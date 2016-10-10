@@ -53,8 +53,10 @@ export var MdTooltip = (function () {
                     }
                 }, 0);
             }
-            this._message = value;
-            this._updatePosition();
+            else {
+                this._message = value;
+                this._updatePosition();
+            }
         },
         enumerable: true,
         configurable: true
