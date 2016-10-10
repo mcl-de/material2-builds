@@ -7896,6 +7896,7 @@ var MdTooltip = (function () {
         },
         set: function (value) {
             var _this = this;
+            value = value.replace(/\r\n|\r|\n/g, '<br>');
             if (this.message) {
                 var showAfterChange_1 = false;
                 if (this.visible) {
