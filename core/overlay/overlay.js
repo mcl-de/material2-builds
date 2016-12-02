@@ -37,9 +37,9 @@ export var Overlay = (function () {
      * @param state State to apply to the overlay.
      * @returns A reference to the created overlay.
      */
-    Overlay.prototype.create = function (state) {
+    Overlay.prototype.create = function (state, overlayContainerElement) {
         if (state === void 0) { state = defaultState; }
-        return this._createOverlayRef(this._createPaneElement(), state);
+        return this._createOverlayRef(this._createPaneElement(overlayContainerElement), state);
     };
     /**
      * Returns a position builder that can be used, via fluent API,
@@ -52,11 +52,18 @@ export var Overlay = (function () {
      * Creates the DOM element for an overlay and appends it to the overlay container.
      * @returns Promise resolving to the created element.
      */
-    Overlay.prototype._createPaneElement = function () {
-        var pane = document.createElement('div');
+    Overlay.prototype._createPaneElement = function (overlayContainerElement) {
+        var doc = document;
+        if (overlayContainerElement) {
+            doc = overlayContainerElement.ownerDocument;
+        }
+        else {
+            overlayContainerElement = this._overlayContainer.getContainerElement();
+        }
+        var pane = doc.createElement('div');
         pane.id = "md-overlay-" + nextUniqueId++;
         pane.classList.add('md-overlay-pane');
-        this._overlayContainer.getContainerElement().appendChild(pane);
+        overlayContainerElement.appendChild(pane);
         return pane;
     };
     /**
