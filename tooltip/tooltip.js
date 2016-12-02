@@ -76,18 +76,18 @@ export var MdTooltip = (function () {
     /**
      * Create the overlay config and position strategy
      */
-    MdTooltip.prototype._createOverlay = function () {
+    MdTooltip.prototype._createOverlay = function (wnd) {
         if (this._overlayRef) {
             if (this.visible) {
                 // if visible, hide before destroying
                 this.hide();
-                this._createOverlay();
+                this._createOverlay(wnd);
             }
             else {
                 // if not visible, dispose and recreate
                 this._overlayRef.dispose();
                 this._overlayRef = null;
-                this._createOverlay();
+                this._createOverlay(wnd);
             }
         }
         else {
@@ -96,8 +96,17 @@ export var MdTooltip = (function () {
             var strategy = this._overlay.position().connectedTo(this._elementRef, origin, position);
             var config = new OverlayState();
             config.positionStrategy = strategy;
-            this._overlayRef = this._overlay.create(config);
+            this._overlayRef = this._overlay.create(config, this._createOverlayContainer(wnd));
         }
+    };
+    MdTooltip.prototype._createOverlayContainer = function (wnd) {
+        var overlayContainerElement = wnd.document.body.querySelector('.md-overlay-container');
+        if (!overlayContainerElement) {
+            overlayContainerElement = wnd.document.createElement('div');
+            overlayContainerElement.classList.add('md-overlay-container');
+            wnd.document.body.appendChild(overlayContainerElement);
+        }
+        return overlayContainerElement;
     };
     /**
      * Returns the origin position based on the user's position preference
@@ -126,7 +135,7 @@ export var MdTooltip = (function () {
      * @param event
      */
     MdTooltip.prototype._handleMouseEnter = function (event) {
-        this._createOverlay();
+        this._createOverlay(event.view);
         this.show();
     };
     /**
