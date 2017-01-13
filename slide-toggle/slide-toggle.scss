@@ -1,6 +1,7 @@
 @import '../core/style/variables';
 @import '../core/ripple/ripple';
 @import '../core/style/elevation';
+@import '../core/a11y/a11y';
 
 
 $md-slide-toggle-width: 36px !default;
@@ -8,6 +9,7 @@ $md-slide-toggle-height: 24px !default;
 $md-slide-toggle-bar-height: 14px !default;
 $md-slide-toggle-thumb-size: 20px !default;
 $md-slide-toggle-margin: 16px !default;
+$md-slide-toggle-spacing: 8px !default;
 
 
 @mixin md-switch-ripple() {
@@ -16,7 +18,7 @@ $md-slide-toggle-margin: 16px !default;
   @include md-temporary-ink-ripple(slide-toggle, true);
 }
 
-:host {
+md-slide-toggle {
   display: flex;
   height: $md-slide-toggle-height;
 
@@ -25,11 +27,8 @@ $md-slide-toggle-margin: 16px !default;
 
   white-space: nowrap;
 
-  // Disable user selection to ensure that dragging is smooth without grabbing some elements
-  // accidentally. Manually prefixing here, because the un-prefixed property is not supported yet.
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
+  // Disable user selection to ensure that dragging is smooth without grabbing
+  // some elements accidentally.
   user-select: none;
 
   outline: none;
@@ -75,7 +74,12 @@ $md-slide-toggle-margin: 16px !default;
 
   position: relative;
 
-  margin-right: 8px;
+  margin-right: $md-slide-toggle-spacing;
+
+  [dir='rtl'] & {
+    margin-left: $md-slide-toggle-spacing;
+    margin-right: 0;
+  }
 }
 
 // The thumb container is responsible for the dragging functionality.
@@ -113,6 +117,11 @@ $md-slide-toggle-margin: 16px !default;
   border-radius: 50%;
 
   @include md-elevation(1);
+
+  @include cdk-high-contrast {
+    background: #fff;
+    border: solid 1px #000;
+  }
 }
 
 // Horizontal bar for the slide-toggle.
@@ -126,6 +135,10 @@ $md-slide-toggle-margin: 16px !default;
   height: $md-slide-toggle-bar-height;
 
   border-radius: 8px;
+
+  @include cdk-high-contrast {
+    background: #fff;
+  }
 }
 
 // The slide toggle shows a visually hidden input inside of the component, which is used
