@@ -10,7 +10,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
-import { NgModule, Component, Directive, Input, ElementRef, ViewContainerRef, style, trigger, state, transition, animate, NgZone, Optional } from '@angular/core';
+import { NgModule, Component, Directive, Input, ElementRef, ViewContainerRef, NgZone, Optional } from '@angular/core';
 import { Overlay, OverlayState, OverlayModule, ComponentPortal, DefaultStyleCompatibilityModeModule } from '../core';
 import { MdTooltipInvalidPositionError } from './tooltip-errors';
 import { Subject } from 'rxjs/Subject';
@@ -104,7 +104,7 @@ export var MdTooltip = (function () {
     MdTooltip.prototype.hide = function (delay) {
         if (delay === void 0) { delay = this.hideDelay; }
         if (this._tooltipInstance) {
-            this._tooltipInstance.hide(delay);
+            this._disposeTooltip();
         }
     };
     /** Shows/hides the tooltip */
@@ -342,18 +342,8 @@ export var TooltipComponent = (function () {
     };
     TooltipComponent = __decorate([
         Component({selector: 'md-tooltip-component, mat-tooltip-component',
-            template: "<div class=\"md-tooltip\" [style.transform-origin]=\"_transformOrigin\" [@state]=\"_visibility\" (@state.done)=\"_afterVisibilityAnimation($event)\" [innerHTML]=\"message\"></div>",
+            template: "<div class=\"md-tooltip\" [style.transform-origin]=\"_transformOrigin\" [innerHTML]=\"message\"></div>",
             styles: [":host{pointer-events:none}.md-tooltip{color:#fff;padding:6px 8px;border-radius:2px;font-family:Roboto,\"Helvetica Neue\",sans-serif;font-size:10px;margin:14px}@media screen and (-ms-high-contrast:active){.md-tooltip{outline:solid 1px}}"],
-            animations: [
-                trigger('state', [
-                    state('void', style({ transform: 'scale(0)' })),
-                    state('initial', style({ transform: 'scale(0)' })),
-                    state('visible', style({ transform: 'scale(1)' })),
-                    state('hidden', style({ transform: 'scale(0)' })),
-                    transition('* => visible', animate('150ms cubic-bezier(0.0, 0.0, 0.2, 1)')),
-                    transition('* => hidden', animate('150ms cubic-bezier(0.4, 0.0, 1, 1)')),
-                ])
-            ],
             host: {
                 '(body:click)': 'this._handleBodyInteraction()'
             }

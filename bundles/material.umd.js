@@ -13114,7 +13114,7 @@ var MdTooltip = (function () {
     MdTooltip.prototype.hide = function (delay) {
         if (delay === void 0) { delay = this.hideDelay; }
         if (this._tooltipInstance) {
-            this._tooltipInstance.hide(delay);
+            this._disposeTooltip();
         }
     };
     /** Shows/hides the tooltip */
@@ -13352,18 +13352,8 @@ var TooltipComponent = (function () {
     };
     TooltipComponent = __decorate$62([
         _angular_core.Component({selector: 'md-tooltip-component, mat-tooltip-component',
-            template: "<div class=\"md-tooltip\" [style.transform-origin]=\"_transformOrigin\" [@state]=\"_visibility\" (@state.done)=\"_afterVisibilityAnimation($event)\" [innerHTML]=\"message\"></div>",
+            template: "<div class=\"md-tooltip\" [style.transform-origin]=\"_transformOrigin\" [innerHTML]=\"message\"></div>",
             styles: [":host{pointer-events:none}.md-tooltip{color:#fff;padding:6px 8px;border-radius:2px;font-family:Roboto,\"Helvetica Neue\",sans-serif;font-size:10px;margin:14px}@media screen and (-ms-high-contrast:active){.md-tooltip{outline:solid 1px}}"],
-            animations: [
-                _angular_core.trigger('state', [
-                    _angular_core.state('void', _angular_core.style({ transform: 'scale(0)' })),
-                    _angular_core.state('initial', _angular_core.style({ transform: 'scale(0)' })),
-                    _angular_core.state('visible', _angular_core.style({ transform: 'scale(1)' })),
-                    _angular_core.state('hidden', _angular_core.style({ transform: 'scale(0)' })),
-                    _angular_core.transition('* => visible', _angular_core.animate('150ms cubic-bezier(0.0, 0.0, 0.2, 1)')),
-                    _angular_core.transition('* => hidden', _angular_core.animate('150ms cubic-bezier(0.4, 0.0, 1, 1)')),
-                ])
-            ],
             host: {
                 '(body:click)': 'this._handleBodyInteraction()'
             }
