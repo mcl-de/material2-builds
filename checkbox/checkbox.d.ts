@@ -1,5 +1,6 @@
-import { ChangeDetectorRef, ElementRef, EventEmitter, Renderer, ModuleWithProviders } from '@angular/core';
+import { ChangeDetectorRef, ElementRef, EventEmitter, Renderer, AfterViewInit, OnDestroy } from '@angular/core';
 import { ControlValueAccessor } from '@angular/forms';
+import { MdRipple, FocusOriginMonitor } from '../core';
 /**
  * Provider Expression that allows md-checkbox to register as a ControlValueAccessor.
  * This allows it to support [(ngModel)].
@@ -22,7 +23,9 @@ export declare enum TransitionCheckState {
 }
 /** Change event object emitted by MdCheckbox. */
 export declare class MdCheckboxChange {
+    /** The source MdCheckbox of the event. */
     source: MdCheckbox;
+    /** The new `checked` value of the checkbox. */
     checked: boolean;
 }
 /**
@@ -33,10 +36,11 @@ export declare class MdCheckboxChange {
  * have the checkbox be accessible, you may supply an [aria-label] input.
  * See: https://www.google.com/design/spec/components/selection-controls.html
  */
-export declare class MdCheckbox implements ControlValueAccessor {
+export declare class MdCheckbox implements ControlValueAccessor, AfterViewInit, OnDestroy {
     private _renderer;
     private _elementRef;
     private _changeDetectorRef;
+    private _focusOriginMonitor;
     /**
      * Attached to the aria-label attribute of the host element. In most cases, arial-labelledby will
      * take precedence so this may be omitted.
@@ -67,14 +71,19 @@ export declare class MdCheckbox implements ControlValueAccessor {
     private _disabled;
     /** Whether the checkbox is disabled. */
     disabled: boolean;
-    /** @docs-private */
-    tabindex: number;
+    /** Tabindex value that is passed to the underlying input element. */
+    tabIndex: number;
     /** Name value will be applied to the input element if present */
     name: string;
     /** Event emitted when the checkbox's `checked` value changes. */
     change: EventEmitter<MdCheckboxChange>;
+    /** Event emitted when the checkbox's `indeterminate` value changes. */
+    indeterminateChange: EventEmitter<boolean>;
+    /** The value attribute of the native input element */
+    value: string;
     /** The native `<input type="checkbox"> element */
     _inputElement: ElementRef;
+    _ripple: MdRipple;
     /**
      * Called when the checkbox is blurred. Needed to properly implement ControlValueAccessor.
      * @docs-private
@@ -86,8 +95,13 @@ export declare class MdCheckbox implements ControlValueAccessor {
     private _indeterminate;
     private _color;
     private _controlValueAccessorChangeFn;
-    _hasFocus: boolean;
-    constructor(_renderer: Renderer, _elementRef: ElementRef, _changeDetectorRef: ChangeDetectorRef);
+    /** Reference to the focused state ripple. */
+    private _focusedRipple;
+    /** Reference to the focus origin monitor subscription. */
+    private _focusedSubscription;
+    constructor(_renderer: Renderer, _elementRef: ElementRef, _changeDetectorRef: ChangeDetectorRef, _focusOriginMonitor: FocusOriginMonitor);
+    ngAfterViewInit(): void;
+    ngOnDestroy(): void;
     /**
      * Whether the checkbox is checked. Note that setting `checked` will immediately set
      * `indeterminate` to false.
@@ -132,8 +146,6 @@ export declare class MdCheckbox implements ControlValueAccessor {
     setDisabledState(isDisabled: boolean): void;
     private _transitionCheckState(newState);
     private _emitChangeEvent();
-    /** Informs the component when the input has focus so that we can style accordingly */
-    _onInputFocus(): void;
     /** Informs the component when we lose focus in order to style accordingly */
     _onInputBlur(): void;
     /** Toggles the `checked` state of the checkbox. */
@@ -141,16 +153,15 @@ export declare class MdCheckbox implements ControlValueAccessor {
     /**
      * Event handler for checkbox input element.
      * Toggles checked state if element is not disabled.
+     * Do not toggle on (change) event since IE doesn't fire change event when
+     *   indeterminate checkbox is clicked.
      * @param event
      */
-    _onInteractionEvent(event: Event): void;
+    _onInputClick(event: Event): void;
     /** Focuses the checkbox. */
     focus(): void;
-    _onInputClick(event: Event): void;
+    _onInteractionEvent(event: Event): void;
     private _getAnimationClassForCheckStateTransition(oldState, newState);
-    _getHostElement(): any;
-}
-export declare class MdCheckboxModule {
-    /** @deprecated */
-    static forRoot(): ModuleWithProviders;
+    /** Fades out the focused state ripple. */
+    private _removeFocusedRipple();
 }

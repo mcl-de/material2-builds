@@ -1,97 +1,193 @@
-var __extends = (this && this.__extends) || function (d, b) {
-    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    function __() { this.constructor = d; }
-    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-};
-var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
-    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-    return c > 3 && r && Object.defineProperty(target, key, r), r;
-};
-var __metadata = (this && this.__metadata) || function (k, v) {
-    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
-};
-import { Component, ViewChild, ViewEncapsulation, NgZone } from '@angular/core';
+import { Component, ViewChild, ViewEncapsulation, NgZone, Renderer, ElementRef, EventEmitter, } from '@angular/core';
+import { animate, trigger, state, style, transition, } from '@angular/animations';
 import { BasePortalHost, PortalHostDirective } from '../core';
 import { MdDialogContentAlreadyAttachedError } from './dialog-errors';
-import { FocusTrap } from '../core/a11y/focus-trap';
+import { FocusTrapFactory } from '../core/a11y/focus-trap';
 import 'rxjs/add/operator/first';
 /**
  * Internal component that wraps user-provided dialog content.
- * @docs-private
+ * Animation is based on https://material.io/guidelines/motion/choreography.html.
+ * \@docs-private
  */
-export var MdDialogContainer = (function (_super) {
-    __extends(MdDialogContainer, _super);
-    function MdDialogContainer(_ngZone) {
-        _super.call(this);
+export class MdDialogContainer extends BasePortalHost {
+    /**
+     * @param {?} _ngZone
+     * @param {?} _renderer
+     * @param {?} _elementRef
+     * @param {?} _focusTrapFactory
+     */
+    constructor(_ngZone, _renderer, _elementRef, _focusTrapFactory) {
+        super();
         this._ngZone = _ngZone;
-        /** Element that was focused before the dialog was opened. Save this to restore upon close. */
+        this._renderer = _renderer;
+        this._elementRef = _elementRef;
+        this._focusTrapFactory = _focusTrapFactory;
         this._elementFocusedBeforeDialogWasOpened = null;
+        /** State of the dialog animation. */
+        this._state = 'enter';
+        /** Emits the current animation state whenever it changes. */
+        this._onAnimationStateChange = new EventEmitter();
     }
     /**
-     * Attach a portal as content to this dialog container.
-     * @param portal Portal to be attached as the dialog content.
+     * Attach a ComponentPortal as content to this dialog container.
+     * @template T
+     * @param {?} portal Portal to be attached as the dialog content.
+     * @return {?}
      */
-    MdDialogContainer.prototype.attachComponentPortal = function (portal) {
-        var _this = this;
+    attachComponentPortal(portal) {
         if (this._portalHost.hasAttached()) {
             throw new MdDialogContentAlreadyAttachedError();
         }
-        var attachResult = this._portalHost.attachComponentPortal(portal);
+        return this._portalHost.attachComponentPortal(portal);
+    }
+    /**
+     * Attach a TemplatePortal as content to this dialog container.
+     * @param {?} portal Portal to be attached as the dialog content.
+     * @return {?}
+     */
+    attachTemplatePortal(portal) {
+        if (this._portalHost.hasAttached()) {
+            throw new MdDialogContentAlreadyAttachedError();
+        }
+        return this._portalHost.attachTemplatePortal(portal);
+    }
+    /**
+     * Moves the focus inside the focus trap.
+     * @return {?}
+     */
+    _trapFocus() {
+        if (!this._focusTrap) {
+            this._focusTrap = this._focusTrapFactory.create(this._elementRef.nativeElement);
+        }
         // If were to attempt to focus immediately, then the content of the dialog would not yet be
         // ready in instances where change detection has to run first. To deal with this, we simply
         // wait for the microtask queue to be empty.
-        this._ngZone.onMicrotaskEmpty.first().subscribe(function () {
-            _this._elementFocusedBeforeDialogWasOpened = document.activeElement;
-            _this._focusTrap.focusFirstTabbableElement();
-        });
-        return attachResult;
-    };
-    /** @docs-private */
-    MdDialogContainer.prototype.attachTemplatePortal = function (portal) {
-        throw Error('Not yet implemented');
-    };
+        this._elementFocusedBeforeDialogWasOpened = (document.activeElement);
+        this._focusTrap.focusFirstTabbableElementWhenReady();
+    }
     /**
-     * Handles the user pressing the Escape key.
-     * @docs-private
+     * Kicks off the leave animation.
+     * \@docs-private
+     * @return {?}
      */
-    MdDialogContainer.prototype.handleEscapeKey = function () {
-        if (!this.dialogConfig.disableClose) {
-            this.dialogRef.close();
+    _exit() {
+        this._state = 'exit';
+        this._onAnimationStateChange.emit('exit-start');
+    }
+    /**
+     * Callback, invoked whenever an animation on the host completes.
+     * \@docs-private
+     * @param {?} event
+     * @return {?}
+     */
+    _onAnimationDone(event) {
+        if (event.toState === 'enter') {
+            this._trapFocus();
         }
-    };
-    MdDialogContainer.prototype.ngOnDestroy = function () {
-        var _this = this;
+        this._onAnimationStateChange.emit(/** @type {?} */ (event.toState));
+    }
+    /**
+     * @return {?}
+     */
+    ngOnDestroy() {
         // When the dialog is destroyed, return focus to the element that originally had it before
         // the dialog was opened. Wait for the DOM to finish settling before changing the focus so
-        // that it doesn't end up back on the <body>.
-        this._ngZone.onMicrotaskEmpty.first().subscribe(function () {
-            _this._elementFocusedBeforeDialogWasOpened.focus();
+        // that it doesn't end up back on the <body>. Also note that we need the extra check, because
+        // IE can set the `activeElement` to null in some cases.
+        let /** @type {?} */ toFocus = (this._elementFocusedBeforeDialogWasOpened);
+        // We shouldn't use `this` inside of the NgZone subscription, because it causes a memory leak.
+        let /** @type {?} */ animationStream = this._onAnimationStateChange;
+        this._ngZone.onMicrotaskEmpty.first().subscribe(() => {
+            if (toFocus && 'focus' in toFocus) {
+                toFocus.focus();
+            }
+            animationStream.complete();
         });
-    };
-    __decorate([
-        ViewChild(PortalHostDirective), 
-        __metadata('design:type', PortalHostDirective)
-    ], MdDialogContainer.prototype, "_portalHost", void 0);
-    __decorate([
-        ViewChild(FocusTrap), 
-        __metadata('design:type', FocusTrap)
-    ], MdDialogContainer.prototype, "_focusTrap", void 0);
-    MdDialogContainer = __decorate([
-        Component({selector: 'md-dialog-container, mat-dialog-container',
-            template: "<cdk-focus-trap><template cdkPortalHost></template></cdk-focus-trap>",
-            styles: ["md-dialog-container{box-shadow:0 11px 15px -7px rgba(0,0,0,.2),0 24px 38px 3px rgba(0,0,0,.14),0 9px 46px 8px rgba(0,0,0,.12);display:block;padding:24px;border-radius:2px;box-sizing:border-box;overflow:auto;max-width:80vw;width:100%;height:100%}@media screen and (-ms-high-contrast:active){md-dialog-container{outline:solid 1px}}[mat-dialog-content],[md-dialog-content],mat-dialog-content,md-dialog-content{display:block;margin:0 -24px;padding:0 24px;max-height:65vh;overflow:auto}[mat-dialog-title],[md-dialog-title]{font-size:20px;font-weight:700;margin:0 0 20px;display:block}[mat-dialog-actions],[md-dialog-actions],mat-dialog-actions,md-dialog-actions{padding:12px 0;display:block}[mat-dialog-actions]:last-child,[md-dialog-actions]:last-child,mat-dialog-actions:last-child,md-dialog-actions:last-child{margin-bottom:-24px}"],
-            host: {
-                'class': 'md-dialog-container',
-                '[attr.role]': 'dialogConfig?.role',
-                '(keydown.escape)': 'handleEscapeKey()',
-            },
-            encapsulation: ViewEncapsulation.None,
-        }), 
-        __metadata('design:paramtypes', [NgZone])
-    ], MdDialogContainer);
-    return MdDialogContainer;
-}(BasePortalHost));
-
+        if (this._focusTrap) {
+            this._focusTrap.destroy();
+        }
+    }
+}
+MdDialogContainer.decorators = [
+    { type: Component, args: [{selector: 'md-dialog-container, mat-dialog-container',
+                template: "<ng-template cdkPortalHost></ng-template> ",
+                styles: [".mat-dialog-container{box-shadow:0 11px 15px -7px rgba(0,0,0,.2),0 24px 38px 3px rgba(0,0,0,.14),0 9px 46px 8px rgba(0,0,0,.12);display:block;padding:24px;border-radius:2px;box-sizing:border-box;overflow:auto;max-width:80vw;width:100%;height:100%}@media screen and (-ms-high-contrast:active){.mat-dialog-container{outline:solid 1px}}.mat-dialog-content{display:block;margin:0 -24px;padding:0 24px;max-height:65vh;overflow:auto}.mat-dialog-title{font-size:20px;font-weight:700;margin:0 0 20px;display:block}.mat-dialog-actions{padding:12px 0;display:flex}.mat-dialog-actions:last-child{margin-bottom:-24px}.mat-dialog-actions[align=end]{justify-content:flex-end}.mat-dialog-actions[align=center]{justify-content:center} /*# sourceMappingURL=dialog.css.map */ "],
+                encapsulation: ViewEncapsulation.None,
+                animations: [
+                    trigger('slideDialog', [
+                        state('void', style({ transform: 'translateY(25%) scale(0.9)', opacity: 0 })),
+                        state('enter', style({ transform: 'translateY(0%) scale(1)', opacity: 1 })),
+                        state('exit', style({ transform: 'translateY(25%)', opacity: 0 })),
+                        transition('* => *', animate('400ms cubic-bezier(0.25, 0.8, 0.25, 1)')),
+                    ])
+                ],
+                host: {
+                    '[class.mat-dialog-container]': 'true',
+                    '[attr.role]': 'dialogConfig?.role',
+                    '[@slideDialog]': '_state',
+                    '(@slideDialog.done)': '_onAnimationDone($event)',
+                },
+            },] },
+];
+/**
+ * @nocollapse
+ */
+MdDialogContainer.ctorParameters = () => [
+    { type: NgZone, },
+    { type: Renderer, },
+    { type: ElementRef, },
+    { type: FocusTrapFactory, },
+];
+MdDialogContainer.propDecorators = {
+    '_portalHost': [{ type: ViewChild, args: [PortalHostDirective,] },],
+};
+function MdDialogContainer_tsickle_Closure_declarations() {
+    /** @type {?} */
+    MdDialogContainer.decorators;
+    /**
+     * @nocollapse
+     * @type {?}
+     */
+    MdDialogContainer.ctorParameters;
+    /** @type {?} */
+    MdDialogContainer.propDecorators;
+    /**
+     * The portal host inside of this container into which the dialog content will be loaded.
+     * @type {?}
+     */
+    MdDialogContainer.prototype._portalHost;
+    /**
+     * The class that traps and manages focus within the dialog.
+     * @type {?}
+     */
+    MdDialogContainer.prototype._focusTrap;
+    /**
+     * Element that was focused before the dialog was opened. Save this to restore upon close.
+     * @type {?}
+     */
+    MdDialogContainer.prototype._elementFocusedBeforeDialogWasOpened;
+    /**
+     * The dialog configuration.
+     * @type {?}
+     */
+    MdDialogContainer.prototype.dialogConfig;
+    /**
+     * State of the dialog animation.
+     * @type {?}
+     */
+    MdDialogContainer.prototype._state;
+    /**
+     * Emits the current animation state whenever it changes.
+     * @type {?}
+     */
+    MdDialogContainer.prototype._onAnimationStateChange;
+    /** @type {?} */
+    MdDialogContainer.prototype._ngZone;
+    /** @type {?} */
+    MdDialogContainer.prototype._renderer;
+    /** @type {?} */
+    MdDialogContainer.prototype._elementRef;
+    /** @type {?} */
+    MdDialogContainer.prototype._focusTrapFactory;
+}
 //# sourceMappingURL=dialog-container.js.map

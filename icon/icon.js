@@ -1,31 +1,19 @@
-var __extends = (this && this.__extends) || function (d, b) {
-    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    function __() { this.constructor = d; }
-    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-};
-var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
-    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-    return c > 3 && r && Object.defineProperty(target, key, r), r;
-};
-var __metadata = (this && this.__metadata) || function (k, v) {
-    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
-};
-import { NgModule, ChangeDetectionStrategy, Component, ElementRef, Input, Renderer, ViewEncapsulation, Optional, SkipSelf } from '@angular/core';
-import { HttpModule, Http } from '@angular/http';
+import { ChangeDetectionStrategy, Component, ElementRef, Input, Renderer, ViewEncapsulation, Optional, SkipSelf, } from '@angular/core';
+import { Http } from '@angular/http';
 import { DomSanitizer } from '@angular/platform-browser';
-import { MdError, DefaultStyleCompatibilityModeModule } from '../core';
+import { MdError } from '../core';
 import { MdIconRegistry } from './icon-registry';
-export { MdIconRegistry } from './icon-registry';
-/** Exception thrown when an invalid icon name is passed to an md-icon component. */
-export var MdIconInvalidNameError = (function (_super) {
-    __extends(MdIconInvalidNameError, _super);
-    function MdIconInvalidNameError(iconName) {
-        _super.call(this, "Invalid icon name: \"" + iconName + "\"");
+/**
+ * Exception thrown when an invalid icon name is passed to an md-icon component.
+ */
+export class MdIconInvalidNameError extends MdError {
+    /**
+     * @param {?} iconName
+     */
+    constructor(iconName) {
+        super(`Invalid icon name: "${iconName}"`);
     }
-    return MdIconInvalidNameError;
-}(MdError));
+}
 /**
  * Component to display an icon. It can be used in the following ways:
  * - Specify the svgSrc input to load an SVG icon from a URL. The SVG content is directly inlined
@@ -59,31 +47,48 @@ export var MdIconInvalidNameError = (function (_super) {
  *   Example:
  *     <md-icon fontSet="fa" fontIcon="alarm"></md-icon>
  */
-export var MdIcon = (function () {
-    function MdIcon(_elementRef, _renderer, _mdIconRegistry) {
+export class MdIcon {
+    /**
+     * @param {?} _elementRef
+     * @param {?} _renderer
+     * @param {?} _mdIconRegistry
+     */
+    constructor(_elementRef, _renderer, _mdIconRegistry) {
         this._elementRef = _elementRef;
         this._renderer = _renderer;
         this._mdIconRegistry = _mdIconRegistry;
         /** Screenreader label for the icon. */
         this.hostAriaLabel = '';
     }
-    Object.defineProperty(MdIcon.prototype, "color", {
-        /** Color of the icon. */
-        get: function () { return this._color; },
-        set: function (value) { this._updateColor(value); },
-        enumerable: true,
-        configurable: true
-    });
-    MdIcon.prototype._updateColor = function (newColor) {
+    /**
+     * Color of the icon.
+     * @return {?}
+     */
+    get color() { return this._color; }
+    /**
+     * @param {?} value
+     * @return {?}
+     */
+    set color(value) { this._updateColor(value); }
+    /**
+     * @param {?} newColor
+     * @return {?}
+     */
+    _updateColor(newColor) {
         this._setElementColor(this._color, false);
         this._setElementColor(newColor, true);
         this._color = newColor;
-    };
-    MdIcon.prototype._setElementColor = function (color, isAdd) {
+    }
+    /**
+     * @param {?} color
+     * @param {?} isAdd
+     * @return {?}
+     */
+    _setElementColor(color, isAdd) {
         if (color != null && color != '') {
-            this._renderer.setElementClass(this._elementRef.nativeElement, "md-" + color, isAdd);
+            this._renderer.setElementClass(this._elementRef.nativeElement, `mat-${color}`, isAdd);
         }
-    };
+    }
     /**
      * Splits an svgIcon binding value into its icon set and icon name components.
      * Returns a 2-element array of [(icon set), (icon name)].
@@ -96,60 +101,78 @@ export var MdIcon = (function () {
      *   'penguin' -> ['', 'penguin']
      *   null -> ['', '']
      *   'a:b:c' -> (throws MdIconInvalidNameError)
+     * @param {?} iconName
+     * @return {?}
      */
-    MdIcon.prototype._splitIconName = function (iconName) {
+    _splitIconName(iconName) {
         if (!iconName) {
             return ['', ''];
         }
-        var parts = iconName.split(':');
+        const /** @type {?} */ parts = iconName.split(':');
         switch (parts.length) {
             case 1:
                 // Use default namespace.
                 return ['', parts[0]];
             case 2:
-                return parts;
+                return (parts);
             default:
                 throw new MdIconInvalidNameError(iconName);
         }
-    };
-    MdIcon.prototype.ngOnChanges = function (changes) {
-        var _this = this;
-        var changedInputs = Object.keys(changes);
+    }
+    /**
+     * @param {?} changes
+     * @return {?}
+     */
+    ngOnChanges(changes) {
+        const /** @type {?} */ changedInputs = Object.keys(changes);
         // Only update the inline SVG icon if the inputs changed, to avoid unnecessary DOM operations.
         if (changedInputs.indexOf('svgIcon') != -1 || changedInputs.indexOf('svgSrc') != -1) {
             if (this.svgIcon) {
-                var _a = this._splitIconName(this.svgIcon), namespace = _a[0], iconName = _a[1];
-                this._mdIconRegistry.getNamedSvgIcon(iconName, namespace).first().subscribe(function (svg) { return _this._setSvgElement(svg); }, function (err) { return console.log("Error retrieving icon: " + err); });
+                const [namespace, iconName] = this._splitIconName(this.svgIcon);
+                this._mdIconRegistry.getNamedSvgIcon(iconName, namespace).first().subscribe(svg => this._setSvgElement(svg), (err) => console.log(`Error retrieving icon: ${err.message}`));
             }
         }
         if (this._usingFontIcon()) {
             this._updateFontIconClasses();
         }
         this._updateAriaLabel();
-    };
-    MdIcon.prototype.ngOnInit = function () {
+    }
+    /**
+     * @return {?}
+     */
+    ngOnInit() {
         // Update font classes because ngOnChanges won't be called if none of the inputs are present,
         // e.g. <md-icon>arrow</md-icon>. In this case we need to add a CSS class for the default font.
         if (this._usingFontIcon()) {
             this._updateFontIconClasses();
         }
-    };
-    MdIcon.prototype.ngAfterViewChecked = function () {
+    }
+    /**
+     * @return {?}
+     */
+    ngAfterViewChecked() {
         // Update aria label here because it may depend on the projected text content.
         // (e.g. <md-icon>home</md-icon> should use 'home').
         this._updateAriaLabel();
-    };
-    MdIcon.prototype._updateAriaLabel = function () {
-        var ariaLabel = this._getAriaLabel();
-        if (ariaLabel) {
+    }
+    /**
+     * @return {?}
+     */
+    _updateAriaLabel() {
+        const /** @type {?} */ ariaLabel = this._getAriaLabel();
+        if (ariaLabel && ariaLabel !== this._previousAriaLabel) {
+            this._previousAriaLabel = ariaLabel;
             this._renderer.setElementAttribute(this._elementRef.nativeElement, 'aria-label', ariaLabel);
         }
-    };
-    MdIcon.prototype._getAriaLabel = function () {
+    }
+    /**
+     * @return {?}
+     */
+    _getAriaLabel() {
         // If the parent provided an aria-label attribute value, use it as-is. Otherwise look for a
         // reasonable value from the alt attribute, font icon name, SVG icon name, or (for ligatures)
         // the text content of the directive.
-        var label = this.hostAriaLabel ||
+        const /** @type {?} */ label = this.hostAriaLabel ||
             this.alt ||
             this.fontIcon ||
             this._splitIconName(this.svgIcon)[1];
@@ -158,31 +181,41 @@ export var MdIcon = (function () {
         }
         // The "content" of an SVG icon is not a useful label.
         if (this._usingFontIcon()) {
-            var text = this._elementRef.nativeElement.textContent;
+            const /** @type {?} */ text = this._elementRef.nativeElement.textContent;
             if (text) {
                 return text;
             }
         }
         // TODO: Warn here in dev mode.
         return null;
-    };
-    MdIcon.prototype._usingFontIcon = function () {
+    }
+    /**
+     * @return {?}
+     */
+    _usingFontIcon() {
         return !this.svgIcon;
-    };
-    MdIcon.prototype._setSvgElement = function (svg) {
-        var layoutElement = this._elementRef.nativeElement;
+    }
+    /**
+     * @param {?} svg
+     * @return {?}
+     */
+    _setSvgElement(svg) {
+        const /** @type {?} */ layoutElement = this._elementRef.nativeElement;
         // Remove existing child nodes and add the new SVG element.
         // We would use renderer.detachView(Array.from(layoutElement.childNodes)) here,
         // but it fails in IE11: https://github.com/angular/angular/issues/6327
         layoutElement.innerHTML = '';
         this._renderer.projectNodes(layoutElement, [svg]);
-    };
-    MdIcon.prototype._updateFontIconClasses = function () {
+    }
+    /**
+     * @return {?}
+     */
+    _updateFontIconClasses() {
         if (!this._usingFontIcon()) {
             return;
         }
-        var elem = this._elementRef.nativeElement;
-        var fontSetClass = this.fontSet ?
+        const /** @type {?} */ elem = this._elementRef.nativeElement;
+        const /** @type {?} */ fontSetClass = this.fontSet ?
             this._mdIconRegistry.classNameForFontAlias(this.fontSet) :
             this._mdIconRegistry.getDefaultFontSetClass();
         if (fontSetClass != this._previousFontSetClass) {
@@ -203,75 +236,100 @@ export var MdIcon = (function () {
             }
             this._previousFontIconClass = this.fontIcon;
         }
-    };
-    __decorate([
-        Input(), 
-        __metadata('design:type', String)
-    ], MdIcon.prototype, "svgIcon", void 0);
-    __decorate([
-        Input(), 
-        __metadata('design:type', String)
-    ], MdIcon.prototype, "fontSet", void 0);
-    __decorate([
-        Input(), 
-        __metadata('design:type', String)
-    ], MdIcon.prototype, "fontIcon", void 0);
-    __decorate([
-        Input(), 
-        __metadata('design:type', String)
-    ], MdIcon.prototype, "alt", void 0);
-    __decorate([
-        Input('aria-label'), 
-        __metadata('design:type', String)
-    ], MdIcon.prototype, "hostAriaLabel", void 0);
-    __decorate([
-        Input(), 
-        __metadata('design:type', String)
-    ], MdIcon.prototype, "color", null);
-    MdIcon = __decorate([
-        Component({template: '<ng-content></ng-content>',
-            selector: 'md-icon, mat-icon',
-            styles: ["md-icon{background-repeat:no-repeat;display:inline-block;fill:currentColor;height:24px;width:24px}"],
-            host: {
-                'role': 'img',
-            },
-            encapsulation: ViewEncapsulation.None,
-            changeDetection: ChangeDetectionStrategy.OnPush,
-        }), 
-        __metadata('design:paramtypes', [ElementRef, Renderer, MdIconRegistry])
-    ], MdIcon);
-    return MdIcon;
-}());
+    }
+}
+MdIcon.decorators = [
+    { type: Component, args: [{template: '<ng-content></ng-content>',
+                selector: 'md-icon, mat-icon',
+                styles: [".mat-icon{background-repeat:no-repeat;display:inline-block;fill:currentColor;height:24px;width:24px} /*# sourceMappingURL=icon.css.map */ "],
+                host: {
+                    'role': 'img',
+                    '[class.mat-icon]': 'true',
+                },
+                encapsulation: ViewEncapsulation.None,
+                changeDetection: ChangeDetectionStrategy.OnPush,
+            },] },
+];
+/**
+ * @nocollapse
+ */
+MdIcon.ctorParameters = () => [
+    { type: ElementRef, },
+    { type: Renderer, },
+    { type: MdIconRegistry, },
+];
+MdIcon.propDecorators = {
+    'svgIcon': [{ type: Input },],
+    'fontSet': [{ type: Input },],
+    'fontIcon': [{ type: Input },],
+    'alt': [{ type: Input },],
+    'hostAriaLabel': [{ type: Input, args: ['aria-label',] },],
+    'color': [{ type: Input },],
+};
+function MdIcon_tsickle_Closure_declarations() {
+    /** @type {?} */
+    MdIcon.decorators;
+    /**
+     * @nocollapse
+     * @type {?}
+     */
+    MdIcon.ctorParameters;
+    /** @type {?} */
+    MdIcon.propDecorators;
+    /** @type {?} */
+    MdIcon.prototype._color;
+    /**
+     * Name of the icon in the SVG icon set.
+     * @type {?}
+     */
+    MdIcon.prototype.svgIcon;
+    /**
+     * Font set that the icon is a part of.
+     * @type {?}
+     */
+    MdIcon.prototype.fontSet;
+    /**
+     * Name of an icon within a font set.
+     * @type {?}
+     */
+    MdIcon.prototype.fontIcon;
+    /**
+     * Alt label to be used for accessibility.
+     * @type {?}
+     */
+    MdIcon.prototype.alt;
+    /**
+     * Screenreader label for the icon.
+     * @type {?}
+     */
+    MdIcon.prototype.hostAriaLabel;
+    /** @type {?} */
+    MdIcon.prototype._previousFontSetClass;
+    /** @type {?} */
+    MdIcon.prototype._previousFontIconClass;
+    /** @type {?} */
+    MdIcon.prototype._previousAriaLabel;
+    /** @type {?} */
+    MdIcon.prototype._elementRef;
+    /** @type {?} */
+    MdIcon.prototype._renderer;
+    /** @type {?} */
+    MdIcon.prototype._mdIconRegistry;
+}
+/**
+ * @param {?} parentRegistry
+ * @param {?} http
+ * @param {?} sanitizer
+ * @return {?}
+ */
 export function ICON_REGISTRY_PROVIDER_FACTORY(parentRegistry, http, sanitizer) {
     return parentRegistry || new MdIconRegistry(http, sanitizer);
 }
 ;
-export var ICON_REGISTRY_PROVIDER = {
+export const /** @type {?} */ ICON_REGISTRY_PROVIDER = {
     // If there is already an MdIconRegistry available, use that. Otherwise, provide a new one.
     provide: MdIconRegistry,
     deps: [[new Optional(), new SkipSelf(), MdIconRegistry], Http, DomSanitizer],
     useFactory: ICON_REGISTRY_PROVIDER_FACTORY,
 };
-export var MdIconModule = (function () {
-    function MdIconModule() {
-    }
-    /** @deprecated */
-    MdIconModule.forRoot = function () {
-        return {
-            ngModule: MdIconModule,
-            providers: [],
-        };
-    };
-    MdIconModule = __decorate([
-        NgModule({
-            imports: [HttpModule, DefaultStyleCompatibilityModeModule],
-            exports: [MdIcon, DefaultStyleCompatibilityModeModule],
-            declarations: [MdIcon],
-            providers: [ICON_REGISTRY_PROVIDER],
-        }), 
-        __metadata('design:paramtypes', [])
-    ], MdIconModule);
-    return MdIconModule;
-}());
-
 //# sourceMappingURL=icon.js.map

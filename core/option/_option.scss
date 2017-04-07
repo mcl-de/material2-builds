@@ -1,24 +1,25 @@
 @import '../style/menu-common';
+@import '../style/vendor-prefixes';
 @import '../a11y/a11y';
 
 /**
  * This mixin contains shared option styles between the select and
  * autocomplete components.
  */
-@mixin md-option() {
-  md-option {
-    @include md-menu-item-base();
+@mixin mat-option() {
+  .mat-option {
+    @include mat-menu-item-base();
     position: relative;
     cursor: pointer;
     outline: none;
 
     &[aria-disabled='true'] {
+      @include user-select(none);
       cursor: default;
-      user-select: none;
     }
   }
 
-  .md-option-ripple {
+  .mat-option-ripple {
     position: absolute;
     top: 0;
     left: 0;
@@ -28,6 +29,16 @@
     // In high contrast mode this completely covers the text.
     @include cdk-high-contrast {
       opacity: 0.5;
+    }
+  }
+
+  .mat-option-pseudo-checkbox {
+    $margin: $mat-menu-side-padding / 2;
+    margin-right: $margin;
+
+    [dir='rtl'] & {
+      margin-left: $margin;
+      margin-right: 0;
     }
   }
 }

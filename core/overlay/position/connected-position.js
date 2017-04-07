@@ -1,26 +1,30 @@
-var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
-    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-    return c > 3 && r && Object.defineProperty(target, key, r), r;
-};
-var __metadata = (this && this.__metadata) || function (k, v) {
-    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
-};
-var __param = (this && this.__param) || function (paramIndex, decorator) {
-    return function (target, key) { decorator(target, key, paramIndex); }
-};
+/** Horizontal dimension of a connection point on the perimeter of the origin or overlay element. */
 import { Optional } from '@angular/core';
-/** The points of the origin element and the overlay element to connect. */
-export var ConnectionPositionPair = (function () {
-    function ConnectionPositionPair(origin, overlay) {
+/**
+ * The points of the origin element and the overlay element to connect.
+ */
+export class ConnectionPositionPair {
+    /**
+     * @param {?} origin
+     * @param {?} overlay
+     */
+    constructor(origin, overlay) {
         this.originX = origin.originX;
         this.originY = origin.originY;
         this.overlayX = overlay.overlayX;
         this.overlayY = overlay.overlayY;
     }
-    return ConnectionPositionPair;
-}());
+}
+function ConnectionPositionPair_tsickle_Closure_declarations() {
+    /** @type {?} */
+    ConnectionPositionPair.prototype.originX;
+    /** @type {?} */
+    ConnectionPositionPair.prototype.originY;
+    /** @type {?} */
+    ConnectionPositionPair.prototype.overlayX;
+    /** @type {?} */
+    ConnectionPositionPair.prototype.overlayY;
+}
 /**
  * Set of properties regarding the position of the origin and overlay relative to the viewport
  * with respect to the containing Scrollable elements.
@@ -44,22 +48,47 @@ export var ConnectionPositionPair = (function () {
  *  |                        |
  *  --------------------------
  */
-export var ScrollableViewProperties = (function () {
-    function ScrollableViewProperties() {
-    }
-    return ScrollableViewProperties;
-}());
-/** The change event emitted by the strategy when a fallback position is used. */
-export var ConnectedOverlayPositionChange = (function () {
-    function ConnectedOverlayPositionChange(connectionPair, scrollableViewProperties) {
+export class ScrollableViewProperties {
+}
+function ScrollableViewProperties_tsickle_Closure_declarations() {
+    /** @type {?} */
+    ScrollableViewProperties.prototype.isOriginClipped;
+    /** @type {?} */
+    ScrollableViewProperties.prototype.isOriginOutsideView;
+    /** @type {?} */
+    ScrollableViewProperties.prototype.isOverlayClipped;
+    /** @type {?} */
+    ScrollableViewProperties.prototype.isOverlayOutsideView;
+}
+/**
+ * The change event emitted by the strategy when a fallback position is used.
+ */
+export class ConnectedOverlayPositionChange {
+    /**
+     * @param {?} connectionPair
+     * @param {?} scrollableViewProperties
+     */
+    constructor(connectionPair, scrollableViewProperties) {
         this.connectionPair = connectionPair;
         this.scrollableViewProperties = scrollableViewProperties;
     }
-    ConnectedOverlayPositionChange = __decorate([
-        __param(1, Optional()), 
-        __metadata('design:paramtypes', [ConnectionPositionPair, ScrollableViewProperties])
-    ], ConnectedOverlayPositionChange);
-    return ConnectedOverlayPositionChange;
-}());
-
+}
+/**
+ * @nocollapse
+ */
+ConnectedOverlayPositionChange.ctorParameters = () => [
+    { type: ConnectionPositionPair, },
+    { type: ScrollableViewProperties, decorators: [{ type: Optional },] },
+];
+function ConnectedOverlayPositionChange_tsickle_Closure_declarations() {
+    /**
+     * @nocollapse
+     * @type {?}
+     */
+    ConnectedOverlayPositionChange.ctorParameters;
+    /** @type {?} */
+    ConnectedOverlayPositionChange.prototype.connectionPair;
+    /** @type {?} */
+    ConnectedOverlayPositionChange.prototype.scrollableViewProperties;
+}
 //# sourceMappingURL=connected-position.js.map

@@ -1,60 +1,50 @@
-var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
-    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-    return c > 3 && r && Object.defineProperty(target, key, r), r;
-};
-var __metadata = (this && this.__metadata) || function (k, v) {
-    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
-};
 import { Injectable } from '@angular/core';
 import { Platform } from '../platform/platform';
-/**
- * The InteractivityChecker leans heavily on the ally.js accessibility utilities.
- * Methods like `isTabbable` are only covering specific edge-cases for the browsers which are
- * supported.
- */
 /**
  * Utility for checking the interactivity of an element, such as whether is is focusable or
  * tabbable.
  */
-export var InteractivityChecker = (function () {
-    function InteractivityChecker(_platform) {
+export class InteractivityChecker {
+    /**
+     * @param {?} _platform
+     */
+    constructor(_platform) {
         this._platform = _platform;
     }
     /**
      * Gets whether an element is disabled.
      *
-     * @param element Element to be checked.
-     * @returns Whether the element is disabled.
+     * @param {?} element Element to be checked.
+     * @return {?} Whether the element is disabled.
      */
-    InteractivityChecker.prototype.isDisabled = function (element) {
+    isDisabled(element) {
         // This does not capture some cases, such as a non-form control with a disabled attribute or
         // a form control inside of a disabled form, but should capture the most common cases.
         return element.hasAttribute('disabled');
-    };
+    }
     /**
      * Gets whether an element is visible for the purposes of interactivity.
      *
      * This will capture states like `display: none` and `visibility: hidden`, but not things like
      * being clipped by an `overflow: hidden` parent or being outside the viewport.
      *
-     * @returns Whether the element is visible.
+     * @param {?} element
+     * @return {?} Whether the element is visible.
      */
-    InteractivityChecker.prototype.isVisible = function (element) {
+    isVisible(element) {
         return hasGeometry(element) && getComputedStyle(element).visibility === 'visible';
-    };
+    }
     /**
      * Gets whether an element can be reached via Tab key.
      * Assumes that the element has already been checked with isFocusable.
      *
-     * @param element Element to be checked.
-     * @returns Whether the element is tabbable.
+     * @param {?} element Element to be checked.
+     * @return {?} Whether the element is tabbable.
      */
-    InteractivityChecker.prototype.isTabbable = function (element) {
-        var frameElement = getWindow(element).frameElement;
+    isTabbable(element) {
+        let /** @type {?} */ frameElement = (getWindow(element).frameElement);
         if (frameElement) {
-            var frameType = frameElement && frameElement.nodeName.toLowerCase();
+            let /** @type {?} */ frameType = frameElement && frameElement.nodeName.toLowerCase();
             // Frame elements inherit their tabindex onto all child elements.
             if (getTabIndexValue(frameElement) === -1) {
                 return false;
@@ -68,8 +58,8 @@ export var InteractivityChecker = (function () {
                 return false;
             }
         }
-        var nodeName = element.nodeName.toLowerCase();
-        var tabIndexValue = getTabIndexValue(element);
+        let /** @type {?} */ nodeName = element.nodeName.toLowerCase();
+        let /** @type {?} */ tabIndexValue = getTabIndexValue(element);
         if (element.hasAttribute('contenteditable')) {
             return tabIndexValue !== -1;
         }
@@ -107,60 +97,103 @@ export var InteractivityChecker = (function () {
             return false;
         }
         return element.tabIndex >= 0;
-    };
+    }
     /**
      * Gets whether an element can be focused by the user.
      *
-     * @param element Element to be checked.
-     * @returns Whether the element is focusable.
+     * @param {?} element Element to be checked.
+     * @return {?} Whether the element is focusable.
      */
-    InteractivityChecker.prototype.isFocusable = function (element) {
+    isFocusable(element) {
         // Perform checks in order of left to most expensive.
         // Again, naive approach that does not capture many edge cases and browser quirks.
         return isPotentiallyFocusable(element) && !this.isDisabled(element) && this.isVisible(element);
-    };
-    InteractivityChecker = __decorate([
-        Injectable(), 
-        __metadata('design:paramtypes', [Platform])
-    ], InteractivityChecker);
-    return InteractivityChecker;
-}());
-/** Checks whether the specified element has any geometry / rectangles. */
+    }
+}
+InteractivityChecker.decorators = [
+    { type: Injectable },
+];
+/**
+ * @nocollapse
+ */
+InteractivityChecker.ctorParameters = () => [
+    { type: Platform, },
+];
+function InteractivityChecker_tsickle_Closure_declarations() {
+    /** @type {?} */
+    InteractivityChecker.decorators;
+    /**
+     * @nocollapse
+     * @type {?}
+     */
+    InteractivityChecker.ctorParameters;
+    /** @type {?} */
+    InteractivityChecker.prototype._platform;
+}
+/**
+ * Checks whether the specified element has any geometry / rectangles.
+ * @param {?} element
+ * @return {?}
+ */
 function hasGeometry(element) {
     // Use logic from jQuery to check for an invisible element.
     // See https://github.com/jquery/jquery/blob/master/src/css/hiddenVisibleSelectors.js#L12
     return !!(element.offsetWidth || element.offsetHeight || element.getClientRects().length);
 }
-/** Gets whether an element's  */
+/**
+ * Gets whether an element's
+ * @param {?} element
+ * @return {?}
+ */
 function isNativeFormElement(element) {
-    var nodeName = element.nodeName.toLowerCase();
+    let /** @type {?} */ nodeName = element.nodeName.toLowerCase();
     return nodeName === 'input' ||
         nodeName === 'select' ||
         nodeName === 'button' ||
         nodeName === 'textarea';
 }
-/** Gets whether an element is an <input type="hidden">. */
+/**
+ * Gets whether an element is an <input type="hidden">.
+ * @param {?} element
+ * @return {?}
+ */
 function isHiddenInput(element) {
     return isInputElement(element) && element.type == 'hidden';
 }
-/** Gets whether an element is an anchor that has an href attribute. */
+/**
+ * Gets whether an element is an anchor that has an href attribute.
+ * @param {?} element
+ * @return {?}
+ */
 function isAnchorWithHref(element) {
     return isAnchorElement(element) && element.hasAttribute('href');
 }
-/** Gets whether an element is an input element. */
+/**
+ * Gets whether an element is an input element.
+ * @param {?} element
+ * @return {?}
+ */
 function isInputElement(element) {
-    return element.nodeName == 'input';
+    return element.nodeName.toLowerCase() == 'input';
 }
-/** Gets whether an element is an anchor element. */
+/**
+ * Gets whether an element is an anchor element.
+ * @param {?} element
+ * @return {?}
+ */
 function isAnchorElement(element) {
     return element.nodeName.toLowerCase() == 'a';
 }
-/** Gets whether an element has a valid tabindex. */
+/**
+ * Gets whether an element has a valid tabindex.
+ * @param {?} element
+ * @return {?}
+ */
 function hasValidTabIndex(element) {
     if (!element.hasAttribute('tabindex') || element.tabIndex === undefined) {
         return false;
     }
-    var tabIndex = element.getAttribute('tabindex');
+    let /** @type {?} */ tabIndex = element.getAttribute('tabindex');
     // IE11 parses tabindex="" as the value "-32768"
     if (tabIndex == '-32768') {
         return false;
@@ -170,19 +203,25 @@ function hasValidTabIndex(element) {
 /**
  * Returns the parsed tabindex from the element attributes instead of returning the
  * evaluated tabindex from the browsers defaults.
+ * @param {?} element
+ * @return {?}
  */
 function getTabIndexValue(element) {
     if (!hasValidTabIndex(element)) {
         return null;
     }
     // See browser issue in Gecko https://bugzilla.mozilla.org/show_bug.cgi?id=1128054
-    var tabIndex = parseInt(element.getAttribute('tabindex'), 10);
+    const /** @type {?} */ tabIndex = parseInt(element.getAttribute('tabindex'), 10);
     return isNaN(tabIndex) ? -1 : tabIndex;
 }
-/** Checks whether the specified element is potentially tabbable on iOS */
+/**
+ * Checks whether the specified element is potentially tabbable on iOS
+ * @param {?} element
+ * @return {?}
+ */
 function isPotentiallyTabbableIOS(element) {
-    var nodeName = element.nodeName.toLowerCase();
-    var inputType = nodeName === 'input' && element.type;
+    let /** @type {?} */ nodeName = element.nodeName.toLowerCase();
+    let /** @type {?} */ inputType = nodeName === 'input' && ((element)).type;
     return inputType === 'text'
         || inputType === 'password'
         || nodeName === 'select'
@@ -191,6 +230,8 @@ function isPotentiallyTabbableIOS(element) {
 /**
  * Gets whether an element is potentially focusable without taking current visible/disabled state
  * into account.
+ * @param {?} element
+ * @return {?}
  */
 function isPotentiallyFocusable(element) {
     // Inputs are potentially focusable *unless* they're type="hidden".
@@ -202,9 +243,12 @@ function isPotentiallyFocusable(element) {
         element.hasAttribute('contenteditable') ||
         hasValidTabIndex(element);
 }
-/** Gets the parent window of a DOM node with regards of being inside of an iframe. */
+/**
+ * Gets the parent window of a DOM node with regards of being inside of an iframe.
+ * @param {?} node
+ * @return {?}
+ */
 function getWindow(node) {
     return node.ownerDocument.defaultView || window;
 }
-
 //# sourceMappingURL=interactivity-checker.js.map

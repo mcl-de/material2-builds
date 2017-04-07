@@ -1,22 +1,15 @@
-var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
-    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-    return c > 3 && r && Object.defineProperty(target, key, r), r;
-};
-var __metadata = (this && this.__metadata) || function (k, v) {
-    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
-};
 import { TemplatePortal } from '../core/portal/portal';
 import { ViewContainerRef, Input, TemplateRef, ViewChild, ContentChild, Component } from '@angular/core';
 import { coerceBooleanProperty } from '../core/coercion/boolean-property';
 import { MdTabLabel } from './tab-label';
-export var MdTab = (function () {
-    function MdTab(_viewContainerRef) {
+export class MdTab {
+    /**
+     * @param {?} _viewContainerRef
+     */
+    constructor(_viewContainerRef) {
         this._viewContainerRef = _viewContainerRef;
         /** The plain text label for the tab, used when there is no template label. */
         this.textLabel = '';
-        /** The portal that will be the hosted content of the tab */
         this._contentPortal = null;
         /**
          * The relatively indexed position where 0 represents the center, negative is left, and positive
@@ -30,45 +23,89 @@ export var MdTab = (function () {
         this.origin = null;
         this._disabled = false;
     }
-    Object.defineProperty(MdTab.prototype, "content", {
-        get: function () { return this._contentPortal; },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(MdTab.prototype, "disabled", {
-        get: function () { return this._disabled; },
-        /** Whether the tab is disabled */
-        set: function (value) { this._disabled = coerceBooleanProperty(value); },
-        enumerable: true,
-        configurable: true
-    });
-    MdTab.prototype.ngOnInit = function () {
+    /**
+     * @return {?}
+     */
+    get content() { return this._contentPortal; }
+    /**
+     * Whether the tab is disabled
+     * @param {?} value
+     * @return {?}
+     */
+    set disabled(value) { this._disabled = coerceBooleanProperty(value); }
+    /**
+     * @return {?}
+     */
+    get disabled() { return this._disabled; }
+    /**
+     * @return {?}
+     */
+    ngOnInit() {
         this._contentPortal = new TemplatePortal(this._content, this._viewContainerRef);
-    };
-    __decorate([
-        ContentChild(MdTabLabel), 
-        __metadata('design:type', MdTabLabel)
-    ], MdTab.prototype, "templateLabel", void 0);
-    __decorate([
-        ViewChild(TemplateRef), 
-        __metadata('design:type', TemplateRef)
-    ], MdTab.prototype, "_content", void 0);
-    __decorate([
-        Input('label'), 
-        __metadata('design:type', String)
-    ], MdTab.prototype, "textLabel", void 0);
-    __decorate([
-        Input(), 
-        __metadata('design:type', Boolean), 
-        __metadata('design:paramtypes', [Boolean])
-    ], MdTab.prototype, "disabled", null);
-    MdTab = __decorate([
-        Component({selector: 'md-tab',
-            template: "<template><ng-content></ng-content></template>",
-        }), 
-        __metadata('design:paramtypes', [ViewContainerRef])
-    ], MdTab);
-    return MdTab;
-}());
-
+    }
+}
+MdTab.decorators = [
+    { type: Component, args: [{selector: 'md-tab, mat-tab',
+                template: "<!-- Create a template for the content of the <md-tab> so that we can grab a reference to this TemplateRef and use it in a Portal to render the tab content in the appropriate place in the tab-group. --> <ng-template><ng-content></ng-content></ng-template> ",
+            },] },
+];
+/**
+ * @nocollapse
+ */
+MdTab.ctorParameters = () => [
+    { type: ViewContainerRef, },
+];
+MdTab.propDecorators = {
+    'templateLabel': [{ type: ContentChild, args: [MdTabLabel,] },],
+    '_content': [{ type: ViewChild, args: [TemplateRef,] },],
+    'textLabel': [{ type: Input, args: ['label',] },],
+    'disabled': [{ type: Input },],
+};
+function MdTab_tsickle_Closure_declarations() {
+    /** @type {?} */
+    MdTab.decorators;
+    /**
+     * @nocollapse
+     * @type {?}
+     */
+    MdTab.ctorParameters;
+    /** @type {?} */
+    MdTab.propDecorators;
+    /**
+     * Content for the tab label given by <ng-template md-tab-label>.
+     * @type {?}
+     */
+    MdTab.prototype.templateLabel;
+    /**
+     * Template inside the MdTab view that contains an <ng-content>.
+     * @type {?}
+     */
+    MdTab.prototype._content;
+    /**
+     * The plain text label for the tab, used when there is no template label.
+     * @type {?}
+     */
+    MdTab.prototype.textLabel;
+    /**
+     * The portal that will be the hosted content of the tab
+     * @type {?}
+     */
+    MdTab.prototype._contentPortal;
+    /**
+     * The relatively indexed position where 0 represents the center, negative is left, and positive
+     * represents the right.
+     * @type {?}
+     */
+    MdTab.prototype.position;
+    /**
+     * The initial relatively index origin of the tab if it was created and selected after there
+     * was already a selected tab. Provides context of what position the tab should originate from.
+     * @type {?}
+     */
+    MdTab.prototype.origin;
+    /** @type {?} */
+    MdTab.prototype._disabled;
+    /** @type {?} */
+    MdTab.prototype._viewContainerRef;
+}
 //# sourceMappingURL=tab.js.map

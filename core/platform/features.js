@@ -1,12 +1,18 @@
-var supportedInputTypes;
-/** @returns The input types supported by this browser. */
+let /** @type {?} */ supportedInputTypes;
+/**
+ * @return {?} The input types supported by this browser.
+ */
 export function getSupportedInputTypes() {
     if (!supportedInputTypes) {
-        var featureTestInput_1 = document.createElement('input');
+        let /** @type {?} */ featureTestInput = document.createElement('input');
         supportedInputTypes = new Set([
+            // `color` must come first. Chrome 56 shows a warning if we change the type to `color` after
+            // first changing it to something else:
+            // The specified value "" does not conform to the required format.
+            // The format is "#rrggbb" where rr, gg, bb are two-digit hexadecimal numbers.
+            'color',
             'button',
             'checkbox',
-            'color',
             'date',
             'datetime-local',
             'email',
@@ -26,12 +32,11 @@ export function getSupportedInputTypes() {
             'time',
             'url',
             'week',
-        ].filter(function (value) {
-            featureTestInput_1.setAttribute('type', value);
-            return featureTestInput_1.type === value;
+        ].filter(value => {
+            featureTestInput.setAttribute('type', value);
+            return featureTestInput.type === value;
         }));
     }
     return supportedInputTypes;
 }
-
 //# sourceMappingURL=features.js.map

@@ -1,41 +1,41 @@
-var __extends = (this && this.__extends) || function (d, b) {
-    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    function __() { this.constructor = d; }
-    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-};
 import { MdError } from '../core/errors/error';
-/** @docs-private */
-export var MdInputContainerPlaceholderConflictError = (function (_super) {
-    __extends(MdInputContainerPlaceholderConflictError, _super);
-    function MdInputContainerPlaceholderConflictError() {
-        _super.call(this, 'Placeholder attribute and child element were both specified.');
+/**
+ * \@docs-private
+ */
+export class MdInputContainerPlaceholderConflictError extends MdError {
+    constructor() {
+        super('Placeholder attribute and child element were both specified.');
     }
-    return MdInputContainerPlaceholderConflictError;
-}(MdError));
-/** @docs-private */
-export var MdInputContainerUnsupportedTypeError = (function (_super) {
-    __extends(MdInputContainerUnsupportedTypeError, _super);
-    function MdInputContainerUnsupportedTypeError(type) {
-        _super.call(this, "Input type \"" + type + "\" isn't supported by md-input-container.");
+}
+/**
+ * \@docs-private
+ */
+export class MdInputContainerUnsupportedTypeError extends MdError {
+    /**
+     * @param {?} type
+     */
+    constructor(type) {
+        super(`Input type "${type}" isn't supported by md-input-container.`);
     }
-    return MdInputContainerUnsupportedTypeError;
-}(MdError));
-/** @docs-private */
-export var MdInputContainerDuplicatedHintError = (function (_super) {
-    __extends(MdInputContainerDuplicatedHintError, _super);
-    function MdInputContainerDuplicatedHintError(align) {
-        _super.call(this, "A hint was already declared for 'align=\"" + align + "\"'.");
+}
+/**
+ * \@docs-private
+ */
+export class MdInputContainerDuplicatedHintError extends MdError {
+    /**
+     * @param {?} align
+     */
+    constructor(align) {
+        super(`A hint was already declared for 'align="${align}"'.`);
     }
-    return MdInputContainerDuplicatedHintError;
-}(MdError));
-/** @docs-private */
-export var MdInputContainerMissingMdInputError = (function (_super) {
-    __extends(MdInputContainerMissingMdInputError, _super);
-    function MdInputContainerMissingMdInputError() {
-        _super.call(this, 'md-input-container must contain an mdInput directive. Did you forget to add mdInput ' +
+}
+/**
+ * \@docs-private
+ */
+export class MdInputContainerMissingMdInputError extends MdError {
+    constructor() {
+        super('md-input-container must contain an mdInput directive. Did you forget to add mdInput ' +
             'to the native input or textarea element?');
     }
-    return MdInputContainerMissingMdInputError;
-}(MdError));
-
+}
 //# sourceMappingURL=input-container-errors.js.map

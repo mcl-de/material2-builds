@@ -1,12 +1,14 @@
-import { ModuleWithProviders, QueryList, ElementRef, Renderer } from '@angular/core';
+import { QueryList, ElementRef, Renderer } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
-import 'rxjs/add/operator/map';
 import { MdTab } from './tab';
+import 'rxjs/add/operator/map';
 /** A simple change event emitted on focus or selection changes. */
 export declare class MdTabChangeEvent {
     index: number;
     tab: MdTab;
 }
+/** Possible positions for the tab header. */
+export declare type MdTabHeaderPosition = 'above' | 'below';
 /**
  * Material design tab-group component.  Supports basic tab pairs (label + content) and includes
  * animated ink-bar, keyboard navigation, and screen reader.
@@ -30,7 +32,9 @@ export declare class MdTabGroup {
     private _selectedIndex;
     /** The index of the active tab. */
     selectedIndex: number;
-    /** Output to enable support for two-way binding on `selectedIndex`. */
+    /** Position of the tab header. */
+    headerPosition: MdTabHeaderPosition;
+    /** Output to enable support for two-way binding on ([selectedIndex]) */
     readonly selectedIndexChange: Observable<number>;
     private _onFocusChange;
     /** Event emitted when focus has changed within a tab group. */
@@ -65,8 +69,4 @@ export declare class MdTabGroup {
     _setTabBodyWrapperHeight(tabHeight: number): void;
     /** Removes the height of the tab body wrapper. */
     _removeTabBodyWrapperHeight(): void;
-}
-export declare class MdTabsModule {
-    /** @deprecated */
-    static forRoot(): ModuleWithProviders;
 }

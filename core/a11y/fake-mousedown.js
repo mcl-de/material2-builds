@@ -4,9 +4,10 @@
  * mousedown events and real mousedown events using the "buttons" property. While
  * real mousedowns will indicate the mouse button that was pressed (e.g. "1" for
  * the left mouse button), faked mousedowns will usually set the property value to 0.
+ * @param {?} event
+ * @return {?}
  */
 export function isFakeMousedownFromScreenReader(event) {
     return event.buttons === 0;
 }
-
 //# sourceMappingURL=fake-mousedown.js.map

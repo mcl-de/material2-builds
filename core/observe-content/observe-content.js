@@ -1,67 +1,100 @@
-var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
-    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-    return c > 3 && r && Object.defineProperty(target, key, r), r;
-};
-var __metadata = (this && this.__metadata) || function (k, v) {
-    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
-};
 import { Directive, ElementRef, NgModule, Output, EventEmitter } from '@angular/core';
 /**
  * Directive that triggers a callback whenever the content of
  * its associated element has changed.
  */
-export var ObserveContent = (function () {
-    function ObserveContent(_elementRef) {
+export class ObserveContent {
+    /**
+     * @param {?} _elementRef
+     */
+    constructor(_elementRef) {
         this._elementRef = _elementRef;
         /** Event emitted for each change in the element's content. */
         this.event = new EventEmitter();
     }
-    ObserveContent.prototype.ngAfterContentInit = function () {
-        var _this = this;
-        this._observer = new MutationObserver(function (mutations) { return mutations.forEach(function () { return _this.event.emit(); }); });
+    /**
+     * @return {?}
+     */
+    ngAfterContentInit() {
+        this._observer = new MutationObserver(mutations => mutations.forEach(() => this.event.emit()));
         this._observer.observe(this._elementRef.nativeElement, {
             characterData: true,
             childList: true,
             subtree: true
         });
-    };
-    ObserveContent.prototype.ngOnDestroy = function () {
+    }
+    /**
+     * @return {?}
+     */
+    ngOnDestroy() {
         if (this._observer) {
             this._observer.disconnect();
         }
-    };
-    __decorate([
-        Output('cdkObserveContent'), 
-        __metadata('design:type', Object)
-    ], ObserveContent.prototype, "event", void 0);
-    ObserveContent = __decorate([
-        Directive({
-            selector: '[cdkObserveContent]'
-        }), 
-        __metadata('design:paramtypes', [ElementRef])
-    ], ObserveContent);
-    return ObserveContent;
-}());
-export var ObserveContentModule = (function () {
-    function ObserveContentModule() {
     }
-    /** @deprecated */
-    ObserveContentModule.forRoot = function () {
+}
+ObserveContent.decorators = [
+    { type: Directive, args: [{
+                selector: '[cdkObserveContent]'
+            },] },
+];
+/**
+ * @nocollapse
+ */
+ObserveContent.ctorParameters = () => [
+    { type: ElementRef, },
+];
+ObserveContent.propDecorators = {
+    'event': [{ type: Output, args: ['cdkObserveContent',] },],
+};
+function ObserveContent_tsickle_Closure_declarations() {
+    /** @type {?} */
+    ObserveContent.decorators;
+    /**
+     * @nocollapse
+     * @type {?}
+     */
+    ObserveContent.ctorParameters;
+    /** @type {?} */
+    ObserveContent.propDecorators;
+    /** @type {?} */
+    ObserveContent.prototype._observer;
+    /**
+     * Event emitted for each change in the element's content.
+     * @type {?}
+     */
+    ObserveContent.prototype.event;
+    /** @type {?} */
+    ObserveContent.prototype._elementRef;
+}
+export class ObserveContentModule {
+    /**
+     * @deprecated
+     * @return {?}
+     */
+    static forRoot() {
         return {
             ngModule: ObserveContentModule,
             providers: []
         };
-    };
-    ObserveContentModule = __decorate([
-        NgModule({
-            exports: [ObserveContent],
-            declarations: [ObserveContent]
-        }), 
-        __metadata('design:paramtypes', [])
-    ], ObserveContentModule);
-    return ObserveContentModule;
-}());
-
+    }
+}
+ObserveContentModule.decorators = [
+    { type: NgModule, args: [{
+                exports: [ObserveContent],
+                declarations: [ObserveContent]
+            },] },
+];
+/**
+ * @nocollapse
+ */
+ObserveContentModule.ctorParameters = () => [];
+function ObserveContentModule_tsickle_Closure_declarations() {
+    /** @type {?} */
+    ObserveContentModule.decorators;
+    /**
+     * @nocollapse
+     * @type {?}
+     */
+    ObserveContentModule.ctorParameters;
+}
 //# sourceMappingURL=observe-content.js.map

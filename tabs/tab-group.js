@@ -1,108 +1,100 @@
-var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
-    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-    return c > 3 && r && Object.defineProperty(target, key, r), r;
-};
-var __metadata = (this && this.__metadata) || function (k, v) {
-    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
-};
-import { NgModule, ViewChild, Component, Input, Output, EventEmitter, QueryList, ContentChildren, ElementRef, Renderer } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { PortalModule, coerceBooleanProperty } from '../core';
-import { MdTabLabel } from './tab-label';
-import { MdTabLabelWrapper } from './tab-label-wrapper';
-import { MdTabNavBar, MdTabLink, MdTabLinkRipple } from './tab-nav-bar/tab-nav-bar';
-import { MdInkBar } from './ink-bar';
-import { Observable } from 'rxjs/Observable';
-import 'rxjs/add/operator/map';
-import { MdRippleModule } from '../core/ripple/ripple';
-import { ObserveContentModule } from '../core/observe-content/observe-content';
+import { ViewChild, Component, Input, Output, EventEmitter, ContentChildren, Renderer } from '@angular/core';
+import { coerceBooleanProperty } from '../core';
 import { MdTab } from './tab';
-import { MdTabBody } from './tab-body';
-import { VIEWPORT_RULER_PROVIDER } from '../core/overlay/position/viewport-ruler';
-import { MdTabHeader } from './tab-header';
+import 'rxjs/add/operator/map';
 /** Used to generate unique ID's for each tab component */
-var nextId = 0;
-/** A simple change event emitted on focus or selection changes. */
-export var MdTabChangeEvent = (function () {
-    function MdTabChangeEvent() {
-    }
-    return MdTabChangeEvent;
-}());
+let /** @type {?} */ nextId = 0;
+/**
+ * A simple change event emitted on focus or selection changes.
+ */
+export class MdTabChangeEvent {
+}
+function MdTabChangeEvent_tsickle_Closure_declarations() {
+    /** @type {?} */
+    MdTabChangeEvent.prototype.index;
+    /** @type {?} */
+    MdTabChangeEvent.prototype.tab;
+}
 /**
  * Material design tab-group component.  Supports basic tab pairs (label + content) and includes
  * animated ink-bar, keyboard navigation, and screen reader.
  * See: https://www.google.com/design/spec/components/tabs.html
  */
-export var MdTabGroup = (function () {
-    function MdTabGroup(_renderer) {
+export class MdTabGroup {
+    /**
+     * @param {?} _renderer
+     */
+    constructor(_renderer) {
         this._renderer = _renderer;
-        /** Whether this component has been initialized. */
         this._isInitialized = false;
-        /** The tab index that should be selected after the content has been checked. */
         this._indexToSelect = 0;
-        /** Snapshot of the height of the tab body wrapper before another tab is activated. */
         this._tabBodyWrapperHeight = null;
-        /** Whether the tab group should grow to the size of the active tab */
         this._dynamicHeight = false;
         this._selectedIndex = null;
+        /** Position of the tab header. */
+        this.headerPosition = 'above';
         this._onFocusChange = new EventEmitter();
         this._onSelectChange = new EventEmitter(true);
         this._groupId = nextId++;
     }
-    Object.defineProperty(MdTabGroup.prototype, "dynamicHeight", {
-        get: function () { return this._dynamicHeight; },
-        set: function (value) { this._dynamicHeight = coerceBooleanProperty(value); },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(MdTabGroup.prototype, "_dynamicHeightDeprecated", {
-        /** @deprecated */
-        get: function () { return this._dynamicHeight; },
-        set: function (value) { this._dynamicHeight = value; },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(MdTabGroup.prototype, "selectedIndex", {
-        get: function () { return this._selectedIndex; },
-        /** The index of the active tab. */
-        set: function (value) { this._indexToSelect = value; },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(MdTabGroup.prototype, "selectedIndexChange", {
-        /** Output to enable support for two-way binding on `selectedIndex`. */
-        get: function () {
-            return this.selectChange.map(function (event) { return event.index; });
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(MdTabGroup.prototype, "focusChange", {
-        /** Event emitted when focus has changed within a tab group. */
-        get: function () {
-            return this._onFocusChange.asObservable();
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(MdTabGroup.prototype, "selectChange", {
-        /** Event emitted when the tab selection has changed. */
-        get: function () {
-            return this._onSelectChange.asObservable();
-        },
-        enumerable: true,
-        configurable: true
-    });
+    /**
+     * @return {?}
+     */
+    get dynamicHeight() { return this._dynamicHeight; }
+    /**
+     * @param {?} value
+     * @return {?}
+     */
+    set dynamicHeight(value) { this._dynamicHeight = coerceBooleanProperty(value); }
+    /**
+     * @deprecated
+     * @return {?}
+     */
+    get _dynamicHeightDeprecated() { return this._dynamicHeight; }
+    /**
+     * @param {?} value
+     * @return {?}
+     */
+    set _dynamicHeightDeprecated(value) { this._dynamicHeight = value; }
+    /**
+     * The index of the active tab.
+     * @param {?} value
+     * @return {?}
+     */
+    set selectedIndex(value) { this._indexToSelect = value; }
+    /**
+     * @return {?}
+     */
+    get selectedIndex() { return this._selectedIndex; }
+    /**
+     * Output to enable support for two-way binding on ([selectedIndex])
+     * @return {?}
+     */
+    get selectedIndexChange() {
+        return this.selectChange.map(event => event.index);
+    }
+    /**
+     * Event emitted when focus has changed within a tab group.
+     * @return {?}
+     */
+    get focusChange() {
+        return this._onFocusChange.asObservable();
+    }
+    /**
+     * Event emitted when the tab selection has changed.
+     * @return {?}
+     */
+    get selectChange() {
+        return this._onSelectChange.asObservable();
+    }
     /**
      * After the content is checked, this component knows what tabs have been defined
      * and what the selected index should be. This is where we can know exactly what position
      * each tab should be in according to the new selected index, and additionally we know how
      * a new selected tab should transition in (from the left or right).
+     * @return {?}
      */
-    MdTabGroup.prototype.ngAfterContentChecked = function () {
-        var _this = this;
+    ngAfterContentChecked() {
         // Clamp the next selected index to the bounds of 0 and the tabs length. Note the `|| 0`, which
         // ensures that values like NaN can't get through and which would otherwise throw the
         // component into an infinite loop (since Math.max(NaN, 0) === NaN).
@@ -114,47 +106,66 @@ export var MdTabGroup = (function () {
             this._onSelectChange.emit(this._createChangeEvent(this._indexToSelect));
         }
         // Setup the position for each tab and optionally setup an origin on the next selected tab.
-        this._tabs.forEach(function (tab, index) {
-            tab.position = index - _this._indexToSelect;
+        this._tabs.forEach((tab, index) => {
+            tab.position = index - this._indexToSelect;
             // If there is already a selected tab, then set up an origin for the next selected tab
             // if it doesn't have one already.
-            if (_this._selectedIndex != null && tab.position == 0 && !tab.origin) {
-                tab.origin = _this._indexToSelect - _this._selectedIndex;
+            if (this._selectedIndex != null && tab.position == 0 && !tab.origin) {
+                tab.origin = this._indexToSelect - this._selectedIndex;
             }
         });
         this._selectedIndex = this._indexToSelect;
-    };
+    }
     /**
      * Waits one frame for the view to update, then updates the ink bar
      * Note: This must be run outside of the zone or it will create an infinite change detection loop.
+     * @return {?}
      */
-    MdTabGroup.prototype.ngAfterViewChecked = function () {
+    ngAfterViewChecked() {
         this._isInitialized = true;
-    };
-    MdTabGroup.prototype._focusChanged = function (index) {
+    }
+    /**
+     * @param {?} index
+     * @return {?}
+     */
+    _focusChanged(index) {
         this._onFocusChange.emit(this._createChangeEvent(index));
-    };
-    MdTabGroup.prototype._createChangeEvent = function (index) {
-        var event = new MdTabChangeEvent;
+    }
+    /**
+     * @param {?} index
+     * @return {?}
+     */
+    _createChangeEvent(index) {
+        const /** @type {?} */ event = new MdTabChangeEvent;
         event.index = index;
         if (this._tabs && this._tabs.length) {
             event.tab = this._tabs.toArray()[index];
         }
         return event;
-    };
-    /** Returns a unique id for each tab label element */
-    MdTabGroup.prototype._getTabLabelId = function (i) {
-        return "md-tab-label-" + this._groupId + "-" + i;
-    };
-    /** Returns a unique id for each tab content element */
-    MdTabGroup.prototype._getTabContentId = function (i) {
-        return "md-tab-content-" + this._groupId + "-" + i;
-    };
+    }
+    /**
+     * Returns a unique id for each tab label element
+     * @param {?} i
+     * @return {?}
+     */
+    _getTabLabelId(i) {
+        return `md-tab-label-${this._groupId}-${i}`;
+    }
+    /**
+     * Returns a unique id for each tab content element
+     * @param {?} i
+     * @return {?}
+     */
+    _getTabContentId(i) {
+        return `md-tab-content-${this._groupId}-${i}`;
+    }
     /**
      * Sets the height of the body wrapper to the height of the activating tab if dynamic
      * height property is true.
+     * @param {?} tabHeight
+     * @return {?}
      */
-    MdTabGroup.prototype._setTabBodyWrapperHeight = function (tabHeight) {
+    _setTabBodyWrapperHeight(tabHeight) {
         if (!this._dynamicHeight || !this._tabBodyWrapperHeight) {
             return;
         }
@@ -164,77 +175,92 @@ export var MdTabGroup = (function () {
         if (this._tabBodyWrapper.nativeElement.offsetHeight) {
             this._renderer.setElementStyle(this._tabBodyWrapper.nativeElement, 'height', tabHeight + 'px');
         }
-    };
-    /** Removes the height of the tab body wrapper. */
-    MdTabGroup.prototype._removeTabBodyWrapperHeight = function () {
+    }
+    /**
+     * Removes the height of the tab body wrapper.
+     * @return {?}
+     */
+    _removeTabBodyWrapperHeight() {
         this._tabBodyWrapperHeight = this._tabBodyWrapper.nativeElement.clientHeight;
         this._renderer.setElementStyle(this._tabBodyWrapper.nativeElement, 'height', '');
-    };
-    __decorate([
-        ContentChildren(MdTab), 
-        __metadata('design:type', QueryList)
-    ], MdTabGroup.prototype, "_tabs", void 0);
-    __decorate([
-        ViewChild('tabBodyWrapper'), 
-        __metadata('design:type', ElementRef)
-    ], MdTabGroup.prototype, "_tabBodyWrapper", void 0);
-    __decorate([
-        Input(), 
-        __metadata('design:type', Boolean)
-    ], MdTabGroup.prototype, "dynamicHeight", null);
-    __decorate([
-        Input('md-dynamic-height'), 
-        __metadata('design:type', Boolean)
-    ], MdTabGroup.prototype, "_dynamicHeightDeprecated", null);
-    __decorate([
-        Input(), 
-        __metadata('design:type', Number), 
-        __metadata('design:paramtypes', [Number])
-    ], MdTabGroup.prototype, "selectedIndex", null);
-    __decorate([
-        Output(), 
-        __metadata('design:type', Observable)
-    ], MdTabGroup.prototype, "selectedIndexChange", null);
-    __decorate([
-        Output(), 
-        __metadata('design:type', Observable)
-    ], MdTabGroup.prototype, "focusChange", null);
-    __decorate([
-        Output(), 
-        __metadata('design:type', Observable)
-    ], MdTabGroup.prototype, "selectChange", null);
-    MdTabGroup = __decorate([
-        Component({selector: 'md-tab-group',
-            template: "<md-tab-header [selectedIndex]=\"selectedIndex\" #tabHeader (indexFocused)=\"_focusChanged($event)\" (selectFocusedIndex)=\"selectedIndex = $event\"><div class=\"md-tab-label\" role=\"tab\" md-tab-label-wrapper md-ripple *ngFor=\"let tab of _tabs; let i = index\" [id]=\"_getTabLabelId(i)\" [tabIndex]=\"selectedIndex == i ? 0 : -1\" [attr.aria-controls]=\"_getTabContentId(i)\" [attr.aria-selected]=\"selectedIndex == i\" [class.md-tab-label-active]=\"selectedIndex == i\" [disabled]=\"tab.disabled\" (click)=\"tabHeader.focusIndex = selectedIndex = i\"><template [ngIf]=\"tab.templateLabel\"><template [cdkPortalHost]=\"tab.templateLabel\"></template></template><template [ngIf]=\"!tab.templateLabel\">{{tab.textLabel}}</template></div></md-tab-header><div class=\"md-tab-body-wrapper\" #tabBodyWrapper><md-tab-body role=\"tabpanel\" *ngFor=\"let tab of _tabs; let i = index\" [id]=\"_getTabContentId(i)\" [attr.aria-labelledby]=\"_getTabLabelId(i)\" [class.md-tab-body-active]=\"selectedIndex == i\" [content]=\"tab.content\" [position]=\"tab.position\" [origin]=\"tab.origin\" (onCentered)=\"_removeTabBodyWrapperHeight()\" (onCentering)=\"_setTabBodyWrapperHeight($event)\"></md-tab-body></div>",
-            styles: [":host{display:flex;flex-direction:column;font-family:Roboto,\"Helvetica Neue\",sans-serif}.md-tab-label{line-height:48px;height:48px;padding:0 12px;font-size:14px;font-family:Roboto,\"Helvetica Neue\",sans-serif;font-weight:500;cursor:pointer;box-sizing:border-box;color:currentColor;opacity:.6;min-width:160px;text-align:center;position:relative}.md-tab-label:focus{outline:0;opacity:1}@media (max-width:600px){.md-tab-label{min-width:72px}}:host[md-stretch-tabs] .md-tab-label{flex-basis:0;flex-grow:1}.md-tab-body-wrapper{position:relative;overflow:hidden;display:flex;transition:height .5s cubic-bezier(.35,0,.25,1)}md-tab-body{position:absolute;top:0;left:0;right:0;bottom:0;display:block;overflow:hidden}md-tab-body.md-tab-body-active{position:relative;overflow-x:hidden;overflow-y:auto;z-index:1;flex-grow:1}:host.md-tab-group-dynamic-height md-tab-body.md-tab-body-active{overflow-y:hidden}.md-tab-disabled{cursor:default;pointer-events:none}"],
-            host: { '[class.md-tab-group-dynamic-height]': 'dynamicHeight' }
-        }), 
-        __metadata('design:paramtypes', [Renderer])
-    ], MdTabGroup);
-    return MdTabGroup;
-}());
-export var MdTabsModule = (function () {
-    function MdTabsModule() {
     }
-    /** @deprecated */
-    MdTabsModule.forRoot = function () {
-        return {
-            ngModule: MdTabsModule,
-            providers: []
-        };
-    };
-    MdTabsModule = __decorate([
-        NgModule({
-            imports: [CommonModule, PortalModule, MdRippleModule, ObserveContentModule],
-            // Don't export all components because some are only to be used internally.
-            exports: [MdTabGroup, MdTabLabel, MdTab, MdTabNavBar, MdTabLink, MdTabLinkRipple],
-            declarations: [MdTabGroup, MdTabLabel, MdTab, MdInkBar, MdTabLabelWrapper,
-                MdTabNavBar, MdTabLink, MdTabBody, MdTabLinkRipple, MdTabHeader],
-            providers: [VIEWPORT_RULER_PROVIDER],
-        }), 
-        __metadata('design:paramtypes', [])
-    ], MdTabsModule);
-    return MdTabsModule;
-}());
-
+}
+MdTabGroup.decorators = [
+    { type: Component, args: [{selector: 'md-tab-group, mat-tab-group',
+                template: "<md-tab-header [selectedIndex]=\"selectedIndex\" #tabHeader (indexFocused)=\"_focusChanged($event)\" (selectFocusedIndex)=\"selectedIndex = $event\"> <div class=\"mat-tab-label\" role=\"tab\" md-tab-label-wrapper md-ripple *ngFor=\"let tab of _tabs; let i = index\" [id]=\"_getTabLabelId(i)\" [tabIndex]=\"selectedIndex == i ? 0 : -1\" [attr.aria-controls]=\"_getTabContentId(i)\" [attr.aria-selected]=\"selectedIndex == i\" [class.mat-tab-label-active]=\"selectedIndex == i\" [disabled]=\"tab.disabled\" (click)=\"tabHeader.focusIndex = selectedIndex = i\"> <!-- If there is a label template, use it. --> <ng-template [ngIf]=\"tab.templateLabel\"> <ng-template [cdkPortalHost]=\"tab.templateLabel\"></ng-template> </ng-template> <!-- If there is not a label template, fall back to the text label. --> <ng-template [ngIf]=\"!tab.templateLabel\">{{tab.textLabel}}</ng-template> </div> </md-tab-header> <div class=\"mat-tab-body-wrapper\" #tabBodyWrapper> <md-tab-body role=\"tabpanel\" *ngFor=\"let tab of _tabs; let i = index\" [id]=\"_getTabContentId(i)\" [attr.aria-labelledby]=\"_getTabLabelId(i)\" [class.mat-tab-body-active]=\"selectedIndex == i\" [content]=\"tab.content\" [position]=\"tab.position\" [origin]=\"tab.origin\" (onCentered)=\"_removeTabBodyWrapperHeight()\" (onCentering)=\"_setTabBodyWrapperHeight($event)\"> </md-tab-body> </div> ",
+                styles: [":host{display:flex;flex-direction:column;font-family:Roboto,\"Helvetica Neue\",sans-serif}:host.mat-tab-group-inverted-header{flex-direction:column-reverse}.mat-tab-label{line-height:48px;height:48px;padding:0 12px;font-size:14px;font-family:Roboto,\"Helvetica Neue\",sans-serif;font-weight:500;cursor:pointer;box-sizing:border-box;opacity:.6;min-width:160px;text-align:center;position:relative}.mat-tab-label:focus{outline:0;opacity:1}@media (max-width:600px){.mat-tab-label{min-width:72px}}:host[mat-stretch-tabs] .mat-tab-label,:host[md-stretch-tabs] .mat-tab-label{flex-basis:0;flex-grow:1}.mat-tab-body-wrapper{position:relative;overflow:hidden;display:flex;transition:height .5s cubic-bezier(.35,0,.25,1)}.mat-tab-body{position:absolute;top:0;left:0;right:0;bottom:0;display:block;overflow:hidden}.mat-tab-body.mat-tab-body-active{position:relative;overflow-x:hidden;overflow-y:auto;z-index:1;flex-grow:1}:host.mat-tab-group-dynamic-height .mat-tab-body.mat-tab-body-active{overflow-y:hidden}.mat-tab-disabled{cursor:default;pointer-events:none} /*# sourceMappingURL=tab-group.css.map */ "],
+                host: {
+                    '[class.mat-tab-group]': 'true',
+                    '[class.mat-tab-group-dynamic-height]': 'dynamicHeight',
+                    '[class.mat-tab-group-inverted-header]': 'headerPosition === "below"',
+                }
+            },] },
+];
+/**
+ * @nocollapse
+ */
+MdTabGroup.ctorParameters = () => [
+    { type: Renderer, },
+];
+MdTabGroup.propDecorators = {
+    '_tabs': [{ type: ContentChildren, args: [MdTab,] },],
+    '_tabBodyWrapper': [{ type: ViewChild, args: ['tabBodyWrapper',] },],
+    'dynamicHeight': [{ type: Input },],
+    '_dynamicHeightDeprecated': [{ type: Input, args: ['md-dynamic-height',] },],
+    'selectedIndex': [{ type: Input },],
+    'headerPosition': [{ type: Input },],
+    'selectedIndexChange': [{ type: Output },],
+    'focusChange': [{ type: Output },],
+    'selectChange': [{ type: Output },],
+};
+function MdTabGroup_tsickle_Closure_declarations() {
+    /** @type {?} */
+    MdTabGroup.decorators;
+    /**
+     * @nocollapse
+     * @type {?}
+     */
+    MdTabGroup.ctorParameters;
+    /** @type {?} */
+    MdTabGroup.propDecorators;
+    /** @type {?} */
+    MdTabGroup.prototype._tabs;
+    /** @type {?} */
+    MdTabGroup.prototype._tabBodyWrapper;
+    /**
+     * Whether this component has been initialized.
+     * @type {?}
+     */
+    MdTabGroup.prototype._isInitialized;
+    /**
+     * The tab index that should be selected after the content has been checked.
+     * @type {?}
+     */
+    MdTabGroup.prototype._indexToSelect;
+    /**
+     * Snapshot of the height of the tab body wrapper before another tab is activated.
+     * @type {?}
+     */
+    MdTabGroup.prototype._tabBodyWrapperHeight;
+    /**
+     * Whether the tab group should grow to the size of the active tab
+     * @type {?}
+     */
+    MdTabGroup.prototype._dynamicHeight;
+    /** @type {?} */
+    MdTabGroup.prototype._selectedIndex;
+    /**
+     * Position of the tab header.
+     * @type {?}
+     */
+    MdTabGroup.prototype.headerPosition;
+    /** @type {?} */
+    MdTabGroup.prototype._onFocusChange;
+    /** @type {?} */
+    MdTabGroup.prototype._onSelectChange;
+    /** @type {?} */
+    MdTabGroup.prototype._groupId;
+    /** @type {?} */
+    MdTabGroup.prototype._renderer;
+}
 //# sourceMappingURL=tab-group.js.map

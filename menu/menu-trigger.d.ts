@@ -18,7 +18,10 @@ export declare class MdMenuTrigger implements AfterViewInit, OnDestroy {
     private _positionSubscription;
     private _openedByMouse;
     /** @deprecated */
-    _deprecatedMenuTriggerFor: MdMenuPanel;
+    _deprecatedMdMenuTriggerFor: MdMenuPanel;
+    /** @deprecated */
+    _deprecatedMatMenuTriggerFor: MdMenuPanel;
+    _matMenuTriggerFor: MdMenuPanel;
     /** References the menu instance that the trigger is associated with. */
     menu: MdMenuPanel;
     /** Event emitted when the associated menu is opened. */

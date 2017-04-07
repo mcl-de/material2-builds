@@ -1,15 +1,3 @@
-var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
-    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-    return c > 3 && r && Object.defineProperty(target, key, r), r;
-};
-var __metadata = (this && this.__metadata) || function (k, v) {
-    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
-};
-var __param = (this && this.__param) || function (paramIndex, decorator) {
-    return function (target, key) { decorator(target, key, paramIndex); }
-};
 import { NgModule, Directive, EventEmitter, TemplateRef, ViewContainerRef, Optional, Input, Output, ElementRef } from '@angular/core';
 import { Overlay, OVERLAY_PROVIDERS } from './overlay';
 import { TemplatePortal } from '../portal/portal';
@@ -20,7 +8,7 @@ import { Dir } from '../rtl/dir';
 import { Scrollable } from './scroll/scrollable';
 import { coerceBooleanProperty } from '../coercion/boolean-property';
 /** Default set of positions for the overlay. Follows the behavior of a dropdown. */
-var defaultPositionList = [
+let /** @type {?} */ defaultPositionList = [
     new ConnectionPositionPair({ originX: 'start', originY: 'bottom' }, { overlayX: 'start', overlayY: 'top' }),
     new ConnectionPositionPair({ originX: 'start', originY: 'top' }, { overlayX: 'start', overlayY: 'bottom' }),
 ];
@@ -28,25 +16,48 @@ var defaultPositionList = [
  * Directive applied to an element to make it usable as an origin for an Overlay using a
  * ConnectedPositionStrategy.
  */
-export var OverlayOrigin = (function () {
-    function OverlayOrigin(elementRef) {
+export class OverlayOrigin {
+    /**
+     * @param {?} elementRef
+     */
+    constructor(elementRef) {
         this.elementRef = elementRef;
     }
-    OverlayOrigin = __decorate([
-        Directive({
-            selector: '[cdk-overlay-origin], [overlay-origin]',
-            exportAs: 'cdkOverlayOrigin',
-        }), 
-        __metadata('design:paramtypes', [ElementRef])
-    ], OverlayOrigin);
-    return OverlayOrigin;
-}());
+}
+OverlayOrigin.decorators = [
+    { type: Directive, args: [{
+                selector: '[cdk-overlay-origin], [overlay-origin]',
+                exportAs: 'cdkOverlayOrigin',
+            },] },
+];
+/**
+ * @nocollapse
+ */
+OverlayOrigin.ctorParameters = () => [
+    { type: ElementRef, },
+];
+function OverlayOrigin_tsickle_Closure_declarations() {
+    /** @type {?} */
+    OverlayOrigin.decorators;
+    /**
+     * @nocollapse
+     * @type {?}
+     */
+    OverlayOrigin.ctorParameters;
+    /** @type {?} */
+    OverlayOrigin.prototype.elementRef;
+}
 /**
  * Directive to facilitate declarative creation of an Overlay using a ConnectedPositionStrategy.
  */
-export var ConnectedOverlayDirective = (function () {
-    // TODO(jelbourn): inputs for size, scroll behavior, animation, etc.
-    function ConnectedOverlayDirective(_overlay, templateRef, viewContainerRef, _dir) {
+export class ConnectedOverlayDirective {
+    /**
+     * @param {?} _overlay
+     * @param {?} templateRef
+     * @param {?} viewContainerRef
+     * @param {?} _dir
+     */
+    constructor(_overlay, templateRef, viewContainerRef, _dir) {
         this._overlay = _overlay;
         this._dir = _dir;
         this._open = false;
@@ -63,85 +74,104 @@ export var ConnectedOverlayDirective = (function () {
         this.detach = new EventEmitter();
         this._templatePortal = new TemplatePortal(templateRef, viewContainerRef);
     }
-    Object.defineProperty(ConnectedOverlayDirective.prototype, "offsetX", {
-        /** The offset in pixels for the overlay connection point on the x-axis */
-        get: function () {
-            return this._offsetX;
-        },
-        set: function (offsetX) {
-            this._offsetX = offsetX;
-            if (this._position) {
-                this._position.withOffsetX(offsetX);
-            }
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(ConnectedOverlayDirective.prototype, "offsetY", {
-        /** The offset in pixels for the overlay connection point on the y-axis */
-        get: function () {
-            return this._offsetY;
-        },
-        set: function (offsetY) {
-            this._offsetY = offsetY;
-            if (this._position) {
-                this._position.withOffsetY(offsetY);
-            }
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(ConnectedOverlayDirective.prototype, "hasBackdrop", {
-        /** Whether or not the overlay should attach a backdrop. */
-        get: function () {
-            return this._hasBackdrop;
-        },
-        set: function (value) {
-            this._hasBackdrop = coerceBooleanProperty(value);
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(ConnectedOverlayDirective.prototype, "open", {
-        get: function () {
-            return this._open;
-        },
-        set: function (value) {
-            value ? this._attachOverlay() : this._detachOverlay();
-            this._open = value;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(ConnectedOverlayDirective.prototype, "overlayRef", {
-        /** The associated overlay reference. */
-        get: function () {
-            return this._overlayRef;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(ConnectedOverlayDirective.prototype, "dir", {
-        /** The element's layout direction. */
-        get: function () {
-            return this._dir ? this._dir.value : 'ltr';
-        },
-        enumerable: true,
-        configurable: true
-    });
-    ConnectedOverlayDirective.prototype.ngOnDestroy = function () {
+    /**
+     * The offset in pixels for the overlay connection point on the x-axis
+     * @return {?}
+     */
+    get offsetX() {
+        return this._offsetX;
+    }
+    /**
+     * @param {?} offsetX
+     * @return {?}
+     */
+    set offsetX(offsetX) {
+        this._offsetX = offsetX;
+        if (this._position) {
+            this._position.withOffsetX(offsetX);
+        }
+    }
+    /**
+     * The offset in pixels for the overlay connection point on the y-axis
+     * @return {?}
+     */
+    get offsetY() {
+        return this._offsetY;
+    }
+    /**
+     * @param {?} offsetY
+     * @return {?}
+     */
+    set offsetY(offsetY) {
+        this._offsetY = offsetY;
+        if (this._position) {
+            this._position.withOffsetY(offsetY);
+        }
+    }
+    /**
+     * Whether or not the overlay should attach a backdrop.
+     * @return {?}
+     */
+    get hasBackdrop() {
+        return this._hasBackdrop;
+    }
+    /**
+     * @param {?} value
+     * @return {?}
+     */
+    set hasBackdrop(value) {
+        this._hasBackdrop = coerceBooleanProperty(value);
+    }
+    /**
+     * @return {?}
+     */
+    get open() {
+        return this._open;
+    }
+    /**
+     * @param {?} value
+     * @return {?}
+     */
+    set open(value) {
+        value ? this._attachOverlay() : this._detachOverlay();
+        this._open = value;
+    }
+    /**
+     * The associated overlay reference.
+     * @return {?}
+     */
+    get overlayRef() {
+        return this._overlayRef;
+    }
+    /**
+     * The element's layout direction.
+     * @return {?}
+     */
+    get dir() {
+        return this._dir ? this._dir.value : 'ltr';
+    }
+    /**
+     * @return {?}
+     */
+    ngOnDestroy() {
         this._destroyOverlay();
-    };
-    /** Creates an overlay */
-    ConnectedOverlayDirective.prototype._createOverlay = function () {
+    }
+    /**
+     * Creates an overlay
+     * @return {?}
+     */
+    _createOverlay() {
         if (!this.positions || !this.positions.length) {
             this.positions = defaultPositionList;
         }
         this._overlayRef = this._overlay.create(this._buildConfig());
-    };
-    /** Builds the overlay config based on the directive's inputs */
-    ConnectedOverlayDirective.prototype._buildConfig = function () {
-        var overlayConfig = new OverlayState();
+    }
+    /**
+     * Builds the overlay config based on the directive's inputs
+     * @return {?}
+     */
+    _buildConfig() {
+        let /** @type {?} */ overlayConfig = new OverlayState();
         if (this.width || this.width === 0) {
             overlayConfig.width = this.width;
         }
@@ -158,50 +188,61 @@ export var ConnectedOverlayDirective = (function () {
         if (this.backdropClass) {
             overlayConfig.backdropClass = this.backdropClass;
         }
-        this._position = this._createPositionStrategy();
+        this._position = (this._createPositionStrategy());
         overlayConfig.positionStrategy = this._position;
-        overlayConfig.direction = this.dir;
         return overlayConfig;
-    };
-    /** Returns the position strategy of the overlay to be set on the overlay config */
-    ConnectedOverlayDirective.prototype._createPositionStrategy = function () {
-        var pos = this.positions[0];
-        var originPoint = { originX: pos.originX, originY: pos.originY };
-        var overlayPoint = { overlayX: pos.overlayX, overlayY: pos.overlayY };
-        var strategy = this._overlay.position()
+    }
+    /**
+     * Returns the position strategy of the overlay to be set on the overlay config
+     * @return {?}
+     */
+    _createPositionStrategy() {
+        const /** @type {?} */ pos = this.positions[0];
+        const /** @type {?} */ originPoint = { originX: pos.originX, originY: pos.originY };
+        const /** @type {?} */ overlayPoint = { overlayX: pos.overlayX, overlayY: pos.overlayY };
+        const /** @type {?} */ strategy = this._overlay.position()
             .connectedTo(this.origin.elementRef, originPoint, overlayPoint)
-            .withDirection(this.dir)
             .withOffsetX(this.offsetX)
             .withOffsetY(this.offsetY);
         this._handlePositionChanges(strategy);
         return strategy;
-    };
-    ConnectedOverlayDirective.prototype._handlePositionChanges = function (strategy) {
-        var _this = this;
-        for (var i = 1; i < this.positions.length; i++) {
+    }
+    /**
+     * @param {?} strategy
+     * @return {?}
+     */
+    _handlePositionChanges(strategy) {
+        for (let /** @type {?} */ i = 1; i < this.positions.length; i++) {
             strategy.withFallbackPosition({ originX: this.positions[i].originX, originY: this.positions[i].originY }, { overlayX: this.positions[i].overlayX, overlayY: this.positions[i].overlayY });
         }
         this._positionSubscription =
-            strategy.onPositionChange.subscribe(function (pos) { return _this.positionChange.emit(pos); });
-    };
-    /** Attaches the overlay and subscribes to backdrop clicks if backdrop exists */
-    ConnectedOverlayDirective.prototype._attachOverlay = function () {
-        var _this = this;
+            strategy.onPositionChange.subscribe(pos => this.positionChange.emit(pos));
+    }
+    /**
+     * Attaches the overlay and subscribes to backdrop clicks if backdrop exists
+     * @return {?}
+     */
+    _attachOverlay() {
         if (!this._overlayRef) {
             this._createOverlay();
         }
+        this._position.withDirection(this.dir);
+        this._overlayRef.getState().direction = this.dir;
         if (!this._overlayRef.hasAttached()) {
             this._overlayRef.attach(this._templatePortal);
             this.attach.emit();
         }
         if (this.hasBackdrop) {
-            this._backdropSubscription = this._overlayRef.backdropClick().subscribe(function () {
-                _this.backdropClick.emit();
+            this._backdropSubscription = this._overlayRef.backdropClick().subscribe(() => {
+                this.backdropClick.emit();
             });
         }
-    };
-    /** Detaches the overlay and unsubscribes to backdrop clicks if backdrop exists */
-    ConnectedOverlayDirective.prototype._detachOverlay = function () {
+    }
+    /**
+     * Detaches the overlay and unsubscribes to backdrop clicks if backdrop exists
+     * @return {?}
+     */
+    _detachOverlay() {
         if (this._overlayRef) {
             this._overlayRef.detach();
             this.detach.emit();
@@ -210,9 +251,12 @@ export var ConnectedOverlayDirective = (function () {
             this._backdropSubscription.unsubscribe();
             this._backdropSubscription = null;
         }
-    };
-    /** Destroys the overlay created by this directive. */
-    ConnectedOverlayDirective.prototype._destroyOverlay = function () {
+    }
+    /**
+     * Destroys the overlay created by this directive.
+     * @return {?}
+     */
+    _destroyOverlay() {
         if (this._overlayRef) {
             this._overlayRef.dispose();
         }
@@ -222,97 +266,159 @@ export var ConnectedOverlayDirective = (function () {
         if (this._positionSubscription) {
             this._positionSubscription.unsubscribe();
         }
-    };
-    __decorate([
-        Input(), 
-        __metadata('design:type', OverlayOrigin)
-    ], ConnectedOverlayDirective.prototype, "origin", void 0);
-    __decorate([
-        Input(), 
-        __metadata('design:type', Array)
-    ], ConnectedOverlayDirective.prototype, "positions", void 0);
-    __decorate([
-        Input(), 
-        __metadata('design:type', Number)
-    ], ConnectedOverlayDirective.prototype, "offsetX", null);
-    __decorate([
-        Input(), 
-        __metadata('design:type', Object)
-    ], ConnectedOverlayDirective.prototype, "offsetY", null);
-    __decorate([
-        Input(), 
-        __metadata('design:type', Object)
-    ], ConnectedOverlayDirective.prototype, "width", void 0);
-    __decorate([
-        Input(), 
-        __metadata('design:type', Object)
-    ], ConnectedOverlayDirective.prototype, "height", void 0);
-    __decorate([
-        Input(), 
-        __metadata('design:type', Object)
-    ], ConnectedOverlayDirective.prototype, "minWidth", void 0);
-    __decorate([
-        Input(), 
-        __metadata('design:type', Object)
-    ], ConnectedOverlayDirective.prototype, "minHeight", void 0);
-    __decorate([
-        Input(), 
-        __metadata('design:type', String)
-    ], ConnectedOverlayDirective.prototype, "backdropClass", void 0);
-    __decorate([
-        Input(), 
-        __metadata('design:type', Object)
-    ], ConnectedOverlayDirective.prototype, "hasBackdrop", null);
-    __decorate([
-        Input(), 
-        __metadata('design:type', Object)
-    ], ConnectedOverlayDirective.prototype, "open", null);
-    __decorate([
-        Output(), 
-        __metadata('design:type', Object)
-    ], ConnectedOverlayDirective.prototype, "backdropClick", void 0);
-    __decorate([
-        Output(), 
-        __metadata('design:type', Object)
-    ], ConnectedOverlayDirective.prototype, "positionChange", void 0);
-    __decorate([
-        Output(), 
-        __metadata('design:type', Object)
-    ], ConnectedOverlayDirective.prototype, "attach", void 0);
-    __decorate([
-        Output(), 
-        __metadata('design:type', Object)
-    ], ConnectedOverlayDirective.prototype, "detach", void 0);
-    ConnectedOverlayDirective = __decorate([
-        Directive({
-            selector: '[cdk-connected-overlay], [connected-overlay]',
-            exportAs: 'cdkConnectedOverlay'
-        }),
-        __param(3, Optional()), 
-        __metadata('design:paramtypes', [Overlay, TemplateRef, ViewContainerRef, Dir])
-    ], ConnectedOverlayDirective);
-    return ConnectedOverlayDirective;
-}());
-export var OverlayModule = (function () {
-    function OverlayModule() {
     }
-    /** @deprecated */
-    OverlayModule.forRoot = function () {
+}
+ConnectedOverlayDirective.decorators = [
+    { type: Directive, args: [{
+                selector: '[cdk-connected-overlay], [connected-overlay]',
+                exportAs: 'cdkConnectedOverlay'
+            },] },
+];
+/**
+ * @nocollapse
+ */
+ConnectedOverlayDirective.ctorParameters = () => [
+    { type: Overlay, },
+    { type: TemplateRef, },
+    { type: ViewContainerRef, },
+    { type: Dir, decorators: [{ type: Optional },] },
+];
+ConnectedOverlayDirective.propDecorators = {
+    'origin': [{ type: Input },],
+    'positions': [{ type: Input },],
+    'offsetX': [{ type: Input },],
+    'offsetY': [{ type: Input },],
+    'width': [{ type: Input },],
+    'height': [{ type: Input },],
+    'minWidth': [{ type: Input },],
+    'minHeight': [{ type: Input },],
+    'backdropClass': [{ type: Input },],
+    'hasBackdrop': [{ type: Input },],
+    'open': [{ type: Input },],
+    'backdropClick': [{ type: Output },],
+    'positionChange': [{ type: Output },],
+    'attach': [{ type: Output },],
+    'detach': [{ type: Output },],
+};
+function ConnectedOverlayDirective_tsickle_Closure_declarations() {
+    /** @type {?} */
+    ConnectedOverlayDirective.decorators;
+    /**
+     * @nocollapse
+     * @type {?}
+     */
+    ConnectedOverlayDirective.ctorParameters;
+    /** @type {?} */
+    ConnectedOverlayDirective.propDecorators;
+    /** @type {?} */
+    ConnectedOverlayDirective.prototype._overlayRef;
+    /** @type {?} */
+    ConnectedOverlayDirective.prototype._templatePortal;
+    /** @type {?} */
+    ConnectedOverlayDirective.prototype._open;
+    /** @type {?} */
+    ConnectedOverlayDirective.prototype._hasBackdrop;
+    /** @type {?} */
+    ConnectedOverlayDirective.prototype._backdropSubscription;
+    /** @type {?} */
+    ConnectedOverlayDirective.prototype._positionSubscription;
+    /** @type {?} */
+    ConnectedOverlayDirective.prototype._offsetX;
+    /** @type {?} */
+    ConnectedOverlayDirective.prototype._offsetY;
+    /** @type {?} */
+    ConnectedOverlayDirective.prototype._position;
+    /**
+     * Origin for the connected overlay.
+     * @type {?}
+     */
+    ConnectedOverlayDirective.prototype.origin;
+    /**
+     * Registered connected position pairs.
+     * @type {?}
+     */
+    ConnectedOverlayDirective.prototype.positions;
+    /**
+     * The width of the overlay panel.
+     * @type {?}
+     */
+    ConnectedOverlayDirective.prototype.width;
+    /**
+     * The height of the overlay panel.
+     * @type {?}
+     */
+    ConnectedOverlayDirective.prototype.height;
+    /**
+     * The min width of the overlay panel.
+     * @type {?}
+     */
+    ConnectedOverlayDirective.prototype.minWidth;
+    /**
+     * The min height of the overlay panel.
+     * @type {?}
+     */
+    ConnectedOverlayDirective.prototype.minHeight;
+    /**
+     * The custom class to be set on the backdrop element.
+     * @type {?}
+     */
+    ConnectedOverlayDirective.prototype.backdropClass;
+    /**
+     * Event emitted when the backdrop is clicked.
+     * @type {?}
+     */
+    ConnectedOverlayDirective.prototype.backdropClick;
+    /**
+     * Event emitted when the position has changed.
+     * @type {?}
+     */
+    ConnectedOverlayDirective.prototype.positionChange;
+    /**
+     * Event emitted when the overlay has been attached.
+     * @type {?}
+     */
+    ConnectedOverlayDirective.prototype.attach;
+    /**
+     * Event emitted when the overlay has been detached.
+     * @type {?}
+     */
+    ConnectedOverlayDirective.prototype.detach;
+    /** @type {?} */
+    ConnectedOverlayDirective.prototype._overlay;
+    /** @type {?} */
+    ConnectedOverlayDirective.prototype._dir;
+}
+export class OverlayModule {
+    /**
+     * @deprecated
+     * @return {?}
+     */
+    static forRoot() {
         return {
             ngModule: OverlayModule,
             providers: [],
         };
-    };
-    OverlayModule = __decorate([
-        NgModule({
-            imports: [PortalModule],
-            exports: [ConnectedOverlayDirective, OverlayOrigin, Scrollable],
-            declarations: [ConnectedOverlayDirective, OverlayOrigin, Scrollable],
-            providers: [OVERLAY_PROVIDERS],
-        }), 
-        __metadata('design:paramtypes', [])
-    ], OverlayModule);
-    return OverlayModule;
-}());
-
+    }
+}
+OverlayModule.decorators = [
+    { type: NgModule, args: [{
+                imports: [PortalModule],
+                exports: [ConnectedOverlayDirective, OverlayOrigin, Scrollable],
+                declarations: [ConnectedOverlayDirective, OverlayOrigin, Scrollable],
+                providers: [OVERLAY_PROVIDERS],
+            },] },
+];
+/**
+ * @nocollapse
+ */
+OverlayModule.ctorParameters = () => [];
+function OverlayModule_tsickle_Closure_declarations() {
+    /** @type {?} */
+    OverlayModule.decorators;
+    /**
+     * @nocollapse
+     * @type {?}
+     */
+    OverlayModule.ctorParameters;
+}
 //# sourceMappingURL=overlay-directives.js.map

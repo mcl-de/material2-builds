@@ -1,7 +1,7 @@
-import { trigger, state, style, animate, transition } from '@angular/core';
+import { trigger, state, style, animate, transition, } from '@angular/animations';
 /**
  * Below are all the animations for the md-menu component.
- * Animation duration and timing values are based on Material 1.
+ * Animation duration and timing values are based on AngularJS Material.
  */
 /**
  * This animation controls the menu panel's entry and exit from the page.
@@ -12,17 +12,17 @@ import { trigger, state, style, animate, transition } from '@angular/core';
  * delay to display the ripple.
  */
 // TODO(kara): switch to :enter and :leave once Mobile Safari is sorted out.
-export var transformMenu = trigger('transformMenu', [
+export const /** @type {?} */ transformMenu = trigger('transformMenu', [
     state('showing', style({
         opacity: 1,
-        transform: "scale(1)"
+        transform: `scale(1)`
     })),
     transition('void => *', [
         style({
             opacity: 0,
-            transform: "scale(0)"
+            transform: `scale(0)`
         }),
-        animate("200ms cubic-bezier(0.25, 0.8, 0.25, 1)")
+        animate(`200ms cubic-bezier(0.25, 0.8, 0.25, 1)`)
     ]),
     transition('* => void', [
         animate('50ms 100ms linear', style({ opacity: 0 }))
@@ -32,12 +32,11 @@ export var transformMenu = trigger('transformMenu', [
  * This animation fades in the background color and content of the menu panel
  * after its containing element is scaled in.
  */
-export var fadeInItems = trigger('fadeInItems', [
+export const /** @type {?} */ fadeInItems = trigger('fadeInItems', [
     state('showing', style({ opacity: 1 })),
     transition('void => *', [
         style({ opacity: 0 }),
-        animate("200ms 100ms cubic-bezier(0.55, 0, 0.55, 0.2)")
+        animate(`200ms 100ms cubic-bezier(0.55, 0, 0.55, 0.2)`)
     ])
 ]);
-
 //# sourceMappingURL=menu-animations.js.map

@@ -1,18 +1,5 @@
-var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
-    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-    return c > 3 && r && Object.defineProperty(target, key, r), r;
-};
-var __metadata = (this && this.__metadata) || function (k, v) {
-    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
-};
-var __param = (this && this.__param) || function (paramIndex, decorator) {
-    return function (target, key) { decorator(target, key, paramIndex); }
-};
-import { NgModule, Injectable, Optional, SkipSelf } from '@angular/core';
-import { ComponentPortal, Overlay, OverlayModule, OverlayState, PortalModule, LiveAnnouncer, DefaultStyleCompatibilityModeModule, LIVE_ANNOUNCER_PROVIDER } from '../core';
-import { CommonModule } from '@angular/common';
+import { Injectable, Optional, SkipSelf } from '@angular/core';
+import { ComponentPortal, Overlay, OverlayState, LiveAnnouncer, } from '../core';
 import { MdSnackBarConfig } from './snack-bar-config';
 import { MdSnackBarRef } from './snack-bar-ref';
 import { MdSnackBarContainer } from './snack-bar-container';
@@ -21,53 +8,62 @@ import { extendObject } from '../core/util/object-extend';
 /**
  * Service to dispatch Material Design snack bar messages.
  */
-export var MdSnackBar = (function () {
-    function MdSnackBar(_overlay, _live, _parentSnackBar) {
+export class MdSnackBar {
+    /**
+     * @param {?} _overlay
+     * @param {?} _live
+     * @param {?} _parentSnackBar
+     */
+    constructor(_overlay, _live, _parentSnackBar) {
         this._overlay = _overlay;
         this._live = _live;
         this._parentSnackBar = _parentSnackBar;
     }
-    Object.defineProperty(MdSnackBar.prototype, "_openedSnackBarRef", {
-        /** Reference to the currently opened snackbar at *any* level. */
-        get: function () {
-            return this._parentSnackBar ?
-                this._parentSnackBar._openedSnackBarRef : this._snackBarRefAtThisLevel;
-        },
-        set: function (value) {
-            if (this._parentSnackBar) {
-                this._parentSnackBar._openedSnackBarRef = value;
-            }
-            else {
-                this._snackBarRefAtThisLevel = value;
-            }
-        },
-        enumerable: true,
-        configurable: true
-    });
+    /**
+     * Reference to the currently opened snackbar at *any* level.
+     * @return {?}
+     */
+    get _openedSnackBarRef() {
+        return this._parentSnackBar ?
+            this._parentSnackBar._openedSnackBarRef : this._snackBarRefAtThisLevel;
+    }
+    /**
+     * @param {?} value
+     * @return {?}
+     */
+    set _openedSnackBarRef(value) {
+        if (this._parentSnackBar) {
+            this._parentSnackBar._openedSnackBarRef = value;
+        }
+        else {
+            this._snackBarRefAtThisLevel = value;
+        }
+    }
     /**
      * Creates and dispatches a snack bar with a custom component for the content, removing any
      * currently opened snack bars.
      *
-     * @param component Component to be instantiated.
-     * @param config Extra configuration for the snack bar.
+     * @template T
+     * @param {?} component Component to be instantiated.
+     * @param {?=} config Extra configuration for the snack bar.
+     * @return {?}
      */
-    MdSnackBar.prototype.openFromComponent = function (component, config) {
-        var _this = this;
+    openFromComponent(component, config) {
         config = _applyConfigDefaults(config);
-        var overlayRef = this._createOverlay();
-        var snackBarContainer = this._attachSnackBarContainer(overlayRef, config);
-        var snackBarRef = this._attachSnackbarContent(component, snackBarContainer, overlayRef);
+        let /** @type {?} */ overlayRef = this._createOverlay();
+        let /** @type {?} */ snackBarContainer = this._attachSnackBarContainer(overlayRef, config);
+        let /** @type {?} */ snackBarRef = this._attachSnackbarContent(component, snackBarContainer, overlayRef);
         // When the snackbar is dismissed, clear the reference to it.
-        snackBarRef.afterDismissed().subscribe(function () {
+        snackBarRef.afterDismissed().subscribe(() => {
             // Clear the snackbar ref if it hasn't already been replaced by a newer snackbar.
-            if (_this._openedSnackBarRef == snackBarRef) {
-                _this._openedSnackBarRef = null;
+            if (this._openedSnackBarRef == snackBarRef) {
+                this._openedSnackBarRef = null;
             }
         });
         // If a snack bar is already in view, dismiss it and enter the new snack bar after exit
         // animation is complete.
         if (this._openedSnackBarRef) {
-            this._openedSnackBarRef.afterDismissed().subscribe(function () {
+            this._openedSnackBarRef.afterDismissed().subscribe(() => {
                 snackBarRef.containerInstance.enter();
             });
             this._openedSnackBarRef.dismiss();
@@ -77,94 +73,114 @@ export var MdSnackBar = (function () {
         }
         // If a dismiss timeout is provided, set up dismiss based on after the snackbar is opened.
         if (config.duration > 0) {
-            snackBarRef.afterOpened().subscribe(function () {
-                setTimeout(function () { return snackBarRef.dismiss(); }, config.duration);
+            snackBarRef.afterOpened().subscribe(() => {
+                setTimeout(() => snackBarRef.dismiss(), config.duration);
             });
         }
         this._live.announce(config.announcementMessage, config.politeness);
         this._openedSnackBarRef = snackBarRef;
         return this._openedSnackBarRef;
-    };
+    }
     /**
      * Opens a snackbar with a message and an optional action.
-     * @param message The message to show in the snackbar.
-     * @param action The label for the snackbar action.
-     * @param config Additional configuration options for the snackbar.
+     * @param {?} message The message to show in the snackbar.
+     * @param {?=} action The label for the snackbar action.
+     * @param {?=} config Additional configuration options for the snackbar.
+     * @return {?}
      */
-    MdSnackBar.prototype.open = function (message, action, config) {
-        if (action === void 0) { action = ''; }
-        if (config === void 0) { config = {}; }
+    open(message, action = '', config = {}) {
         config.announcementMessage = message;
-        var simpleSnackBarRef = this.openFromComponent(SimpleSnackBar, config);
+        let /** @type {?} */ simpleSnackBarRef = this.openFromComponent(SimpleSnackBar, config);
         simpleSnackBarRef.instance.snackBarRef = simpleSnackBarRef;
         simpleSnackBarRef.instance.message = message;
         simpleSnackBarRef.instance.action = action;
         return simpleSnackBarRef;
-    };
+    }
+    /**
+     * Dismisses the currently-visible snack bar.
+     * @return {?}
+     */
+    dismiss() {
+        if (this._openedSnackBarRef) {
+            this._openedSnackBarRef.dismiss();
+        }
+    }
     /**
      * Attaches the snack bar container component to the overlay.
+     * @param {?} overlayRef
+     * @param {?} config
+     * @return {?}
      */
-    MdSnackBar.prototype._attachSnackBarContainer = function (overlayRef, config) {
-        var containerPortal = new ComponentPortal(MdSnackBarContainer, config.viewContainerRef);
-        var containerRef = overlayRef.attach(containerPortal);
+    _attachSnackBarContainer(overlayRef, config) {
+        let /** @type {?} */ containerPortal = new ComponentPortal(MdSnackBarContainer, config.viewContainerRef);
+        let /** @type {?} */ containerRef = overlayRef.attach(containerPortal);
         containerRef.instance.snackBarConfig = config;
         return containerRef.instance;
-    };
+    }
     /**
      * Places a new component as the content of the snack bar container.
+     * @template T
+     * @param {?} component
+     * @param {?} container
+     * @param {?} overlayRef
+     * @return {?}
      */
-    MdSnackBar.prototype._attachSnackbarContent = function (component, container, overlayRef) {
-        var portal = new ComponentPortal(component);
-        var contentRef = container.attachComponentPortal(portal);
+    _attachSnackbarContent(component, container, overlayRef) {
+        let /** @type {?} */ portal = new ComponentPortal(component);
+        let /** @type {?} */ contentRef = container.attachComponentPortal(portal);
         return new MdSnackBarRef(contentRef.instance, container, overlayRef);
-    };
+    }
     /**
      * Creates a new overlay and places it in the correct location.
+     * @return {?}
      */
-    MdSnackBar.prototype._createOverlay = function () {
-        var state = new OverlayState();
+    _createOverlay() {
+        let /** @type {?} */ state = new OverlayState();
         state.positionStrategy = this._overlay.position().global()
             .centerHorizontally()
             .bottom('0');
         return this._overlay.create(state);
-    };
-    MdSnackBar = __decorate([
-        Injectable(),
-        __param(2, Optional()),
-        __param(2, SkipSelf()), 
-        __metadata('design:paramtypes', [Overlay, LiveAnnouncer, MdSnackBar])
-    ], MdSnackBar);
-    return MdSnackBar;
-}());
+    }
+}
+MdSnackBar.decorators = [
+    { type: Injectable },
+];
+/**
+ * @nocollapse
+ */
+MdSnackBar.ctorParameters = () => [
+    { type: Overlay, },
+    { type: LiveAnnouncer, },
+    { type: MdSnackBar, decorators: [{ type: Optional }, { type: SkipSelf },] },
+];
+function MdSnackBar_tsickle_Closure_declarations() {
+    /** @type {?} */
+    MdSnackBar.decorators;
+    /**
+     * @nocollapse
+     * @type {?}
+     */
+    MdSnackBar.ctorParameters;
+    /**
+     * Reference to the current snack bar in the view *at this level* (in the Angular injector tree).
+     * If there is a parent snack-bar service, all operations should delegate to that parent
+     * via `_openedSnackBarRef`.
+     * @type {?}
+     */
+    MdSnackBar.prototype._snackBarRefAtThisLevel;
+    /** @type {?} */
+    MdSnackBar.prototype._overlay;
+    /** @type {?} */
+    MdSnackBar.prototype._live;
+    /** @type {?} */
+    MdSnackBar.prototype._parentSnackBar;
+}
 /**
  * Applies default options to the snackbar config.
- * @param config The configuration to which the defaults will be applied.
- * @returns The new configuration object with defaults applied.
+ * @param {?} config The configuration to which the defaults will be applied.
+ * @return {?} The new configuration object with defaults applied.
  */
 function _applyConfigDefaults(config) {
     return extendObject(new MdSnackBarConfig(), config);
 }
-export var MdSnackBarModule = (function () {
-    function MdSnackBarModule() {
-    }
-    /** @deprecated */
-    MdSnackBarModule.forRoot = function () {
-        return {
-            ngModule: MdSnackBarModule,
-            providers: []
-        };
-    };
-    MdSnackBarModule = __decorate([
-        NgModule({
-            imports: [OverlayModule, PortalModule, CommonModule, DefaultStyleCompatibilityModeModule],
-            exports: [MdSnackBarContainer, DefaultStyleCompatibilityModeModule],
-            declarations: [MdSnackBarContainer, SimpleSnackBar],
-            entryComponents: [MdSnackBarContainer, SimpleSnackBar],
-            providers: [MdSnackBar, LIVE_ANNOUNCER_PROVIDER]
-        }), 
-        __metadata('design:paramtypes', [])
-    ], MdSnackBarModule);
-    return MdSnackBarModule;
-}());
-
 //# sourceMappingURL=snack-bar.js.map

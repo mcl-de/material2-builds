@@ -1,42 +1,31 @@
-var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
-    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-    return c > 3 && r && Object.defineProperty(target, key, r), r;
-};
-var __metadata = (this && this.__metadata) || function (k, v) {
-    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
-};
-var __param = (this && this.__param) || function (paramIndex, decorator) {
-    return function (target, key) { decorator(target, key, paramIndex); }
-};
-import { ViewChild, Component, Input, NgZone, QueryList, ElementRef, ViewEncapsulation, ContentChildren, Output, EventEmitter, Optional } from '@angular/core';
+import { ViewChild, Component, Input, ElementRef, ViewEncapsulation, ContentChildren, Output, EventEmitter, Optional, } from '@angular/core';
 import { RIGHT_ARROW, LEFT_ARROW, ENTER, Dir } from '../core';
 import { MdTabLabelWrapper } from './tab-label-wrapper';
 import { MdInkBar } from './ink-bar';
-import 'rxjs/add/operator/map';
 import { applyCssTransform } from '../core/style/apply-transform';
+import 'rxjs/add/operator/map';
 /**
  * The distance in pixels that will be overshot when scrolling a tab label into view. This helps
  * provide a small affordance to the label next to it.
  */
-var EXAGGERATED_OVERSCROLL = 60;
+const /** @type {?} */ EXAGGERATED_OVERSCROLL = 60;
 /**
  * The header of the tab group which displays a list of all the tabs in the tab group. Includes
  * an ink bar that follows the currently selected tab. When the tabs list's width exceeds the
  * width of the header container, then arrows will be displayed to allow the user to scroll
  * left and right across the header.
+ * \@docs-private
  */
-export var MdTabHeader = (function () {
-    function MdTabHeader(_zone, _elementRef, _dir) {
-        this._zone = _zone;
+export class MdTabHeader {
+    /**
+     * @param {?} _elementRef
+     * @param {?} _dir
+     */
+    constructor(_elementRef, _dir) {
         this._elementRef = _elementRef;
         this._dir = _dir;
-        /** The tab index that is focused. */
         this._focusIndex = 0;
-        /** The distance in pixels that the tab labels should be translated to the left. */
         this._scrollDistance = 0;
-        /** Whether the header should scroll to the selected index after the view has been checked. */
         this._selectedIndexChanged = false;
         /** Whether the controls for pagination should be displayed */
         this._showPaginationControls = false;
@@ -50,18 +39,24 @@ export var MdTabHeader = (function () {
         /** Event emitted when a label is focused. */
         this.indexFocused = new EventEmitter();
     }
-    Object.defineProperty(MdTabHeader.prototype, "selectedIndex", {
-        get: function () { return this._selectedIndex; },
-        /** The index of the active tab. */
-        set: function (value) {
-            this._selectedIndexChanged = this._selectedIndex != value;
-            this._selectedIndex = value;
-            this._focusIndex = value;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    MdTabHeader.prototype.ngAfterContentChecked = function () {
+    /**
+     * The index of the active tab.
+     * @param {?} value
+     * @return {?}
+     */
+    set selectedIndex(value) {
+        this._selectedIndexChanged = this._selectedIndex != value;
+        this._selectedIndex = value;
+        this._focusIndex = value;
+    }
+    /**
+     * @return {?}
+     */
+    get selectedIndex() { return this._selectedIndex; }
+    /**
+     * @return {?}
+     */
+    ngAfterContentChecked() {
         // If the number of tab labels have changed, check if scrolling should be enabled
         if (this._tabLabelCount != this._labelWrappers.length) {
             this._updatePagination();
@@ -81,8 +76,12 @@ export var MdTabHeader = (function () {
             this._updateTabScrollPosition();
             this._scrollDistanceChanged = false;
         }
-    };
-    MdTabHeader.prototype._handleKeydown = function (event) {
+    }
+    /**
+     * @param {?} event
+     * @return {?}
+     */
+    _handleKeydown(event) {
         switch (event.keyCode) {
             case RIGHT_ARROW:
                 this._focusNextTab();
@@ -94,59 +93,81 @@ export var MdTabHeader = (function () {
                 this.selectFocusedIndex.emit(this.focusIndex);
                 break;
         }
-    };
+    }
     /**
      * Aligns the ink bar to the selected tab on load.
+     * @return {?}
      */
-    MdTabHeader.prototype.ngAfterContentInit = function () {
+    ngAfterContentInit() {
         this._alignInkBarToSelectedTab();
-    };
+        if (this._dir) {
+            this._directionChange = this._dir.dirChange.subscribe(() => this._alignInkBarToSelectedTab());
+        }
+    }
+    /**
+     * @return {?}
+     */
+    ngOnDestroy() {
+        if (this._directionChange) {
+            this._directionChange.unsubscribe();
+            this._directionChange = null;
+        }
+    }
     /**
      * Callback for when the MutationObserver detects that the content has changed.
+     * @return {?}
      */
-    MdTabHeader.prototype._onContentChanges = function () {
+    _onContentChanges() {
         this._updatePagination();
         this._alignInkBarToSelectedTab();
-    };
+    }
     /**
      * Updating the view whether pagination should be enabled or not
+     * @return {?}
      */
-    MdTabHeader.prototype._updatePagination = function () {
+    _updatePagination() {
         this._checkPaginationEnabled();
         this._checkScrollingControls();
         this._updateTabScrollPosition();
-    };
-    Object.defineProperty(MdTabHeader.prototype, "focusIndex", {
-        /** Tracks which element has focus; used for keyboard navigation */
-        get: function () { return this._focusIndex; },
-        /** When the focus index is set, we must manually send focus to the correct label */
-        set: function (value) {
-            if (!this._isValidIndex(value) || this._focusIndex == value) {
-                return;
-            }
-            this._focusIndex = value;
-            this.indexFocused.emit(value);
-            this._setTabFocus(value);
-        },
-        enumerable: true,
-        configurable: true
-    });
+    }
+    /**
+     * When the focus index is set, we must manually send focus to the correct label
+     * @param {?} value
+     * @return {?}
+     */
+    set focusIndex(value) {
+        if (!this._isValidIndex(value) || this._focusIndex == value) {
+            return;
+        }
+        this._focusIndex = value;
+        this.indexFocused.emit(value);
+        this._setTabFocus(value);
+    }
+    /**
+     * Tracks which element has focus; used for keyboard navigation
+     * @return {?}
+     */
+    get focusIndex() { return this._focusIndex; }
     /**
      * Determines if an index is valid.  If the tabs are not ready yet, we assume that the user is
      * providing a valid index and return true.
+     * @param {?} index
+     * @return {?}
      */
-    MdTabHeader.prototype._isValidIndex = function (index) {
+    _isValidIndex(index) {
         if (!this._labelWrappers) {
             return true;
         }
-        var tab = this._labelWrappers ? this._labelWrappers.toArray()[index] : null;
+        const /** @type {?} */ tab = this._labelWrappers ? this._labelWrappers.toArray()[index] : null;
         return tab && !tab.disabled;
-    };
+    }
     /**
      * Sets focus on the HTML element for the label wrapper and scrolls it into the view if
      * scrolling is enabled.
+     * @param {?} tabIndex
+     * @return {?}
      */
-    MdTabHeader.prototype._setTabFocus = function (tabIndex) {
+    _setTabFocus(tabIndex) {
         if (this._showPaginationControls) {
             this._scrollToLabel(tabIndex);
         }
@@ -155,8 +176,8 @@ export var MdTabHeader = (function () {
             // Do not let the browser manage scrolling to focus the element, this will be handled
             // by using translation. In LTR, the scroll left should be 0. In RTL, the scroll width
             // should be the full width minus the offset width.
-            var containerEl = this._tabListContainer.nativeElement;
-            var dir = this._getLayoutDirection();
+            const /** @type {?} */ containerEl = this._tabListContainer.nativeElement;
+            const /** @type {?} */ dir = this._getLayoutDirection();
             if (dir == 'ltr') {
                 containerEl.scrollLeft = 0;
             }
@@ -164,55 +185,72 @@ export var MdTabHeader = (function () {
                 containerEl.scrollLeft = containerEl.scrollWidth - containerEl.offsetWidth;
             }
         }
-    };
+    }
     /**
      * Moves the focus towards the beginning or the end of the list depending on the offset provided.
      * Valid offsets are 1 and -1.
+     * @param {?} offset
+     * @return {?}
      */
-    MdTabHeader.prototype._moveFocus = function (offset) {
+    _moveFocus(offset) {
         if (this._labelWrappers) {
-            var tabs = this._labelWrappers.toArray();
-            for (var i = this.focusIndex + offset; i < tabs.length && i >= 0; i += offset) {
+            const /** @type {?} */ tabs = this._labelWrappers.toArray();
+            for (let /** @type {?} */ i = this.focusIndex + offset; i < tabs.length && i >= 0; i += offset) {
                 if (this._isValidIndex(i)) {
                     this.focusIndex = i;
                     return;
                 }
             }
         }
-    };
-    /** Increment the focus index by 1 until a valid tab is found. */
-    MdTabHeader.prototype._focusNextTab = function () {
+    }
+    /**
+     * Increment the focus index by 1 until a valid tab is found.
+     * @return {?}
+     */
+    _focusNextTab() {
         this._moveFocus(this._getLayoutDirection() == 'ltr' ? 1 : -1);
-    };
-    /** Decrement the focus index by 1 until a valid tab is found. */
-    MdTabHeader.prototype._focusPreviousTab = function () {
+    }
+    /**
+     * Decrement the focus index by 1 until a valid tab is found.
+     * @return {?}
+     */
+    _focusPreviousTab() {
         this._moveFocus(this._getLayoutDirection() == 'ltr' ? -1 : 1);
-    };
-    /** The layout direction of the containing app. */
-    MdTabHeader.prototype._getLayoutDirection = function () {
+    }
+    /**
+     * The layout direction of the containing app.
+     * @return {?}
+     */
+    _getLayoutDirection() {
         return this._dir && this._dir.value === 'rtl' ? 'rtl' : 'ltr';
-    };
-    /** Performs the CSS transformation on the tab list that will cause the list to scroll. */
-    MdTabHeader.prototype._updateTabScrollPosition = function () {
-        var translateX = this.scrollDistance + 'px';
+    }
+    /**
+     * Performs the CSS transformation on the tab list that will cause the list to scroll.
+     * @return {?}
+     */
+    _updateTabScrollPosition() {
+        let /** @type {?} */ translateX = this.scrollDistance + 'px';
         if (this._getLayoutDirection() == 'ltr') {
             translateX = '-' + translateX;
         }
-        applyCssTransform(this._tabList.nativeElement, "translate3d(" + translateX + ", 0, 0)");
-    };
-    Object.defineProperty(MdTabHeader.prototype, "scrollDistance", {
-        get: function () { return this._scrollDistance; },
-        /** Sets the distance in pixels that the tab header should be transformed in the X-axis. */
-        set: function (v) {
-            this._scrollDistance = Math.max(0, Math.min(this._getMaxScrollDistance(), v));
-            // Mark that the scroll distance has changed so that after the view is checked, the CSS
-            // transformation can move the header.
-            this._scrollDistanceChanged = true;
-            this._checkScrollingControls();
-        },
-        enumerable: true,
-        configurable: true
-    });
+        applyCssTransform(this._tabList.nativeElement, `translate3d(${translateX}, 0, 0)`);
+    }
+    /**
+     * Sets the distance in pixels that the tab header should be transformed in the X-axis.
+     * @param {?} v
+     * @return {?}
+     */
+    set scrollDistance(v) {
+        this._scrollDistance = Math.max(0, Math.min(this._getMaxScrollDistance(), v));
+        // Mark that the scroll distance has changed so that after the view is checked, the CSS
+        // transformation can move the header.
+        this._scrollDistanceChanged = true;
+        this._checkScrollingControls();
+    }
+    /**
+     * @return {?}
+     */
+    get scrollDistance() { return this._scrollDistance; }
     /**
      * Moves the tab list in the 'before' or 'after' direction (towards the beginning of the list or
      * the end of the list, respectively). The distance to scroll is computed to be a third of the
@@ -220,28 +258,32 @@ export var MdTabHeader = (function () {
      *
      * This is an expensive call that forces a layout reflow to compute box and scroll metrics and
      * should be called sparingly.
+     * @param {?} scrollDir
+     * @return {?}
      */
-    MdTabHeader.prototype._scrollHeader = function (scrollDir) {
-        var viewLength = this._tabListContainer.nativeElement.offsetWidth;
+    _scrollHeader(scrollDir) {
+        const /** @type {?} */ viewLength = this._tabListContainer.nativeElement.offsetWidth;
         // Move the scroll distance one-third the length of the tab list's viewport.
         this.scrollDistance += (scrollDir == 'before' ? -1 : 1) * viewLength / 3;
-    };
+    }
     /**
      * Moves the tab list such that the desired tab label (marked by index) is moved into view.
      *
      * This is an expensive call that forces a layout reflow to compute box and scroll metrics and
      * should be called sparingly.
+     * @param {?} labelIndex
+     * @return {?}
      */
-    MdTabHeader.prototype._scrollToLabel = function (labelIndex) {
-        var selectedLabel = this._labelWrappers
+    _scrollToLabel(labelIndex) {
+        const /** @type {?} */ selectedLabel = this._labelWrappers
             ? this._labelWrappers.toArray()[labelIndex]
             : null;
         if (!selectedLabel) {
             return;
         }
         // The view length is the visible width of the tab labels.
-        var viewLength = this._tabListContainer.nativeElement.offsetWidth;
-        var labelBeforePos, labelAfterPos;
+        const /** @type {?} */ viewLength = this._tabListContainer.nativeElement.offsetWidth;
+        let /** @type {?} */ labelBeforePos, /** @type {?} */ labelAfterPos;
         if (this._getLayoutDirection() == 'ltr') {
             labelBeforePos = selectedLabel.getOffsetLeft();
             labelAfterPos = labelBeforePos + selectedLabel.getOffsetWidth();
@@ -250,8 +292,8 @@ export var MdTabHeader = (function () {
             labelAfterPos = this._tabList.nativeElement.offsetWidth - selectedLabel.getOffsetLeft();
             labelBeforePos = labelAfterPos - selectedLabel.getOffsetWidth();
         }
-        var beforeVisiblePos = this.scrollDistance;
-        var afterVisiblePos = this.scrollDistance + viewLength;
+        const /** @type {?} */ beforeVisiblePos = this.scrollDistance;
+        const /** @type {?} */ afterVisiblePos = this.scrollDistance + viewLength;
         if (labelBeforePos < beforeVisiblePos) {
             // Scroll header to move label to the before direction
             this.scrollDistance -= beforeVisiblePos - labelBeforePos + EXAGGERATED_OVERSCROLL;
@@ -260,7 +302,7 @@ export var MdTabHeader = (function () {
             // Scroll header to move label to the after direction
             this.scrollDistance += labelAfterPos - afterVisiblePos + EXAGGERATED_OVERSCROLL;
         }
-    };
+    }
     /**
      * Evaluate whether the pagination controls should be displayed. If the scroll width of the
      * tab list is wider than the size of the header container, then the pagination controls should
@@ -268,14 +310,15 @@ export var MdTabHeader = (function () {
      *
      * This is an expensive call that forces a layout reflow to compute box and scroll metrics and
      * should be called sparingly.
+     * @return {?}
      */
-    MdTabHeader.prototype._checkPaginationEnabled = function () {
+    _checkPaginationEnabled() {
         this._showPaginationControls =
             this._tabList.nativeElement.scrollWidth > this._elementRef.nativeElement.offsetWidth;
         if (!this._showPaginationControls) {
             this.scrollDistance = 0;
         }
-    };
+    }
     /**
      * Evaluate whether the before and after controls should be enabled or disabled.
      * If the header is at the beginning of the list (scroll distance is equal to 0) then disable the
@@ -284,80 +327,144 @@ export var MdTabHeader = (function () {
      *
      * This is an expensive call that forces a layout reflow to compute box and scroll metrics and
      * should be called sparingly.
+     * @return {?}
      */
-    MdTabHeader.prototype._checkScrollingControls = function () {
+    _checkScrollingControls() {
         // Check if the pagination arrows should be activated.
         this._disableScrollBefore = this.scrollDistance == 0;
         this._disableScrollAfter = this.scrollDistance == this._getMaxScrollDistance();
-    };
+    }
     /**
      * Determines what is the maximum length in pixels that can be set for the scroll distance. This
      * is equal to the difference in width between the tab list container and tab header container.
      *
      * This is an expensive call that forces a layout reflow to compute box and scroll metrics and
      * should be called sparingly.
+     * @return {?}
      */
-    MdTabHeader.prototype._getMaxScrollDistance = function () {
-        var lengthOfTabList = this._tabList.nativeElement.scrollWidth;
-        var viewLength = this._tabListContainer.nativeElement.offsetWidth;
+    _getMaxScrollDistance() {
+        const /** @type {?} */ lengthOfTabList = this._tabList.nativeElement.scrollWidth;
+        const /** @type {?} */ viewLength = this._tabListContainer.nativeElement.offsetWidth;
         return lengthOfTabList - viewLength;
-    };
-    /** Tells the ink-bar to align itself to the current label wrapper */
-    MdTabHeader.prototype._alignInkBarToSelectedTab = function () {
-        var _this = this;
-        var selectedLabelWrapper = this._labelWrappers && this._labelWrappers.length
+    }
+    /**
+     * Tells the ink-bar to align itself to the current label wrapper
+     * @return {?}
+     */
+    _alignInkBarToSelectedTab() {
+        const /** @type {?} */ selectedLabelWrapper = this._labelWrappers && this._labelWrappers.length
             ? this._labelWrappers.toArray()[this.selectedIndex].elementRef.nativeElement
             : null;
-        this._zone.runOutsideAngular(function () {
-            requestAnimationFrame(function () {
-                _this._inkBar.alignToElement(selectedLabelWrapper);
-            });
-        });
-    };
-    __decorate([
-        ContentChildren(MdTabLabelWrapper), 
-        __metadata('design:type', QueryList)
-    ], MdTabHeader.prototype, "_labelWrappers", void 0);
-    __decorate([
-        ViewChild(MdInkBar), 
-        __metadata('design:type', MdInkBar)
-    ], MdTabHeader.prototype, "_inkBar", void 0);
-    __decorate([
-        ViewChild('tabListContainer'), 
-        __metadata('design:type', ElementRef)
-    ], MdTabHeader.prototype, "_tabListContainer", void 0);
-    __decorate([
-        ViewChild('tabList'), 
-        __metadata('design:type', ElementRef)
-    ], MdTabHeader.prototype, "_tabList", void 0);
-    __decorate([
-        Input(), 
-        __metadata('design:type', Number), 
-        __metadata('design:paramtypes', [Number])
-    ], MdTabHeader.prototype, "selectedIndex", null);
-    __decorate([
-        Output(), 
-        __metadata('design:type', Object)
-    ], MdTabHeader.prototype, "selectFocusedIndex", void 0);
-    __decorate([
-        Output(), 
-        __metadata('design:type', Object)
-    ], MdTabHeader.prototype, "indexFocused", void 0);
-    MdTabHeader = __decorate([
-        Component({selector: 'md-tab-header',
-            template: "<div class=\"md-tab-header-pagination md-tab-header-pagination-before md-elevation-z4\" aria-hidden=\"true\" md-ripple [mdRippleDisabled]=\"_disableScrollBefore\" [class.md-tab-header-pagination-disabled]=\"_disableScrollBefore\" (click)=\"_scrollHeader('before')\"><div class=\"md-tab-header-pagination-chevron\"></div></div><div class=\"md-tab-label-container\" #tabListContainer (keydown)=\"_handleKeydown($event)\"><div class=\"md-tab-list\" #tabList role=\"tablist\" (cdkObserveContent)=\"_onContentChanges()\"><ng-content></ng-content><md-ink-bar></md-ink-bar></div></div><div class=\"md-tab-header-pagination md-tab-header-pagination-after md-elevation-z4\" aria-hidden=\"true\" md-ripple [mdRippleDisabled]=\"_disableScrollAfter\" [class.md-tab-header-pagination-disabled]=\"_disableScrollAfter\" (click)=\"_scrollHeader('after')\"><div class=\"md-tab-header-pagination-chevron\"></div></div>",
-            styles: [".md-tab-header{overflow:hidden;position:relative;display:flex;flex-direction:row;flex-shrink:0}.md-tab-label{line-height:48px;height:48px;padding:0 12px;font-size:14px;font-family:Roboto,\"Helvetica Neue\",sans-serif;font-weight:500;cursor:pointer;box-sizing:border-box;color:currentColor;opacity:.6;min-width:160px;text-align:center;position:relative}.md-tab-label:focus{outline:0;opacity:1}@media (max-width:600px){.md-tab-label{min-width:72px}}md-ink-bar{position:absolute;bottom:0;height:2px;transition:.5s cubic-bezier(.35,0,.25,1)}.md-tab-header-pagination{position:relative;display:none;justify-content:center;align-items:center;min-width:32px;cursor:pointer;z-index:2}.md-tab-header-pagination-controls-enabled .md-tab-header-pagination,.md-tab-list{display:flex}.md-tab-header-pagination-before,.md-tab-header-rtl .md-tab-header-pagination-after{padding-left:4px}.md-tab-header-pagination-before .md-tab-header-pagination-chevron,.md-tab-header-rtl .md-tab-header-pagination-after .md-tab-header-pagination-chevron{transform:rotate(-135deg)}.md-tab-header-pagination-after,.md-tab-header-rtl .md-tab-header-pagination-before{padding-right:4px}.md-tab-header-pagination-after .md-tab-header-pagination-chevron,.md-tab-header-rtl .md-tab-header-pagination-before .md-tab-header-pagination-chevron{transform:rotate(45deg)}.md-tab-header-pagination-chevron{border-style:solid;border-width:2px 2px 0 0;content:'';height:8px;width:8px}.md-tab-header-pagination-disabled{box-shadow:none;cursor:default}.md-tab-header-pagination-disabled .md-tab-header-pagination-chevron{border-color:#ccc}.md-tab-label-container{display:flex;flex-grow:1;overflow:hidden;z-index:1}.md-tab-list{flex-grow:1;position:relative;transition:transform .5s cubic-bezier(.35,0,.25,1)}"],
-            encapsulation: ViewEncapsulation.None,
-            host: {
-                'class': 'md-tab-header',
-                '[class.md-tab-header-pagination-controls-enabled]': '_showPaginationControls',
-                '[class.md-tab-header-rtl]': "_getLayoutDirection() == 'rtl'",
-            }
-        }),
-        __param(2, Optional()), 
-        __metadata('design:paramtypes', [NgZone, ElementRef, Dir])
-    ], MdTabHeader);
-    return MdTabHeader;
-}());
-
+        this._inkBar.alignToElement(selectedLabelWrapper);
+    }
+}
+MdTabHeader.decorators = [
+    { type: Component, args: [{selector: 'md-tab-header, mat-tab-header',
+                template: "<div class=\"mat-tab-header-pagination mat-tab-header-pagination-before mat-elevation-z4\" aria-hidden=\"true\" md-ripple [mdRippleDisabled]=\"_disableScrollBefore\" [class.mat-tab-header-pagination-disabled]=\"_disableScrollBefore\" (click)=\"_scrollHeader('before')\"> <div class=\"mat-tab-header-pagination-chevron\"></div> </div> <div class=\"mat-tab-label-container\" #tabListContainer (keydown)=\"_handleKeydown($event)\"> <div class=\"mat-tab-list\" #tabList role=\"tablist\" (cdkObserveContent)=\"_onContentChanges()\"> <div class=\"mat-tab-labels\"> <ng-content></ng-content> </div> <md-ink-bar></md-ink-bar> </div> </div> <div class=\"mat-tab-header-pagination mat-tab-header-pagination-after mat-elevation-z4\" aria-hidden=\"true\" md-ripple [mdRippleDisabled]=\"_disableScrollAfter\" [class.mat-tab-header-pagination-disabled]=\"_disableScrollAfter\" (click)=\"_scrollHeader('after')\"> <div class=\"mat-tab-header-pagination-chevron\"></div> </div> ",
+                styles: [".mat-tab-header{display:flex;overflow:hidden;position:relative;flex-shrink:0}.mat-tab-label{line-height:48px;height:48px;padding:0 12px;font-size:14px;font-family:Roboto,\"Helvetica Neue\",sans-serif;font-weight:500;cursor:pointer;box-sizing:border-box;opacity:.6;min-width:160px;text-align:center;position:relative}.mat-tab-label:focus{outline:0;opacity:1}@media (max-width:600px){.mat-tab-label{min-width:72px}}.mat-ink-bar{position:absolute;bottom:0;height:2px;transition:.5s cubic-bezier(.35,0,.25,1)}.mat-tab-group-inverted-header .mat-ink-bar{bottom:auto;top:0}.mat-tab-header-pagination{position:relative;display:none;justify-content:center;align-items:center;min-width:32px;cursor:pointer;z-index:2}.mat-tab-header-pagination-controls-enabled .mat-tab-header-pagination{display:flex}.mat-tab-header-pagination-before,.mat-tab-header-rtl .mat-tab-header-pagination-after{padding-left:4px}.mat-tab-header-pagination-before .mat-tab-header-pagination-chevron,.mat-tab-header-rtl .mat-tab-header-pagination-after .mat-tab-header-pagination-chevron{transform:rotate(-135deg)}.mat-tab-header-pagination-after,.mat-tab-header-rtl .mat-tab-header-pagination-before{padding-right:4px}.mat-tab-header-pagination-after .mat-tab-header-pagination-chevron,.mat-tab-header-rtl .mat-tab-header-pagination-before .mat-tab-header-pagination-chevron{transform:rotate(45deg)}.mat-tab-header-pagination-chevron{border-style:solid;border-width:2px 2px 0 0;content:'';height:8px;width:8px}.mat-tab-header-pagination-disabled{box-shadow:none;cursor:default}.mat-tab-header-pagination-disabled .mat-tab-header-pagination-chevron{border-color:#ccc}.mat-tab-label-container{display:flex;flex-grow:1;overflow:hidden;z-index:1}.mat-tab-list{flex-grow:1;position:relative;transition:transform .5s cubic-bezier(.35,0,.25,1)}.mat-tab-labels{display:flex} /*# sourceMappingURL=tab-header.css.map */ "],
+                encapsulation: ViewEncapsulation.None,
+                host: {
+                    'class': 'mat-tab-header',
+                    '[class.mat-tab-header-pagination-controls-enabled]': '_showPaginationControls',
+                    '[class.mat-tab-header-rtl]': "_getLayoutDirection() == 'rtl'",
+                }
+            },] },
+];
+/**
+ * @nocollapse
+ */
+MdTabHeader.ctorParameters = () => [
+    { type: ElementRef, },
+    { type: Dir, decorators: [{ type: Optional },] },
+];
+MdTabHeader.propDecorators = {
+    '_labelWrappers': [{ type: ContentChildren, args: [MdTabLabelWrapper,] },],
+    '_inkBar': [{ type: ViewChild, args: [MdInkBar,] },],
+    '_tabListContainer': [{ type: ViewChild, args: ['tabListContainer',] },],
+    '_tabList': [{ type: ViewChild, args: ['tabList',] },],
+    'selectedIndex': [{ type: Input },],
+    'selectFocusedIndex': [{ type: Output },],
+    'indexFocused': [{ type: Output },],
+};
+function MdTabHeader_tsickle_Closure_declarations() {
+    /** @type {?} */
+    MdTabHeader.decorators;
+    /**
+     * @nocollapse
+     * @type {?}
+     */
+    MdTabHeader.ctorParameters;
+    /** @type {?} */
+    MdTabHeader.propDecorators;
+    /** @type {?} */
+    MdTabHeader.prototype._labelWrappers;
+    /** @type {?} */
+    MdTabHeader.prototype._inkBar;
+    /** @type {?} */
+    MdTabHeader.prototype._tabListContainer;
+    /** @type {?} */
+    MdTabHeader.prototype._tabList;
+    /**
+     * The tab index that is focused.
+     * @type {?}
+     */
+    MdTabHeader.prototype._focusIndex;
+    /**
+     * The distance in pixels that the tab labels should be translated to the left.
+     * @type {?}
+     */
+    MdTabHeader.prototype._scrollDistance;
+    /**
+     * Whether the header should scroll to the selected index after the view has been checked.
+     * @type {?}
+     */
+    MdTabHeader.prototype._selectedIndexChanged;
+    /**
+     * Subscription to changes in the layout direction.
+     * @type {?}
+     */
+    MdTabHeader.prototype._directionChange;
+    /**
+     * Whether the controls for pagination should be displayed
+     * @type {?}
+     */
+    MdTabHeader.prototype._showPaginationControls;
+    /**
+     * Whether the tab list can be scrolled more towards the end of the tab label list.
+     * @type {?}
+     */
+    MdTabHeader.prototype._disableScrollAfter;
+    /**
+     * Whether the tab list can be scrolled more towards the beginning of the tab label list.
+     * @type {?}
+     */
+    MdTabHeader.prototype._disableScrollBefore;
+    /**
+     * The number of tab labels that are displayed on the header. When this changes, the header
+     * should re-evaluate the scroll position.
+     * @type {?}
+     */
+    MdTabHeader.prototype._tabLabelCount;
+    /**
+     * Whether the scroll distance has changed and should be applied after the view is checked.
+     * @type {?}
+     */
+    MdTabHeader.prototype._scrollDistanceChanged;
+    /** @type {?} */
+    MdTabHeader.prototype._selectedIndex;
+    /**
+     * Event emitted when the option is selected.
+     * @type {?}
+     */
+    MdTabHeader.prototype.selectFocusedIndex;
+    /**
+     * Event emitted when a label is focused.
+     * @type {?}
+     */
+    MdTabHeader.prototype.indexFocused;
+    /** @type {?} */
+    MdTabHeader.prototype._elementRef;
+    /** @type {?} */
+    MdTabHeader.prototype._dir;
+}
 //# sourceMappingURL=tab-header.js.map

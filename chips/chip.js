@@ -1,19 +1,14 @@
-var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
-    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-    return c > 3 && r && Object.defineProperty(target, key, r), r;
-};
-var __metadata = (this && this.__metadata) || function (k, v) {
-    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
-};
 import { Component, ElementRef, EventEmitter, Input, Output, Renderer } from '@angular/core';
 import { coerceBooleanProperty } from '../core/coercion/boolean-property';
 /**
  * Material design styled Chip component. Used inside the MdChipList component.
  */
-export var MdChip = (function () {
-    function MdChip(_renderer, _elementRef) {
+export class MdChip {
+    /**
+     * @param {?} _renderer
+     * @param {?} _elementRef
+     */
+    constructor(_renderer, _elementRef) {
         this._renderer = _renderer;
         this._elementRef = _elementRef;
         /** Whether or not the chip is disabled. Disabled chips cannot be focused. */
@@ -31,76 +26,97 @@ export var MdChip = (function () {
         /** Emitted when the chip is destroyed. */
         this.destroy = new EventEmitter();
     }
-    MdChip.prototype.ngOnInit = function () {
+    /**
+     * @return {?}
+     */
+    ngOnInit() {
         this._addDefaultCSSClass();
         this._updateColor(this._color);
-    };
-    MdChip.prototype.ngOnDestroy = function () {
+    }
+    /**
+     * @return {?}
+     */
+    ngOnDestroy() {
         this.destroy.emit({ chip: this });
-    };
-    Object.defineProperty(MdChip.prototype, "disabled", {
-        /** Whether or not the chip is disabled. */
-        get: function () {
-            return this._disabled;
-        },
-        /** Sets the disabled state of the chip. */
-        set: function (value) {
-            this._disabled = coerceBooleanProperty(value) ? true : null;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(MdChip.prototype, "_isAriaDisabled", {
-        /** A String representation of the current disabled state. */
-        get: function () {
-            return String(coerceBooleanProperty(this.disabled));
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(MdChip.prototype, "selected", {
-        /** Whether or not this chip is selected. */
-        get: function () {
-            return this._selected;
-        },
-        set: function (value) {
-            this._selected = coerceBooleanProperty(value);
-            if (this._selected) {
-                this.select.emit({ chip: this });
-            }
-            else {
-                this.deselect.emit({ chip: this });
-            }
-        },
-        enumerable: true,
-        configurable: true
-    });
+    }
+    /**
+     * Whether or not the chip is disabled.
+     * @return {?}
+     */
+    get disabled() {
+        return this._disabled;
+    }
+    /**
+     * Sets the disabled state of the chip.
+     * @param {?} value
+     * @return {?}
+     */
+    set disabled(value) {
+        this._disabled = coerceBooleanProperty(value) ? true : null;
+    }
+    /**
+     * A String representation of the current disabled state.
+     * @return {?}
+     */
+    get _isAriaDisabled() {
+        return String(coerceBooleanProperty(this.disabled));
+    }
+    /**
+     * Whether or not this chip is selected.
+     * @return {?}
+     */
+    get selected() {
+        return this._selected;
+    }
+    /**
+     * @param {?} value
+     * @return {?}
+     */
+    set selected(value) {
+        this._selected = coerceBooleanProperty(value);
+        if (this._selected) {
+            this.select.emit({ chip: this });
+        }
+        else {
+            this.deselect.emit({ chip: this });
+        }
+    }
     /**
      * Toggles the current selected state of this chip.
-     * @return Whether the chip is selected.
+     * @return {?} Whether the chip is selected.
      */
-    MdChip.prototype.toggleSelected = function () {
+    toggleSelected() {
         this.selected = !this.selected;
         return this.selected;
-    };
-    Object.defineProperty(MdChip.prototype, "color", {
-        /** The color of the chip. Can be `primary`, `accent`, or `warn`. */
-        get: function () {
-            return this._color;
-        },
-        set: function (value) {
-            this._updateColor(value);
-        },
-        enumerable: true,
-        configurable: true
-    });
-    /** Allows for programmatic focusing of the chip. */
-    MdChip.prototype.focus = function () {
+    }
+    /**
+     * The color of the chip. Can be `primary`, `accent`, or `warn`.
+     * @return {?}
+     */
+    get color() {
+        return this._color;
+    }
+    /**
+     * @param {?} value
+     * @return {?}
+     */
+    set color(value) {
+        this._updateColor(value);
+    }
+    /**
+     * Allows for programmatic focusing of the chip.
+     * @return {?}
+     */
+    focus() {
         this._renderer.invokeElementMethod(this._elementRef.nativeElement, 'focus');
         this.onFocus.emit({ chip: this });
-    };
-    /** Ensures events fire properly upon click. */
-    MdChip.prototype._handleClick = function (event) {
+    }
+    /**
+     * Ensures events fire properly upon click.
+     * @param {?} event
+     * @return {?}
+     */
+    _handleClick(event) {
         // Check disabled
         if (this.disabled) {
             event.preventDefault();
@@ -109,69 +125,122 @@ export var MdChip = (function () {
         else {
             this.focus();
         }
-    };
-    /** Initializes the appropriate CSS classes based on the chip type (basic or standard). */
-    MdChip.prototype._addDefaultCSSClass = function () {
-        var el = this._elementRef.nativeElement;
-        // Always add the `md-chip` class
-        el.classList.add('md-chip');
-        // If we are a basic chip, also add the `md-basic-chip` class for :not() targeting
-        if (el.nodeName.toLowerCase() == 'md-basic-chip' || el.hasAttribute('md-basic-chip')) {
-            el.classList.add('md-basic-chip');
+    }
+    /**
+     * Initializes the appropriate CSS classes based on the chip type (basic or standard).
+     * @return {?}
+     */
+    _addDefaultCSSClass() {
+        let /** @type {?} */ el = this._elementRef.nativeElement;
+        // Always add the `mat-chip` class
+        el.classList.add('mat-chip');
+        // If we are a basic chip, also add the `mat-basic-chip` class for :not() targeting
+        if (el.nodeName.toLowerCase() == 'mat-basic-chip' || el.hasAttribute('mat-basic-chip') ||
+            el.nodeName.toLowerCase() == 'md-basic-chip' || el.hasAttribute('md-basic-chip')) {
+            el.classList.add('mat-basic-chip');
         }
-    };
-    /** Updates the private _color variable and the native element. */
-    MdChip.prototype._updateColor = function (newColor) {
+    }
+    /**
+     * Updates the private _color variable and the native element.
+     * @param {?} newColor
+     * @return {?}
+     */
+    _updateColor(newColor) {
         this._setElementColor(this._color, false);
         this._setElementColor(newColor, true);
         this._color = newColor;
-    };
-    /** Sets the md-color on the native element. */
-    MdChip.prototype._setElementColor = function (color, isAdd) {
+    }
+    /**
+     * Sets the mat-color on the native element.
+     * @param {?} color
+     * @param {?} isAdd
+     * @return {?}
+     */
+    _setElementColor(color, isAdd) {
         if (color != null && color != '') {
-            this._renderer.setElementClass(this._elementRef.nativeElement, "md-" + color, isAdd);
+            this._renderer.setElementClass(this._elementRef.nativeElement, `mat-${color}`, isAdd);
         }
-    };
-    __decorate([
-        Output(), 
-        __metadata('design:type', Object)
-    ], MdChip.prototype, "select", void 0);
-    __decorate([
-        Output(), 
-        __metadata('design:type', Object)
-    ], MdChip.prototype, "deselect", void 0);
-    __decorate([
-        Output(), 
-        __metadata('design:type', Object)
-    ], MdChip.prototype, "destroy", void 0);
-    __decorate([
-        Input(), 
-        __metadata('design:type', Boolean)
-    ], MdChip.prototype, "disabled", null);
-    __decorate([
-        Input(), 
-        __metadata('design:type', Boolean)
-    ], MdChip.prototype, "selected", null);
-    __decorate([
-        Input(), 
-        __metadata('design:type', String)
-    ], MdChip.prototype, "color", null);
-    MdChip = __decorate([
-        Component({
-            selector: 'md-basic-chip, [md-basic-chip], md-chip, [md-chip]',
-            template: "<ng-content></ng-content>",
-            host: {
-                'tabindex': '-1',
-                'role': 'option',
-                '[class.md-chip-selected]': 'selected',
-                '[attr.disabled]': 'disabled',
-                '[attr.aria-disabled]': '_isAriaDisabled',
-                '(click)': '_handleClick($event)'
-            }
-        }), 
-        __metadata('design:paramtypes', [Renderer, ElementRef])
-    ], MdChip);
-    return MdChip;
-}());
-
+    }
+}
+MdChip.decorators = [
+    { type: Component, args: [{
+                selector: `md-basic-chip, [md-basic-chip], md-chip, [md-chip],
+             mat-basic-chip, [mat-basic-chip], mat-chip, [mat-chip]`,
+                template: `<ng-content></ng-content>`,
+                host: {
+                    '[class.mat-chip]': 'true',
+                    'tabindex': '-1',
+                    'role': 'option',
+                    '[class.mat-chip-selected]': 'selected',
+                    '[attr.disabled]': 'disabled',
+                    '[attr.aria-disabled]': '_isAriaDisabled',
+                    '(click)': '_handleClick($event)'
+                }
+            },] },
+];
+/**
+ * @nocollapse
+ */
+MdChip.ctorParameters = () => [
+    { type: Renderer, },
+    { type: ElementRef, },
+];
+MdChip.propDecorators = {
+    'select': [{ type: Output },],
+    'deselect': [{ type: Output },],
+    'destroy': [{ type: Output },],
+    'disabled': [{ type: Input },],
+    'selected': [{ type: Input },],
+    'color': [{ type: Input },],
+};
+function MdChip_tsickle_Closure_declarations() {
+    /** @type {?} */
+    MdChip.decorators;
+    /**
+     * @nocollapse
+     * @type {?}
+     */
+    MdChip.ctorParameters;
+    /** @type {?} */
+    MdChip.propDecorators;
+    /**
+     * Whether or not the chip is disabled. Disabled chips cannot be focused.
+     * @type {?}
+     */
+    MdChip.prototype._disabled;
+    /**
+     * Whether or not the chip is selected.
+     * @type {?}
+     */
+    MdChip.prototype._selected;
+    /**
+     * The palette color of selected chips.
+     * @type {?}
+     */
+    MdChip.prototype._color;
+    /**
+     * Emitted when the chip is focused.
+     * @type {?}
+     */
+    MdChip.prototype.onFocus;
+    /**
+     * Emitted when the chip is selected.
+     * @type {?}
+     */
+    MdChip.prototype.select;
+    /**
+     * Emitted when the chip is deselected.
+     * @type {?}
+     */
+    MdChip.prototype.deselect;
+    /**
+     * Emitted when the chip is destroyed.
+     * @type {?}
+     */
+    MdChip.prototype.destroy;
+    /** @type {?} */
+    MdChip.prototype._renderer;
+    /** @type {?} */
+    MdChip.prototype._elementRef;
+}
 //# sourceMappingURL=chip.js.map

@@ -28,3 +28,21 @@ export declare class MdGridTileText implements AfterContentInit {
     constructor(_renderer: Renderer, _element: ElementRef);
     ngAfterContentInit(): void;
 }
+/**
+ * Directive whose purpose is to add the mat- CSS styling to this selector.
+ * @docs-private
+ */
+export declare class MdGridAvatarCssMatStyler {
+}
+/**
+ * Directive whose purpose is to add the mat- CSS styling to this selector.
+ * @docs-private
+ */
+export declare class MdGridTileHeaderCssMatStyler {
+}
+/**
+ * Directive whose purpose is to add the mat- CSS styling to this selector.
+ * @docs-private
+ */
+export declare class MdGridTileFooterCssMatStyler {
+}

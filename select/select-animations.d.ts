@@ -1,16 +1,16 @@
-import { AnimationEntryMetadata } from '@angular/core';
+import { AnimationTriggerMetadata } from '@angular/animations';
 /**
  * The following are all the animations for the md-select component, with each
  * const containing the metadata for one animation.
  *
- * The values below match the implementation of the Material 1 md-select animation.
+ * The values below match the implementation of the AngularJS Material md-select animation.
  */
 /**
  * This animation shrinks the placeholder text to 75% of its normal size and translates
  * it to either the top left corner (ltr) or top right corner (rtl) of the trigger,
  * depending on the text direction of the application.
  */
-export declare const transformPlaceholder: AnimationEntryMetadata;
+export declare const transformPlaceholder: AnimationTriggerMetadata;
 /**
  * This animation transforms the select's overlay panel on and off the page.
  *
@@ -20,10 +20,10 @@ export declare const transformPlaceholder: AnimationEntryMetadata;
  *
  * When the panel is removed from the DOM, it simply fades out linearly.
  */
-export declare const transformPanel: AnimationEntryMetadata;
+export declare const transformPanel: AnimationTriggerMetadata;
 /**
  * This animation fades in the background color and text content of the
  * select's options. It is time delayed to occur 100ms after the overlay
  * panel has transformed in.
  */
-export declare const fadeInContent: AnimationEntryMetadata;
+export declare const fadeInContent: AnimationTriggerMetadata;

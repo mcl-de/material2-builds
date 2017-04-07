@@ -1,77 +1,113 @@
-var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
-    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-    return c > 3 && r && Object.defineProperty(target, key, r), r;
-};
-var __metadata = (this && this.__metadata) || function (k, v) {
-    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
-};
-import { Component, ElementRef, Input, HostBinding, Renderer } from '@angular/core';
+import { Component, ElementRef, Input, Renderer } from '@angular/core';
+import { coerceBooleanProperty } from '../core/coercion/boolean-property';
 /**
  * This directive is intended to be used inside an md-menu tag.
  * It exists mostly to set the role attribute.
  */
-export var MdMenuItem = (function () {
-    function MdMenuItem(_renderer, _elementRef) {
+export class MdMenuItem {
+    /**
+     * @param {?} _renderer
+     * @param {?} _elementRef
+     */
+    constructor(_renderer, _elementRef) {
         this._renderer = _renderer;
         this._elementRef = _elementRef;
+        this._disabled = false;
     }
-    MdMenuItem.prototype.focus = function () {
-        this._renderer.invokeElementMethod(this._elementRef.nativeElement, 'focus');
-    };
-    Object.defineProperty(MdMenuItem.prototype, "disabled", {
-        // this is necessary to support anchors
-        /** Whether the menu item is disabled. */
-        get: function () { return this._disabled; },
-        set: function (value) {
-            this._disabled = (value === false || value === undefined) ? null : true;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(MdMenuItem.prototype, "isAriaDisabled", {
-        /** Sets the aria-disabled property on the menu item. */
-        get: function () { return String(!!this.disabled); },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(MdMenuItem.prototype, "_tabindex", {
-        get: function () { return this.disabled ? '-1' : '0'; },
-        enumerable: true,
-        configurable: true
-    });
-    MdMenuItem.prototype._getHostElement = function () {
+    /**
+     * Focuses the menu item.
+     * @return {?}
+     */
+    focus() {
+        this._renderer.invokeElementMethod(this._getHostElement(), 'focus');
+    }
+    /**
+     * Whether the menu item is disabled.
+     * @return {?}
+     */
+    get disabled() { return this._disabled; }
+    /**
+     * @param {?} value
+     * @return {?}
+     */
+    set disabled(value) {
+        this._disabled = coerceBooleanProperty(value);
+    }
+    /**
+     * Used to set the `tabindex`.
+     * @return {?}
+     */
+    _getTabIndex() {
+        return this._disabled ? '-1' : '0';
+    }
+    /**
+     * Used to set the HTML `disabled` attribute. Necessary for links to be disabled properly.
+     * @return {?}
+     */
+    _getDisabledAttr() {
+        return this._disabled ? true : null;
+    }
+    /**
+     * Returns the host DOM element.
+     * @return {?}
+     */
+    _getHostElement() {
         return this._elementRef.nativeElement;
-    };
-    MdMenuItem.prototype._checkDisabled = function (event) {
+    }
+    /**
+     * Prevents the default element actions if it is disabled.
+     * @param {?} event
+     * @return {?}
+     */
+    _checkDisabled(event) {
         if (this.disabled) {
             event.preventDefault();
             event.stopPropagation();
         }
-    };
-    __decorate([
-        HostBinding('attr.disabled'),
-        Input(), 
-        __metadata('design:type', Boolean)
-    ], MdMenuItem.prototype, "disabled", null);
-    __decorate([
-        HostBinding('attr.aria-disabled'), 
-        __metadata('design:type', String)
-    ], MdMenuItem.prototype, "isAriaDisabled", null);
-    MdMenuItem = __decorate([
-        Component({selector: '[md-menu-item], [mat-menu-item]',
-            host: {
-                'role': 'menuitem',
-                '(click)': '_checkDisabled($event)',
-                '[attr.tabindex]': '_tabindex'
-            },
-            template: "<ng-content></ng-content><div class=\"md-menu-ripple\" *ngIf=\"!disabled\" md-ripple mdRippleBackgroundColor=\"rgba(0,0,0,0)\" [mdRippleTrigger]=\"_getHostElement()\"></div>",
-            exportAs: 'mdMenuItem'
-        }), 
-        __metadata('design:paramtypes', [Renderer, ElementRef])
-    ], MdMenuItem);
-    return MdMenuItem;
-}());
-
+    }
+}
+MdMenuItem.decorators = [
+    { type: Component, args: [{selector: '[md-menu-item], [mat-menu-item]',
+                host: {
+                    'role': 'menuitem',
+                    '[class.mat-menu-item]': 'true',
+                    '[attr.tabindex]': '_getTabIndex()',
+                    '[attr.aria-disabled]': 'disabled.toString()',
+                    '[attr.disabled]': '_getDisabledAttr()',
+                    '(click)': '_checkDisabled($event)',
+                },
+                template: "<ng-content></ng-content> <div class=\"mat-menu-ripple\" *ngIf=\"!disabled\" md-ripple [mdRippleTrigger]=\"_getHostElement()\"> </div> ",
+                exportAs: 'mdMenuItem'
+            },] },
+];
+/**
+ * @nocollapse
+ */
+MdMenuItem.ctorParameters = () => [
+    { type: Renderer, },
+    { type: ElementRef, },
+];
+MdMenuItem.propDecorators = {
+    'disabled': [{ type: Input },],
+};
+function MdMenuItem_tsickle_Closure_declarations() {
+    /** @type {?} */
+    MdMenuItem.decorators;
+    /**
+     * @nocollapse
+     * @type {?}
+     */
+    MdMenuItem.ctorParameters;
+    /** @type {?} */
+    MdMenuItem.propDecorators;
+    /**
+     * Whether the menu item is disabled
+     * @type {?}
+     */
+    MdMenuItem.prototype._disabled;
+    /** @type {?} */
+    MdMenuItem.prototype._renderer;
+    /** @type {?} */
+    MdMenuItem.prototype._elementRef;
+}
 //# sourceMappingURL=menu-item.js.map

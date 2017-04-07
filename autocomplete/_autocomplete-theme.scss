@@ -1,16 +1,19 @@
 @import '../core/theming/theming';
 
-@mixin md-autocomplete-theme($theme) {
+@mixin mat-autocomplete-theme($theme) {
   $foreground: map-get($theme, foreground);
   $background: map-get($theme, background);
 
-  md-option {
-    background: md-color($background, card);
-    color: md-color($foreground, text);
+  .mat-autocomplete-panel {
+    background: mat-color($background, card);
+    color: mat-color($foreground, text);
 
-    &.md-selected {
-      background: md-color($background, card);
-      color: md-color($foreground, text);
+    .mat-option {
+      &.mat-selected:not(.mat-active) {
+        background: mat-color($background, card);
+        color: mat-color($foreground, text);
+      }
     }
   }
+
 }

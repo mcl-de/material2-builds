@@ -1,14 +1,5 @@
-var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
-    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-    return c > 3 && r && Object.defineProperty(target, key, r), r;
-};
-var __metadata = (this && this.__metadata) || function (k, v) {
-    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
-};
-import { Directive, ElementRef } from '@angular/core';
-import { Observable } from 'rxjs/Observable';
+import { Directive, ElementRef, NgZone, Renderer } from '@angular/core';
+import { Subject } from 'rxjs/Subject';
 import { ScrollDispatcher } from './scroll-dispatcher';
 import 'rxjs/add/observable/fromEvent';
 /**
@@ -16,33 +7,88 @@ import 'rxjs/add/observable/fromEvent';
  * ScrollDispatcher service to include itself as part of its collection of scrolling events that it
  * can be listened to through the service.
  */
-export var Scrollable = (function () {
-    function Scrollable(_elementRef, _scroll) {
+export class Scrollable {
+    /**
+     * @param {?} _elementRef
+     * @param {?} _scroll
+     * @param {?} _ngZone
+     * @param {?} _renderer
+     */
+    constructor(_elementRef, _scroll, _ngZone, _renderer) {
         this._elementRef = _elementRef;
         this._scroll = _scroll;
+        this._ngZone = _ngZone;
+        this._renderer = _renderer;
+        this._elementScrolled = new Subject();
     }
-    Scrollable.prototype.ngOnInit = function () {
+    /**
+     * @return {?}
+     */
+    ngOnInit() {
+        this._scrollListener = this._ngZone.runOutsideAngular(() => {
+            return this._renderer.listen(this.getElementRef().nativeElement, 'scroll', (event) => {
+                this._elementScrolled.next(event);
+            });
+        });
         this._scroll.register(this);
-    };
-    Scrollable.prototype.ngOnDestroy = function () {
+    }
+    /**
+     * @return {?}
+     */
+    ngOnDestroy() {
         this._scroll.deregister(this);
-    };
+        if (this._scrollListener) {
+            this._scrollListener();
+            this._scrollListener = null;
+        }
+    }
     /**
      * Returns observable that emits when a scroll event is fired on the host element.
+     * @return {?}
      */
-    Scrollable.prototype.elementScrolled = function () {
-        return Observable.fromEvent(this._elementRef.nativeElement, 'scroll');
-    };
-    Scrollable.prototype.getElementRef = function () {
+    elementScrolled() {
+        return this._elementScrolled.asObservable();
+    }
+    /**
+     * @return {?}
+     */
+    getElementRef() {
         return this._elementRef;
-    };
-    Scrollable = __decorate([
-        Directive({
-            selector: '[cdk-scrollable]'
-        }), 
-        __metadata('design:paramtypes', [ElementRef, ScrollDispatcher])
-    ], Scrollable);
-    return Scrollable;
-}());
-
+    }
+}
+Scrollable.decorators = [
+    { type: Directive, args: [{
+                selector: '[cdk-scrollable]'
+            },] },
+];
+/**
+ * @nocollapse
+ */
+Scrollable.ctorParameters = () => [
+    { type: ElementRef, },
+    { type: ScrollDispatcher, },
+    { type: NgZone, },
+    { type: Renderer, },
+];
+function Scrollable_tsickle_Closure_declarations() {
+    /** @type {?} */
+    Scrollable.decorators;
+    /**
+     * @nocollapse
+     * @type {?}
+     */
+    Scrollable.ctorParameters;
+    /** @type {?} */
+    Scrollable.prototype._elementScrolled;
+    /** @type {?} */
+    Scrollable.prototype._scrollListener;
+    /** @type {?} */
+    Scrollable.prototype._elementRef;
+    /** @type {?} */
+    Scrollable.prototype._scroll;
+    /** @type {?} */
+    Scrollable.prototype._ngZone;
+    /** @type {?} */
+    Scrollable.prototype._renderer;
+}
 //# sourceMappingURL=scrollable.js.map
