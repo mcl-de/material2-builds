@@ -76,7 +76,6 @@ function OverlayContainer_tsickle_Closure_declarations() {
 export function OVERLAY_CONTAINER_PROVIDER_FACTORY(parentContainer) {
     return parentContainer || new OverlayContainer();
 }
-;
 export const /** @type {?} */ OVERLAY_CONTAINER_PROVIDER = {
     // If there is already an OverlayContainer available, use that. Otherwise, provide a new one.
     provide: OverlayContainer,

@@ -1,16 +1,10 @@
 import { animate, state, style, transition, trigger, } from '@angular/animations';
 /**
- * The following are all the animations for the md-select component, with each
- * const containing the metadata for one animation.
- *
- * The values below match the implementation of the AngularJS Material md-select animation.
- */
-/**
  * This animation shrinks the placeholder text to 75% of its normal size and translates
  * it to either the top left corner (ltr) or top right corner (rtl) of the trigger,
  * depending on the text direction of the application.
  */
-export const /** @type {?} */ transformPlaceholder = trigger('transformPlaceholder', [
+export const transformPlaceholder = trigger('transformPlaceholder', [
     state('floating-ltr', style({
         top: '-22px',
         left: '-2px',
@@ -32,7 +26,7 @@ export const /** @type {?} */ transformPlaceholder = trigger('transformPlacehold
  *
  * When the panel is removed from the DOM, it simply fades out linearly.
  */
-export const /** @type {?} */ transformPanel = trigger('transformPanel', [
+export const transformPanel = trigger('transformPanel', [
     state('showing', style({
         opacity: 1,
         minWidth: 'calc(100% + 32px)',
@@ -55,7 +49,7 @@ export const /** @type {?} */ transformPanel = trigger('transformPanel', [
  * select's options. It is time delayed to occur 100ms after the overlay
  * panel has transformed in.
  */
-export const /** @type {?} */ fadeInContent = trigger('fadeInContent', [
+export const fadeInContent = trigger('fadeInContent', [
     state('showing', style({ opacity: 1 })),
     transition('void => showing', [
         style({ opacity: 0 }),

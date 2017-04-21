@@ -12,6 +12,9 @@ export class MdTabLabelWrapper {
     constructor(elementRef, _renderer) {
         this.elementRef = elementRef;
         this._renderer = _renderer;
+        /**
+         * Whether the tab label is disabled.
+         */
         this._disabled = false;
     }
     /**

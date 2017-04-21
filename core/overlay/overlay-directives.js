@@ -7,8 +7,10 @@ import { PortalModule } from '../portal/portal-directives';
 import { Dir } from '../rtl/dir';
 import { Scrollable } from './scroll/scrollable';
 import { coerceBooleanProperty } from '../coercion/boolean-property';
-/** Default set of positions for the overlay. Follows the behavior of a dropdown. */
-let /** @type {?} */ defaultPositionList = [
+/**
+ * Default set of positions for the overlay. Follows the behavior of a dropdown.
+ */
+let defaultPositionList = [
     new ConnectionPositionPair({ originX: 'start', originY: 'bottom' }, { overlayX: 'start', overlayY: 'top' }),
     new ConnectionPositionPair({ originX: 'start', originY: 'top' }, { overlayX: 'start', overlayY: 'bottom' }),
 ];
@@ -64,13 +66,21 @@ export class ConnectedOverlayDirective {
         this._hasBackdrop = false;
         this._offsetX = 0;
         this._offsetY = 0;
-        /** Event emitted when the backdrop is clicked. */
+        /**
+         * Event emitted when the backdrop is clicked.
+         */
         this.backdropClick = new EventEmitter();
-        /** Event emitted when the position has changed. */
+        /**
+         * Event emitted when the position has changed.
+         */
         this.positionChange = new EventEmitter();
-        /** Event emitted when the overlay has been attached. */
+        /**
+         * Event emitted when the overlay has been attached.
+         */
         this.attach = new EventEmitter();
-        /** Event emitted when the overlay has been detached. */
+        /**
+         * Event emitted when the overlay has been detached.
+         */
         this.detach = new EventEmitter();
         this._templatePortal = new TemplatePortal(templateRef, viewContainerRef);
     }

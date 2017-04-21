@@ -8,7 +8,7 @@ import 'rxjs/add/operator/map';
  * The distance in pixels that will be overshot when scrolling a tab label into view. This helps
  * provide a small affordance to the label next to it.
  */
-const /** @type {?} */ EXAGGERATED_OVERSCROLL = 60;
+const EXAGGERATED_OVERSCROLL = 60;
 /**
  * The header of the tab group which displays a list of all the tabs in the tab group. Includes
  * an ink bar that follows the currently selected tab. When the tabs list's width exceeds the
@@ -24,19 +24,38 @@ export class MdTabHeader {
     constructor(_elementRef, _dir) {
         this._elementRef = _elementRef;
         this._dir = _dir;
+        /**
+         * The tab index that is focused.
+         */
         this._focusIndex = 0;
+        /**
+         * The distance in pixels that the tab labels should be translated to the left.
+         */
         this._scrollDistance = 0;
+        /**
+         * Whether the header should scroll to the selected index after the view has been checked.
+         */
         this._selectedIndexChanged = false;
-        /** Whether the controls for pagination should be displayed */
+        /**
+         * Whether the controls for pagination should be displayed
+         */
         this._showPaginationControls = false;
-        /** Whether the tab list can be scrolled more towards the end of the tab label list. */
+        /**
+         * Whether the tab list can be scrolled more towards the end of the tab label list.
+         */
         this._disableScrollAfter = true;
-        /** Whether the tab list can be scrolled more towards the beginning of the tab label list. */
+        /**
+         * Whether the tab list can be scrolled more towards the beginning of the tab label list.
+         */
         this._disableScrollBefore = true;
         this._selectedIndex = 0;
-        /** Event emitted when the option is selected. */
+        /**
+         * Event emitted when the option is selected.
+         */
         this.selectFocusedIndex = new EventEmitter();
-        /** Event emitted when a label is focused. */
+        /**
+         * Event emitted when a label is focused.
+         */
         this.indexFocused = new EventEmitter();
     }
     /**

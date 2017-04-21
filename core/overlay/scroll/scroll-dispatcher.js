@@ -4,8 +4,10 @@ import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/observable/fromEvent';
 import 'rxjs/add/observable/merge';
 import 'rxjs/add/operator/auditTime';
-/** Time in ms to throttle the scrolling events by default. */
-export const /** @type {?} */ DEFAULT_SCROLL_TIME = 20;
+/**
+ * Time in ms to throttle the scrolling events by default.
+ */
+export const DEFAULT_SCROLL_TIME = 20;
 /**
  * Service contained all registered Scrollable references and emits an event when any one of the
  * Scrollable references emit a scrolled event.
@@ -16,10 +18,17 @@ export class ScrollDispatcher {
      */
     constructor(_ngZone) {
         this._ngZone = _ngZone;
-        /** Subject for notifying that a registered scrollable reference element has been scrolled. */
+        /**
+         * Subject for notifying that a registered scrollable reference element has been scrolled.
+         */
         this._scrolled = new Subject();
-        /** Keeps track of the global `scroll` and `resize` subscriptions. */
+        /**
+         * Keeps track of the global `scroll` and `resize` subscriptions.
+         */
         this._globalSubscription = null;
+        /**
+         * Keeps track of the amount of subscriptions to `scrolled`. Used for cleaning up afterwards.
+         */
         this._scrolledCount = 0;
         /**
          * Map of all the scrollable references that are registered with the service and their

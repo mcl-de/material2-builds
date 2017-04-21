@@ -20,7 +20,9 @@ export class RippleRef {
         this._renderer = _renderer;
         this.element = element;
         this.config = config;
-        /** Current state of the ripple reference. */
+        /**
+         * Current state of the ripple reference.
+         */
         this.state = RippleState.HIDDEN;
     }
     /**

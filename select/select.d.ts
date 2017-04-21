@@ -214,10 +214,11 @@ export declare class MdSelect implements AfterContentInit, OnDestroy, OnInit, Co
     readonly triggerValue: string;
     /** Whether the element is in RTL mode. */
     _isRtl(): boolean;
-    /** The width of the trigger element. This is necessary to match
+    /**
+     * Sets the width of the trigger element. This is necessary to match
      * the overlay width to the trigger width.
      */
-    _getWidth(): number;
+    private _setTriggerWidth();
     /** Ensures the panel opens if activated by the keyboard. */
     _handleKeydown(event: KeyboardEvent): void;
     /**
@@ -279,7 +280,6 @@ export declare class MdSelect implements AfterContentInit, OnDestroy, OnInit, Co
     /**
      * Sets the `multiple` property on each option. The promise is necessary
      * in order to avoid Angular errors when modifying the property after init.
-     * TODO: there should be a better way of doing this.
      */
     private _setOptionMultiple();
     /**

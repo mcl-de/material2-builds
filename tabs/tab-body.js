@@ -1,4 +1,4 @@
-import { ViewChild, Component, Input, Output, EventEmitter, ElementRef, Optional, ChangeDetectorRef, } from '@angular/core';
+import { ViewChild, Component, Input, Output, EventEmitter, ElementRef, Optional, } from '@angular/core';
 import { trigger, state, style, animate, transition, } from '@angular/animations';
 import { PortalHostDirective, Dir } from '../core';
 import 'rxjs/add/operator/map';
@@ -10,18 +10,18 @@ export class MdTabBody {
     /**
      * @param {?} _dir
      * @param {?} _elementRef
-     * @param {?} _changeDetectorRef
      */
-    constructor(_dir, _elementRef, _changeDetectorRef) {
+    constructor(_dir, _elementRef) {
         this._dir = _dir;
         this._elementRef = _elementRef;
-        this._changeDetectorRef = _changeDetectorRef;
-        /** Event emitted when the tab begins to animate towards the center as the active tab. */
+        /**
+         * Event emitted when the tab begins to animate towards the center as the active tab.
+         */
         this.onCentering = new EventEmitter();
-        /** Event emitted when the tab completes its animation towards the center. */
+        /**
+         * Event emitted when the tab completes its animation towards the center.
+         */
         this.onCentered = new EventEmitter(true);
-        /** Whether the element is allowed to be animated. */
-        this._canBeAnimated = false;
     }
     /**
      * @param {?} position
@@ -76,27 +76,6 @@ export class MdTabBody {
         }
     }
     /**
-     * After the content has been checked, determines whether the element should be allowed to
-     * animate. This has to be limited, because under a specific set of circumstances (see #2151),
-     * the animations can be triggered too early, which either crashes Chrome by putting it into an
-     * infinite loop (with Angular < 2.3.0) or throws an error because the element doesn't have a
-     * computed style (with Angular > 2.3.0). This can alternatively be determined by checking the
-     * transform: canBeAnimated = getComputedStyle(element) !== '', however document.contains should
-     * be faster since it doesn't cause a reflow.
-     *
-     * TODO: This can safely be removed after we stop supporting Angular < 2.4.2. The fix landed via
-     * https://github.com/angular/angular/commit/21030e9a1cf30e8101399d8535ed72d847a23ba6
-     * @return {?}
-     */
-    ngAfterContentChecked() {
-        if (!this._canBeAnimated) {
-            this._canBeAnimated = document.body.contains(this._elementRef.nativeElement);
-            if (this._canBeAnimated) {
-                this._changeDetectorRef.markForCheck();
-            }
-        }
-    }
-    /**
      * @param {?} e
      * @return {?}
      */
@@ -139,8 +118,8 @@ export class MdTabBody {
 }
 MdTabBody.decorators = [
     { type: Component, args: [{selector: 'md-tab-body, mat-tab-body',
-                template: "<div class=\"mat-tab-body-content\" #content [@translateTab]=\"_canBeAnimated ? _position : null\" (@translateTab.start)=\"_onTranslateTabStarted($event)\" (@translateTab.done)=\"_onTranslateTabComplete($event)\"> <ng-template cdkPortalHost></ng-template> </div> ",
-                styles: [".mat-tab-body-content{height:100%} /*# sourceMappingURL=tab-body.css.map */ "],
+                template: "<div class=\"mat-tab-body-content\" #content [@translateTab]=\"_position\" (@translateTab.start)=\"_onTranslateTabStarted($event)\" (@translateTab.done)=\"_onTranslateTabComplete($event)\"> <ng-template cdkPortalHost></ng-template> </div> ",
+                styles: [".mat-tab-body-content{height:100%;overflow:auto} /*# sourceMappingURL=tab-body.css.map */ "],
                 host: {
                     '[class.mat-tab-body]': 'true',
                 },
@@ -170,7 +149,6 @@ MdTabBody.decorators = [
 MdTabBody.ctorParameters = () => [
     { type: Dir, decorators: [{ type: Optional },] },
     { type: ElementRef, },
-    { type: ChangeDetectorRef, },
 ];
 MdTabBody.propDecorators = {
     '_portalHost': [{ type: ViewChild, args: [PortalHostDirective,] },],
@@ -216,11 +194,6 @@ function MdTabBody_tsickle_Closure_declarations() {
      */
     MdTabBody.prototype._position;
     /**
-     * Whether the element is allowed to be animated.
-     * @type {?}
-     */
-    MdTabBody.prototype._canBeAnimated;
-    /**
      * The origin position from which this tab should appear when it is centered into view.
      * @type {?}
      */
@@ -229,7 +202,5 @@ function MdTabBody_tsickle_Closure_declarations() {
     MdTabBody.prototype._dir;
     /** @type {?} */
     MdTabBody.prototype._elementRef;
-    /** @type {?} */
-    MdTabBody.prototype._changeDetectorRef;
 }
 //# sourceMappingURL=tab-body.js.map

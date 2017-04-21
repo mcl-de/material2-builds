@@ -6,10 +6,14 @@ import { OverlayPositionBuilder } from './position/overlay-position-builder';
 import { VIEWPORT_RULER_PROVIDER } from './position/viewport-ruler';
 import { OverlayContainer, OVERLAY_CONTAINER_PROVIDER } from './overlay-container';
 import { SCROLL_DISPATCHER_PROVIDER } from './scroll/scroll-dispatcher';
-/** Next overlay unique ID. */
-let /** @type {?} */ nextUniqueId = 0;
-/** The default state for newly created overlays. */
-let /** @type {?} */ defaultState = new OverlayState();
+/**
+ * Next overlay unique ID.
+ */
+let nextUniqueId = 0;
+/**
+ * The default state for newly created overlays.
+ */
+let defaultState = new OverlayState();
 /**
  * Service to create Overlays. Overlays are dynamically added pieces of floating UI, meant to be
  * used as a low-level building building block for other components. Dialogs, tooltips, menus,
@@ -115,8 +119,10 @@ function Overlay_tsickle_Closure_declarations() {
     /** @type {?} */
     Overlay.prototype._ngZone;
 }
-/** Providers for Overlay and its related injectables. */
-export const /** @type {?} */ OVERLAY_PROVIDERS = [
+/**
+ * Providers for Overlay and its related injectables.
+ */
+export const OVERLAY_PROVIDERS = [
     Overlay,
     OverlayPositionBuilder,
     VIEWPORT_RULER_PROVIDER,

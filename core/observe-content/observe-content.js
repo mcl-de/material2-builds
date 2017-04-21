@@ -9,7 +9,9 @@ export class ObserveContent {
      */
     constructor(_elementRef) {
         this._elementRef = _elementRef;
-        /** Event emitted for each change in the element's content. */
+        /**
+         * Event emitted for each change in the element's content.
+         */
         this.event = new EventEmitter();
     }
     /**

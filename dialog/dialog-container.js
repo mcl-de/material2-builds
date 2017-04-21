@@ -1,9 +1,8 @@
-import { Component, ViewChild, ViewEncapsulation, NgZone, Renderer, ElementRef, EventEmitter, } from '@angular/core';
+import { Component, ViewChild, ViewEncapsulation, Renderer, ElementRef, EventEmitter, } from '@angular/core';
 import { animate, trigger, state, style, transition, } from '@angular/animations';
 import { BasePortalHost, PortalHostDirective } from '../core';
 import { MdDialogContentAlreadyAttachedError } from './dialog-errors';
 import { FocusTrapFactory } from '../core/a11y/focus-trap';
-import 'rxjs/add/operator/first';
 /**
  * Internal component that wraps user-provided dialog content.
  * Animation is based on https://material.io/guidelines/motion/choreography.html.
@@ -11,21 +10,26 @@ import 'rxjs/add/operator/first';
  */
 export class MdDialogContainer extends BasePortalHost {
     /**
-     * @param {?} _ngZone
      * @param {?} _renderer
      * @param {?} _elementRef
      * @param {?} _focusTrapFactory
      */
-    constructor(_ngZone, _renderer, _elementRef, _focusTrapFactory) {
+    constructor(_renderer, _elementRef, _focusTrapFactory) {
         super();
-        this._ngZone = _ngZone;
         this._renderer = _renderer;
         this._elementRef = _elementRef;
         this._focusTrapFactory = _focusTrapFactory;
+        /**
+         * Element that was focused before the dialog was opened. Save this to restore upon close.
+         */
         this._elementFocusedBeforeDialogWasOpened = null;
-        /** State of the dialog animation. */
+        /**
+         * State of the dialog animation.
+         */
         this._state = 'enter';
-        /** Emits the current animation state whenever it changes. */
+        /**
+         * Emits the current animation state whenever it changes.
+         */
         this._onAnimationStateChange = new EventEmitter();
     }
     /**
@@ -66,46 +70,35 @@ export class MdDialogContainer extends BasePortalHost {
         this._focusTrap.focusFirstTabbableElementWhenReady();
     }
     /**
-     * Kicks off the leave animation.
-     * \@docs-private
-     * @return {?}
-     */
-    _exit() {
-        this._state = 'exit';
-        this._onAnimationStateChange.emit('exit-start');
-    }
-    /**
      * Callback, invoked whenever an animation on the host completes.
      * \@docs-private
      * @param {?} event
      * @return {?}
      */
     _onAnimationDone(event) {
+        this._onAnimationStateChange.emit(event);
         if (event.toState === 'enter') {
             this._trapFocus();
         }
-        this._onAnimationStateChange.emit(/** @type {?} */ (event.toState));
+        else if (event.toState === 'exit') {
+            this._onAnimationStateChange.complete();
+        }
     }
     /**
+     * Kicks off the leave animation and restores focus to the previously-focused element.
+     * \@docs-private
      * @return {?}
      */
-    ngOnDestroy() {
-        // When the dialog is destroyed, return focus to the element that originally had it before
-        // the dialog was opened. Wait for the DOM to finish settling before changing the focus so
-        // that it doesn't end up back on the <body>. Also note that we need the extra check, because
-        // IE can set the `activeElement` to null in some cases.
-        let /** @type {?} */ toFocus = (this._elementFocusedBeforeDialogWasOpened);
-        // We shouldn't use `this` inside of the NgZone subscription, because it causes a memory leak.
-        let /** @type {?} */ animationStream = this._onAnimationStateChange;
-        this._ngZone.onMicrotaskEmpty.first().subscribe(() => {
-            if (toFocus && 'focus' in toFocus) {
-                toFocus.focus();
-            }
-            animationStream.complete();
-        });
+    _exit() {
+        // We need the extra check, because IE can set the `activeElement` to null in some cases.
+        let /** @type {?} */ toFocus = this._elementFocusedBeforeDialogWasOpened;
+        if (toFocus && 'focus' in toFocus) {
+            toFocus.focus();
+        }
         if (this._focusTrap) {
             this._focusTrap.destroy();
         }
+        this._state = 'exit';
     }
 }
 MdDialogContainer.decorators = [
@@ -115,9 +108,9 @@ MdDialogContainer.decorators = [
                 encapsulation: ViewEncapsulation.None,
                 animations: [
                     trigger('slideDialog', [
-                        state('void', style({ transform: 'translateY(25%) scale(0.9)', opacity: 0 })),
-                        state('enter', style({ transform: 'translateY(0%) scale(1)', opacity: 1 })),
-                        state('exit', style({ transform: 'translateY(25%)', opacity: 0 })),
+                        state('void', style({ transform: 'translate3d(0, 25%, 0) scale(0.9)', opacity: 0 })),
+                        state('enter', style({ transform: 'translate3d(0, 0, 0) scale(1)', opacity: 1 })),
+                        state('exit', style({ transform: 'translate3d(0, 25%, 0)', opacity: 0 })),
                         transition('* => *', animate('400ms cubic-bezier(0.25, 0.8, 0.25, 1)')),
                     ])
                 ],
@@ -133,7 +126,6 @@ MdDialogContainer.decorators = [
  * @nocollapse
  */
 MdDialogContainer.ctorParameters = () => [
-    { type: NgZone, },
     { type: Renderer, },
     { type: ElementRef, },
     { type: FocusTrapFactory, },
@@ -181,8 +173,6 @@ function MdDialogContainer_tsickle_Closure_declarations() {
      * @type {?}
      */
     MdDialogContainer.prototype._onAnimationStateChange;
-    /** @type {?} */
-    MdDialogContainer.prototype._ngZone;
     /** @type {?} */
     MdDialogContainer.prototype._renderer;
     /** @type {?} */

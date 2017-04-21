@@ -14,26 +14,31 @@ import { MdSelectDynamicMultipleError, MdSelectNonArrayValueError } from './sele
 import 'rxjs/add/observable/merge';
 import 'rxjs/add/operator/startWith';
 /**
- * The following style constants are necessary to save here in order
- * to properly calculate the alignment of the selected option over
- * the trigger element.
+ * The fixed height of every option element.
  */
-/** The fixed height of every option element. */
-export const /** @type {?} */ SELECT_OPTION_HEIGHT = 48;
-/** The max height of the select's overlay panel */
-export const /** @type {?} */ SELECT_PANEL_MAX_HEIGHT = 256;
-/** The max number of options visible at once in the select panel. */
-export const /** @type {?} */ SELECT_MAX_OPTIONS_DISPLAYED = 5;
-/** The fixed height of the select's trigger element. */
-export const /** @type {?} */ SELECT_TRIGGER_HEIGHT = 30;
+export const SELECT_OPTION_HEIGHT = 48;
+/**
+ * The max height of the select's overlay panel
+ */
+export const SELECT_PANEL_MAX_HEIGHT = 256;
+/**
+ * The max number of options visible at once in the select panel.
+ */
+export const SELECT_MAX_OPTIONS_DISPLAYED = 5;
+/**
+ * The fixed height of the select's trigger element.
+ */
+export const SELECT_TRIGGER_HEIGHT = 30;
 /**
  * Must adjust for the difference in height between the option and the trigger,
  * so the text will align on the y axis.
  * (SELECT_OPTION_HEIGHT (48) - SELECT_TRIGGER_HEIGHT (30)) / 2 = 9
  */
-export const /** @type {?} */ SELECT_OPTION_HEIGHT_ADJUSTMENT = 9;
-/** The panel's padding on the x-axis */
-export const /** @type {?} */ SELECT_PANEL_PADDING_X = 16;
+export const SELECT_OPTION_HEIGHT_ADJUSTMENT = 9;
+/**
+ * The panel's padding on the x-axis
+ */
+export const SELECT_PANEL_PADDING_X = 16;
 /**
  * Distance between the panel edge and the option text in
  * multi-selection mode.
@@ -43,17 +48,17 @@ export const /** @type {?} */ SELECT_PANEL_PADDING_X = 16;
  * the browser adds ~4px, because we're using inline elements.
  * The checkbox width is 20px.
  */
-export const /** @type {?} */ SELECT_MULTIPLE_PANEL_PADDING_X = SELECT_PANEL_PADDING_X * 1.75 + 20;
+export const SELECT_MULTIPLE_PANEL_PADDING_X = SELECT_PANEL_PADDING_X * 1.75 + 20;
 /**
  * The panel's padding on the y-axis. This padding indicates there are more
  * options available if you scroll.
  */
-export const /** @type {?} */ SELECT_PANEL_PADDING_Y = 16;
+export const SELECT_PANEL_PADDING_Y = 16;
 /**
  * The select panel will only "fit" inside the viewport if it is positioned at
  * this value or more away from the viewport boundary.
  */
-export const /** @type {?} */ SELECT_PANEL_VIEWPORT_PADDING = 8;
+export const SELECT_PANEL_VIEWPORT_PADDING = 8;
 /**
  * Change event object that is emitted when the select value has changed.
  */
@@ -90,21 +95,49 @@ export class MdSelect {
         this._changeDetectorRef = _changeDetectorRef;
         this._dir = _dir;
         this._control = _control;
+        /**
+         * Whether or not the overlay panel is open.
+         */
         this._panelOpen = false;
+        /**
+         * Whether filling out the select is required in the form.
+         */
         this._required = false;
+        /**
+         * Whether the select is disabled.
+         */
         this._disabled = false;
+        /**
+         * The scroll position of the overlay panel, calculated to center the selected option.
+         */
         this._scrollTop = 0;
+        /**
+         * Whether the component is in multiple selection mode.
+         */
         this._multiple = false;
+        /**
+         * The animation state of the placeholder.
+         */
         this._placeholderState = '';
-        /** View -> model callback called when value changes */
+        /**
+         * View -> model callback called when value changes
+         */
         this._onChange = (value) => { };
-        /** View -> model callback called when select has been touched */
+        /**
+         * View -> model callback called when select has been touched
+         */
         this._onTouched = () => { };
-        /** The IDs of child options to be passed to the aria-owns attribute. */
+        /**
+         * The IDs of child options to be passed to the aria-owns attribute.
+         */
         this._optionIds = '';
-        /** The value of the select panel's transform-origin property. */
+        /**
+         * The value of the select panel's transform-origin property.
+         */
         this._transformOrigin = 'top';
-        /** Whether the panel's animation is done. */
+        /**
+         * Whether the panel's animation is done.
+         */
         this._panelDoneAnimating = false;
         /**
          * The x-offset of the overlay panel in relation to the trigger's top start corner.
@@ -139,15 +172,25 @@ export class MdSelect {
             },
         ];
         this._floatPlaceholder = 'auto';
-        /** Aria label of the select. If not specified, the placeholder will be used as label. */
+        /**
+         * Aria label of the select. If not specified, the placeholder will be used as label.
+         */
         this.ariaLabel = '';
-        /** Input that can be used to specify the `aria-labelledby` attribute. */
+        /**
+         * Input that can be used to specify the `aria-labelledby` attribute.
+         */
         this.ariaLabelledby = '';
-        /** Event emitted when the select has been opened. */
+        /**
+         * Event emitted when the select has been opened.
+         */
         this.onOpen = new EventEmitter();
-        /** Event emitted when the select has been closed. */
+        /**
+         * Event emitted when the select has been closed.
+         */
         this.onClose = new EventEmitter();
-        /** Event emitted when the selected value has been changed by the user. */
+        /**
+         * Event emitted when the selected value has been changed by the user.
+         */
         this.change = new EventEmitter();
         if (this._control) {
             this._control.valueAccessor = this;
@@ -166,7 +209,7 @@ export class MdSelect {
     set placeholder(value) {
         this._placeholder = value;
         // Must wait to record the trigger width to ensure placeholder width is included.
-        Promise.resolve(null).then(() => this._triggerWidth = this._getWidth());
+        Promise.resolve(null).then(() => this._setTriggerWidth());
     }
     /**
      * Whether the component is disabled.
@@ -285,6 +328,9 @@ export class MdSelect {
         if (this.disabled || !this.options.length) {
             return;
         }
+        if (!this._triggerWidth) {
+            this._setTriggerWidth();
+        }
         this._calculateOverlayPosition();
         this._placeholderState = this._floatPlaceholderState();
         this._panelOpen = true;
@@ -383,12 +429,12 @@ export class MdSelect {
         return this._dir ? this._dir.value === 'rtl' : false;
     }
     /**
-     * The width of the trigger element. This is necessary to match
+     * Sets the width of the trigger element. This is necessary to match
      * the overlay width to the trigger width.
      * @return {?}
      */
-    _getWidth() {
-        return this._getTriggerRect().width;
+    _setTriggerWidth() {
+        this._triggerWidth = this._getTriggerRect().width;
     }
     /**
      * Ensures the panel opens if activated by the keyboard.
@@ -599,7 +645,6 @@ export class MdSelect {
     /**
      * Sets the `multiple` property on each option. The promise is necessary
      * in order to avoid Angular errors when modifying the property after init.
-     * TODO: there should be a better way of doing this.
      * @return {?}
      */
     _setOptionMultiple() {

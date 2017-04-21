@@ -51,23 +51,47 @@ export class MdSidenav {
         this._elementRef = _elementRef;
         this._renderer = _renderer;
         this._focusTrapFactory = _focusTrapFactory;
+        /**
+         * Alignment of the sidenav (direction neutral); whether 'start' or 'end'.
+         */
         this._align = 'start';
-        /** Mode of the sidenav; whether 'over' or 'side'. */
+        /**
+         * Mode of the sidenav; one of 'over', 'push' or 'side'.
+         */
         this.mode = 'over';
         this._disableClose = false;
-        /** Whether the sidenav is opened. */
+        /**
+         * Whether the sidenav is opened.
+         */
         this._opened = false;
-        /** Event emitted when the sidenav is being opened. Use this to synchronize animations. */
+        /**
+         * Event emitted when the sidenav is being opened. Use this to synchronize animations.
+         */
         this.onOpenStart = new EventEmitter();
-        /** Event emitted when the sidenav is fully opened. */
+        /**
+         * Event emitted when the sidenav is fully opened.
+         */
         this.onOpen = new EventEmitter();
-        /** Event emitted when the sidenav is being closed. Use this to synchronize animations. */
+        /**
+         * Event emitted when the sidenav is being closed. Use this to synchronize animations.
+         */
         this.onCloseStart = new EventEmitter();
-        /** Event emitted when the sidenav is fully closed. */
+        /**
+         * Event emitted when the sidenav is fully closed.
+         */
         this.onClose = new EventEmitter();
-        /** Event emitted when the sidenav alignment changes. */
+        /**
+         * Event emitted when the sidenav alignment changes.
+         */
         this.onAlignChanged = new EventEmitter();
+        /**
+         * The current toggle animation promise. `null` if no animation is in progress.
+         */
         this._toggleAnimationPromise = null;
+        /**
+         * The current toggle animation promise resolution function.
+         * `null` if no animation is in progress.
+         */
         this._resolveToggleAnimationPromise = null;
         this._elementFocusedBeforeSidenavWasOpened = null;
         this.onOpen.subscribe(() => {
@@ -353,7 +377,7 @@ function MdSidenav_tsickle_Closure_declarations() {
      */
     MdSidenav.prototype._align;
     /**
-     * Mode of the sidenav; whether 'over' or 'side'.
+     * Mode of the sidenav; one of 'over', 'push' or 'side'.
      * @type {?}
      */
     MdSidenav.prototype.mode;
@@ -427,9 +451,13 @@ export class MdSidenavContainer {
         this._element = _element;
         this._renderer = _renderer;
         this._ngZone = _ngZone;
-        /** Event emitted when the sidenav backdrop is clicked. */
+        /**
+         * Event emitted when the sidenav backdrop is clicked.
+         */
         this.backdropClick = new EventEmitter();
-        /** Whether to enable open/close trantions. */
+        /**
+         * Whether to enable open/close trantions.
+         */
         this._enableTransitions = false;
         // If a `Dir` directive exists up the tree, listen direction changes and update the left/right
         // properties to point to the proper start/end.

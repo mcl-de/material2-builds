@@ -10,51 +10,89 @@ export class MdTextareaAutosize {
         this._elementRef = _elementRef;
     }
     /**
+     * @deprecated Use mdAutosizeMinRows
      * @return {?}
      */
-    get mdAutosizeMinRows() {
-        return this.minRows;
-    }
+    get minRows() { return this._minRows; }
     /**
      * @param {?} value
      * @return {?}
      */
-    set mdAutosizeMinRows(value) {
-        this.minRows = value;
+    set minRows(value) {
+        this._minRows = value;
+        this._setMinHeight();
     }
     /**
+     * @deprecated Use mdAutosizeMaxRows
      * @return {?}
      */
-    get mdAutosizeMaxRows() {
-        return this.maxRows;
-    }
+    get maxRows() { return this._maxRows; }
     /**
      * @param {?} value
      * @return {?}
      */
-    set mdAutosizeMaxRows(value) {
-        this.maxRows = value;
+    set maxRows(value) {
+        this._maxRows = value;
+        this._setMaxHeight();
     }
     /**
-     * The minimum height of the textarea as determined by minRows.
+     * Minimum number of rows for this textarea.
      * @return {?}
      */
-    get _minHeight() {
-        return this.minRows ? `${this.minRows * this._cachedLineHeight}px` : null;
+    get mdAutosizeMinRows() { return this.minRows; }
+    /**
+     * @param {?} value
+     * @return {?}
+     */
+    set mdAutosizeMinRows(value) { this.minRows = value; }
+    /**
+     * Maximum number of rows for this textarea.
+     * @return {?}
+     */
+    get mdAutosizeMaxRows() { return this.maxRows; }
+    /**
+     * @param {?} value
+     * @return {?}
+     */
+    set mdAutosizeMaxRows(value) { this.maxRows = value; }
+    /**
+     * Sets the minimum height of the textarea as determined by minRows.
+     * @return {?}
+     */
+    _setMinHeight() {
+        const /** @type {?} */ minHeight = this.minRows && this._cachedLineHeight ?
+            `${this.minRows * this._cachedLineHeight}px` : null;
+        if (minHeight) {
+            this._setTextareaStyle('minHeight', minHeight);
+        }
     }
     /**
-     * The maximum height of the textarea as determined by maxRows.
+     * Sets the maximum height of the textarea as determined by maxRows.
      * @return {?}
      */
-    get _maxHeight() {
-        return this.maxRows ? `${this.maxRows * this._cachedLineHeight}px` : null;
+    _setMaxHeight() {
+        const /** @type {?} */ maxHeight = this.maxRows && this._cachedLineHeight ?
+            `${this.maxRows * this._cachedLineHeight}px` : null;
+        if (maxHeight) {
+            this._setTextareaStyle('maxHeight', maxHeight);
+        }
     }
     /**
      * @return {?}
      */
-    ngOnInit() {
+    ngAfterViewInit() {
         this._cacheTextareaLineHeight();
         this.resizeToFitContent();
+    }
+    /**
+     * Sets a style property on the textarea element.
+     * @param {?} property
+     * @param {?} value
+     * @return {?}
+     */
+    _setTextareaStyle(property, value) {
+        const /** @type {?} */ textarea = (this._elementRef.nativeElement);
+        textarea.style[property] = value;
     }
     /**
      * Cache the height of a single-row textarea.
@@ -75,13 +113,16 @@ export class MdTextareaAutosize {
         textareaClone.style.position = 'absolute';
         textareaClone.style.visibility = 'hidden';
         textareaClone.style.border = 'none';
-        textareaClone.style.padding = '';
+        textareaClone.style.padding = '0';
         textareaClone.style.height = '';
         textareaClone.style.minHeight = '';
         textareaClone.style.maxHeight = '';
         textarea.parentNode.appendChild(textareaClone);
-        this._cachedLineHeight = textareaClone.offsetHeight;
+        this._cachedLineHeight = textareaClone.clientHeight;
         textarea.parentNode.removeChild(textareaClone);
+        // Min and max heights have to be re-calculated if the cached line height changes
+        this._setMinHeight();
+        this._setMaxHeight();
     }
     /**
      * Resize the textarea to fit its content.
@@ -102,8 +143,6 @@ MdTextareaAutosize.decorators = [
                 exportAs: 'mdTextareaAutosize',
                 host: {
                     '(input)': 'resizeToFitContent()',
-                    '[style.min-height]': '_minHeight',
-                    '[style.max-height]': '_maxHeight',
                 },
             },] },
 ];
@@ -115,8 +154,8 @@ MdTextareaAutosize.ctorParameters = () => [
 ];
 MdTextareaAutosize.propDecorators = {
     'minRows': [{ type: Input },],
-    'mdAutosizeMinRows': [{ type: Input },],
     'maxRows': [{ type: Input },],
+    'mdAutosizeMinRows': [{ type: Input },],
     'mdAutosizeMaxRows': [{ type: Input },],
 };
 function MdTextareaAutosize_tsickle_Closure_declarations() {
@@ -129,16 +168,10 @@ function MdTextareaAutosize_tsickle_Closure_declarations() {
     MdTextareaAutosize.ctorParameters;
     /** @type {?} */
     MdTextareaAutosize.propDecorators;
-    /**
-     * Minimum number of rows for this textarea.
-     * @type {?}
-     */
-    MdTextareaAutosize.prototype.minRows;
-    /**
-     * Maximum number of rows for this textarea.
-     * @type {?}
-     */
-    MdTextareaAutosize.prototype.maxRows;
+    /** @type {?} */
+    MdTextareaAutosize.prototype._minRows;
+    /** @type {?} */
+    MdTextareaAutosize.prototype._maxRows;
     /**
      * Cached height of a textarea with a single row.
      * @type {?}

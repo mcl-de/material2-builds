@@ -35,12 +35,32 @@ function MdRadioChange_tsickle_Closure_declarations() {
  */
 export class MdRadioGroup {
     constructor() {
+        /**
+         * Selected value for group. Should equal the value of the selected radio button if there *is*
+         * a corresponding radio button with a matching value. If there is *not* such a corresponding
+         * radio button, this value persists to be applied in case a new radio button is added with a
+         * matching value.
+         */
         this._value = null;
+        /**
+         * The HTML name attribute applied to radio buttons in this group.
+         */
         this._name = `md-radio-group-${_uniqueIdCounter++}`;
+        /**
+         * Disables all individual radio buttons assigned to this group.
+         */
         this._disabled = false;
+        /**
+         * The currently selected radio button. Should match value.
+         */
         this._selected = null;
+        /**
+         * Whether the `value` has been set to its initial value.
+         */
         this._isInitialized = false;
-        /** The method to be called in order to update ngModel */
+        /**
+         * The method to be called in order to update ngModel
+         */
         this._controlValueAccessorChangeFn = (value) => { };
         /**
          * onTouch function registered via registerOnTouch (ControlValueAccessor).
@@ -53,9 +73,13 @@ export class MdRadioGroup {
          * a radio button (the same behavior as `<input type-"radio">`).
          */
         this.change = new EventEmitter();
-        /** Child radio buttons. */
+        /**
+         * Child radio buttons.
+         */
         this._radios = null;
-        /** Whether the labels should appear after or before the radio-buttons. Defaults to 'after' */
+        /**
+         * Whether the labels should appear after or before the radio-buttons. Defaults to 'after'
+         */
         this.labelPosition = 'after';
     }
     /**
@@ -344,7 +368,9 @@ export class MdRadioButton {
         this._renderer = _renderer;
         this._focusOriginMonitor = _focusOriginMonitor;
         this._radioDispatcher = _radioDispatcher;
-        /** The unique ID for the radio button. */
+        /**
+         * The unique ID for the radio button.
+         */
         this.id = `md-radio-${_uniqueIdCounter++}`;
         /**
          * Event emitted when the checked state of this radio button changes.
@@ -352,7 +378,13 @@ export class MdRadioButton {
          * the radio button (the same behavior as `<input type-"radio">`).
          */
         this.change = new EventEmitter();
+        /**
+         * Whether this radio is checked.
+         */
         this._checked = false;
+        /**
+         * Value assigned to this radio.
+         */
         this._value = null;
         this.radioGroup = radioGroup;
         _radioDispatcher.listen((id, name) => {
@@ -499,13 +531,9 @@ export class MdRadioButton {
      * @return {?}
      */
     ngAfterViewInit() {
-        this._focusOriginMonitorSubscription = this._focusOriginMonitor
+        this._focusOriginMonitor
             .monitor(this._inputElement.nativeElement, this._renderer, false)
-            .subscribe(focusOrigin => {
-            if (focusOrigin === 'keyboard' && !this._focusedRippleRef) {
-                this._focusedRippleRef = this._ripple.launch(0, 0, { persistent: true, centered: true });
-            }
-        });
+            .subscribe(focusOrigin => this._onInputFocusChange(focusOrigin));
     }
     /**
      * @return {?}
@@ -528,18 +556,6 @@ export class MdRadioButton {
      */
     _isRippleDisabled() {
         return this.disableRipple || this.disabled;
-    }
-    /**
-     * @return {?}
-     */
-    _onInputBlur() {
-        if (this._focusedRippleRef) {
-            this._focusedRippleRef.fadeOut();
-            this._focusedRippleRef = null;
-        }
-        if (this.radioGroup) {
-            this.radioGroup._touch();
-        }
     }
     /**
      * @param {?} event
@@ -577,10 +593,29 @@ export class MdRadioButton {
             }
         }
     }
+    /**
+     * Function is called whenever the focus changes for the input element.
+     * @param {?} focusOrigin
+     * @return {?}
+     */
+    _onInputFocusChange(focusOrigin) {
+        if (!this._focusRipple && focusOrigin === 'keyboard') {
+            this._focusRipple = this._ripple.launch(0, 0, { persistent: true, centered: true });
+        }
+        else if (!focusOrigin) {
+            if (this.radioGroup) {
+                this.radioGroup._touch();
+            }
+            if (this._focusRipple) {
+                this._focusRipple.fadeOut();
+                this._focusRipple = null;
+            }
+        }
+    }
 }
 MdRadioButton.decorators = [
     { type: Component, args: [{selector: 'md-radio-button, mat-radio-button',
-                template: "<!-- TODO(jelbourn): render the radio on either side of the content --> <!-- TODO(mtlin): Evaluate trade-offs of using native radio vs. cost of additional bindings. --> <label [attr.for]=\"inputId\" class=\"mat-radio-label\" #label> <!-- The actual 'radio' part of the control. --> <div class=\"mat-radio-container\"> <div class=\"mat-radio-outer-circle\"></div> <div class=\"mat-radio-inner-circle\"></div> <div md-ripple *ngIf=\"!_isRippleDisabled()\" class=\"mat-radio-ripple\" [mdRippleTrigger]=\"label\" [mdRippleCentered]=\"true\"></div> </div> <input #input class=\"mat-radio-input cdk-visually-hidden\" type=\"radio\" [id]=\"inputId\" [checked]=\"checked\" [disabled]=\"disabled\" [name]=\"name\" [attr.aria-label]=\"ariaLabel\" [attr.aria-labelledby]=\"ariaLabelledby\" (change)=\"_onInputChange($event)\" (blur)=\"_onInputBlur()\" (click)=\"_onInputClick($event)\"> <!-- The label content for radio control. --> <div class=\"mat-radio-label-content\" [class.mat-radio-label-before]=\"labelPosition == 'before'\"> <ng-content></ng-content> </div> </label> ",
+                template: "<!-- TODO(jelbourn): render the radio on either side of the content --> <!-- TODO(mtlin): Evaluate trade-offs of using native radio vs. cost of additional bindings. --> <label [attr.for]=\"inputId\" class=\"mat-radio-label\" #label> <!-- The actual 'radio' part of the control. --> <div class=\"mat-radio-container\"> <div class=\"mat-radio-outer-circle\"></div> <div class=\"mat-radio-inner-circle\"></div> <div md-ripple class=\"mat-radio-ripple\" [mdRippleTrigger]=\"label\" [mdRippleDisabled]=\"_isRippleDisabled()\" [mdRippleCentered]=\"true\"></div> </div> <input #input class=\"mat-radio-input cdk-visually-hidden\" type=\"radio\" [id]=\"inputId\" [checked]=\"checked\" [disabled]=\"disabled\" [name]=\"name\" [attr.aria-label]=\"ariaLabel\" [attr.aria-labelledby]=\"ariaLabelledby\" (change)=\"_onInputChange($event)\" (click)=\"_onInputClick($event)\"> <!-- The label content for radio control. --> <div class=\"mat-radio-label-content\" [class.mat-radio-label-before]=\"labelPosition == 'before'\"> <ng-content></ng-content> </div> </label> ",
                 styles: [".mat-radio-button{display:inline-block;font-family:Roboto,\"Helvetica Neue\",sans-serif}.mat-radio-label{cursor:pointer;display:inline-flex;align-items:baseline;white-space:nowrap}.mat-radio-container{box-sizing:border-box;display:inline-block;height:20px;position:relative;width:20px;top:2px}.mat-radio-outer-circle{box-sizing:border-box;height:20px;left:0;position:absolute;top:0;transition:border-color ease 280ms;width:20px;border-width:2px;border-style:solid;border-radius:50%}.mat-radio-inner-circle{border-radius:50%;box-sizing:border-box;height:20px;left:0;position:absolute;top:0;transition:transform ease 280ms,background-color ease 280ms;transform:scale(0);width:20px}.mat-radio-checked .mat-radio-inner-circle{transform:scale(.5)}.mat-radio-label-content{display:inline-block;order:0;line-height:inherit;padding-left:8px;padding-right:0}[dir=rtl] .mat-radio-label-content{padding-right:8px;padding-left:0}.mat-radio-label-content.mat-radio-label-before{order:-1;padding-left:0;padding-right:8px}[dir=rtl] .mat-radio-label-content.mat-radio-label-before{padding-right:0;padding-left:8px}.mat-radio-disabled,.mat-radio-disabled .mat-radio-label{cursor:default}.mat-radio-ripple{position:absolute;left:-15px;top:-15px;right:-15px;bottom:-15px;border-radius:50%;z-index:1;pointer-events:none} /*# sourceMappingURL=radio.css.map */ "],
                 encapsulation: ViewEncapsulation.None,
                 host: {
@@ -686,15 +721,10 @@ function MdRadioButton_tsickle_Closure_declarations() {
      */
     MdRadioButton.prototype._ripple;
     /**
-     * Stream of focus event from the focus origin monitor.
-     * @type {?}
-     */
-    MdRadioButton.prototype._focusOriginMonitorSubscription;
-    /**
      * Reference to the current focus ripple.
      * @type {?}
      */
-    MdRadioButton.prototype._focusedRippleRef;
+    MdRadioButton.prototype._focusRipple;
     /**
      * The native `<input type=radio>` element
      * @type {?}

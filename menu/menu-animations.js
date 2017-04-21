@@ -32,7 +32,7 @@ export const /** @type {?} */ transformMenu = trigger('transformMenu', [
  * This animation fades in the background color and content of the menu panel
  * after its containing element is scaled in.
  */
-export const /** @type {?} */ fadeInItems = trigger('fadeInItems', [
+export const fadeInItems = trigger('fadeInItems', [
     state('showing', style({ opacity: 1 })),
     transition('void => *', [
         style({ opacity: 0 }),

@@ -34,16 +34,42 @@ function MdButtonToggleChange_tsickle_Closure_declarations() {
  */
 export class MdButtonToggleGroup {
     constructor() {
+        /**
+         * The value for the button toggle group. Should match currently selected button toggle.
+         */
         this._value = null;
+        /**
+         * The HTML name attribute applied to toggles in this group.
+         */
         this._name = `md-button-toggle-group-${_uniqueIdCounter++}`;
+        /**
+         * Disables all toggles in the group.
+         */
         this._disabled = null;
+        /**
+         * Whether the button toggle group should be vertical.
+         */
         this._vertical = false;
+        /**
+         * The currently selected button toggle, should match the value.
+         */
         this._selected = null;
+        /**
+         * Whether the button toggle group is initialized or not.
+         */
         this._isInitialized = false;
+        /**
+         * The method to be called in order to update ngModel.
+         * Now `ngModel` binding is not supported in multiple selection mode.
+         */
         this._controlValueAccessorChangeFn = (value) => { };
-        /** onTouch function registered via registerOnTouch (ControlValueAccessor). */
+        /**
+         * onTouch function registered via registerOnTouch (ControlValueAccessor).
+         */
         this.onTouched = () => { };
-        /** Child button toggle buttons. */
+        /**
+         * Child button toggle buttons.
+         */
         this._buttonToggles = null;
         this._change = new EventEmitter();
     }
@@ -306,7 +332,13 @@ function MdButtonToggleGroup_tsickle_Closure_declarations() {
  */
 export class MdButtonToggleGroupMultiple {
     constructor() {
+        /**
+         * Disables all toggles in the group.
+         */
         this._disabled = null;
+        /**
+         * Whether the button toggle group should be vertical.
+         */
         this._vertical = false;
     }
     /**
@@ -394,10 +426,25 @@ export class MdButtonToggle {
         this._renderer = _renderer;
         this._elementRef = _elementRef;
         this._focusOriginMonitor = _focusOriginMonitor;
+        /**
+         * Whether or not this button toggle is checked.
+         */
         this._checked = false;
+        /**
+         * Whether or not this button toggle is disabled.
+         */
         this._disabled = null;
+        /**
+         * Value assigned to this button toggle.
+         */
         this._value = null;
+        /**
+         * Whether or not the button toggle is a single selection.
+         */
         this._isSingleSelector = null;
+        /**
+         * Event emitted when the group value changes.
+         */
         this._change = new EventEmitter();
         this.buttonToggleGroup = toggleGroup;
         this.buttonToggleGroupMultiple = toggleGroupMultiple;

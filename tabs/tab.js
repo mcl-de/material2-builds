@@ -8,8 +8,13 @@ export class MdTab {
      */
     constructor(_viewContainerRef) {
         this._viewContainerRef = _viewContainerRef;
-        /** The plain text label for the tab, used when there is no template label. */
+        /**
+         * The plain text label for the tab, used when there is no template label.
+         */
         this.textLabel = '';
+        /**
+         * The portal that will be the hosted content of the tab
+         */
         this._contentPortal = null;
         /**
          * The relatively indexed position where 0 represents the center, negative is left, and positive

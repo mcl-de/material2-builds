@@ -7,9 +7,13 @@ import { NgModule, Directive, HostBinding, Output, Input, EventEmitter } from '@
  */
 export class Dir {
     constructor() {
-        /** Layout direction of the element. */
+        /**
+         * Layout direction of the element.
+         */
         this._dir = 'ltr';
-        /** Event emitted when the direction changes. */
+        /**
+         * Event emitted when the direction changes.
+         */
         this.dirChange = new EventEmitter();
     }
     /**

@@ -4,7 +4,9 @@ import { Component, ChangeDetectionStrategy, HostBinding, Input, } from '@angula
  */
 export class MdProgressBar {
     constructor() {
-        /** Color of the progress bar. */
+        /**
+         * Color of the progress bar.
+         */
         this.color = 'primary';
         this._value = 0;
         this._bufferValue = 0;

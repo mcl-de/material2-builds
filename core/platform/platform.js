@@ -11,7 +11,9 @@ const /** @type {?} */ hasV8BreakIterator = typeof (window) !== 'undefined' ?
  */
 export class Platform {
     constructor() {
-        /** Layout Engines */
+        /**
+         * Layout Engines
+         */
         this.EDGE = /(edge)/i.test(navigator.userAgent);
         this.TRIDENT = /(msie|trident)/i.test(navigator.userAgent);
         // EdgeHTML and Trident mock Blink specific things and need to excluded from this check.
@@ -19,7 +21,9 @@ export class Platform {
         // Webkit is part of the userAgent in EdgeHTML Blink and Trident, so we need to
         // ensure that Webkit runs standalone and is not use as another engines base.
         this.WEBKIT = /AppleWebKit/i.test(navigator.userAgent) && !this.BLINK && !this.EDGE && !this.TRIDENT;
-        /** Browsers and Platform Types */
+        /**
+         * Browsers and Platform Types
+         */
         this.IOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
         // It's difficult to detect the plain Gecko engine, because most of the browsers identify
         // them self as Gecko-like browsers and modify the userAgent's according to that.

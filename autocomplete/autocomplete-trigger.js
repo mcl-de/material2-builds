@@ -1,23 +1,24 @@
-import { Directive, ElementRef, forwardRef, Host, Input, NgZone, Optional, ViewContainerRef, } from '@angular/core';
+import { Directive, ElementRef, forwardRef, Host, Input, NgZone, Optional, ViewContainerRef, Inject, ChangeDetectorRef, } from '@angular/core';
 import { NG_VALUE_ACCESSOR } from '@angular/forms';
+import { DOCUMENT } from '@angular/platform-browser';
 import { Overlay, OverlayState, TemplatePortal } from '../core';
 import { Observable } from 'rxjs/Observable';
 import { ENTER, UP_ARROW, DOWN_ARROW } from '../core/keyboard/keycodes';
 import { Dir } from '../core/rtl/dir';
-import { Subject } from 'rxjs/Subject';
+import { MdInputContainer } from '../input/input-container';
 import 'rxjs/add/observable/merge';
+import 'rxjs/add/observable/fromEvent';
+import 'rxjs/add/operator/filter';
 import 'rxjs/add/operator/startWith';
 import 'rxjs/add/operator/switchMap';
-import { MdInputContainer } from '../input/input-container';
 /**
- * The following style constants are necessary to save here in order
- * to properly calculate the scrollTop of the panel. Because we are not
- * actually focusing the active item, scroll must be handled manually.
+ * The height of each autocomplete option.
  */
-/** The height of each autocomplete option. */
-export const /** @type {?} */ AUTOCOMPLETE_OPTION_HEIGHT = 48;
-/** The total height of the autocomplete panel. */
-export const /** @type {?} */ AUTOCOMPLETE_PANEL_HEIGHT = 256;
+export const AUTOCOMPLETE_OPTION_HEIGHT = 48;
+/**
+ * The total height of the autocomplete panel.
+ */
+export const AUTOCOMPLETE_PANEL_HEIGHT = 256;
 /**
  * Provider that allows the autocomplete to register as a ControlValueAccessor.
  * \@docs-private
@@ -32,23 +33,33 @@ export class MdAutocompleteTrigger {
      * @param {?} _element
      * @param {?} _overlay
      * @param {?} _viewContainerRef
+     * @param {?} _changeDetectorRef
      * @param {?} _dir
      * @param {?} _zone
      * @param {?} _inputContainer
+     * @param {?} _document
      */
-    constructor(_element, _overlay, _viewContainerRef, _dir, _zone, _inputContainer) {
+    constructor(_element, _overlay, _viewContainerRef, _changeDetectorRef, _dir, _zone, _inputContainer, _document) {
         this._element = _element;
         this._overlay = _overlay;
         this._viewContainerRef = _viewContainerRef;
+        this._changeDetectorRef = _changeDetectorRef;
         this._dir = _dir;
         this._zone = _zone;
         this._inputContainer = _inputContainer;
+        this._document = _document;
         this._panelOpen = false;
-        this._blurStream = new Subject();
+        /**
+         * Whether or not the placeholder state is being overridden.
+         */
         this._manuallyFloatingPlaceholder = false;
-        /** View -> model callback called when value changes */
+        /**
+         * View -> model callback called when value changes
+         */
         this._onChange = (value) => { };
-        /** View -> model callback called when autocomplete has been touched */
+        /**
+         * View -> model callback called when autocomplete has been touched
+         */
         this._onTouched = () => { };
     }
     /**
@@ -110,6 +121,11 @@ export class MdAutocompleteTrigger {
         }
         this._panelOpen = false;
         this._resetPlaceholder();
+        // We need to trigger change detection manually, because
+        // `fromEvent` doesn't seem to do it at the proper time.
+        // This ensures that the placeholder is reset when the
+        // user clicks outside.
+        this._changeDetectorRef.detectChanges();
     }
     /**
      * A stream of actions that should close the autocomplete panel, including
@@ -117,7 +133,7 @@ export class MdAutocompleteTrigger {
      * @return {?}
      */
     get panelClosingActions() {
-        return Observable.merge(this.optionSelections, this._blurStream.asObservable(), this.autocomplete._keyManager.tabOut);
+        return Observable.merge(this.optionSelections, this.autocomplete._keyManager.tabOut, this._outsideClickStream);
     }
     /**
      * Stream of autocomplete option selections.
@@ -133,6 +149,20 @@ export class MdAutocompleteTrigger {
     get activeOption() {
         if (this.autocomplete._keyManager) {
             return (this.autocomplete._keyManager.activeItem);
+        }
+    }
+    /**
+     * Stream of clicks outside of the autocomplete panel.
+     * @return {?}
+     */
+    get _outsideClickStream() {
+        if (this._document) {
+            return Observable.fromEvent(this._document, 'click').filter((event) => {
+                let /** @type {?} */ clickTarget = (event.target);
+                return this._panelOpen &&
+                    !this._inputContainer._elementRef.nativeElement.contains(clickTarget) &&
+                    !this._overlayRef.overlayElement.contains(clickTarget);
+            });
         }
     }
     /**
@@ -177,11 +207,17 @@ export class MdAutocompleteTrigger {
             event.preventDefault();
         }
         else {
+            const /** @type {?} */ prevActiveItem = this.autocomplete._keyManager.activeItem;
+            const /** @type {?} */ isArrowKey = event.keyCode === UP_ARROW || event.keyCode === DOWN_ARROW;
             this.autocomplete._keyManager.onKeydown(event);
-            if (event.keyCode === UP_ARROW || event.keyCode === DOWN_ARROW) {
+            if (isArrowKey) {
                 this.openPanel();
-                Promise.resolve().then(() => this._scrollToOption());
             }
+            Promise.resolve().then(() => {
+                if (isArrowKey || this.autocomplete._keyManager.activeItem !== prevActiveItem) {
+                    this._scrollToOption();
+                }
+            });
         }
     }
     /**
@@ -195,17 +231,6 @@ export class MdAutocompleteTrigger {
         if (document.activeElement === event.target) {
             this._onChange(((event.target)).value);
             this.openPanel();
-        }
-    }
-    /**
-     * @param {?} newlyFocusedTag
-     * @return {?}
-     */
-    _handleBlur(newlyFocusedTag) {
-        this._onTouched();
-        // Only emit blur event if the new focus is *not* on an option.
-        if (newlyFocusedTag !== 'MD-OPTION') {
-            this._blurStream.next(null);
         }
     }
     /**
@@ -284,7 +309,7 @@ export class MdAutocompleteTrigger {
      * @return {?}
      */
     _setValueAndClose(event) {
-        if (event) {
+        if (event && event.source) {
             this._clearPreviousSelectedOption(event.source);
             this._setTriggerValue(event.source.value);
             this._onChange(event.source.value);
@@ -377,8 +402,8 @@ MdAutocompleteTrigger.decorators = [
                     '[attr.aria-expanded]': 'panelOpen.toString()',
                     '[attr.aria-owns]': 'autocomplete?.id',
                     '(focus)': 'openPanel()',
-                    '(blur)': '_handleBlur($event.relatedTarget?.tagName)',
                     '(input)': '_handleInput($event)',
+                    '(blur)': '_onTouched()',
                     '(keydown)': '_handleKeydown($event)',
                 },
                 providers: [MD_AUTOCOMPLETE_VALUE_ACCESSOR]
@@ -391,9 +416,11 @@ MdAutocompleteTrigger.ctorParameters = () => [
     { type: ElementRef, },
     { type: Overlay, },
     { type: ViewContainerRef, },
+    { type: ChangeDetectorRef, },
     { type: Dir, decorators: [{ type: Optional },] },
     { type: NgZone, },
     { type: MdInputContainer, decorators: [{ type: Optional }, { type: Host },] },
+    { type: undefined, decorators: [{ type: Optional }, { type: Inject, args: [DOCUMENT,] },] },
 ];
 MdAutocompleteTrigger.propDecorators = {
     'autocomplete': [{ type: Input, args: ['mdAutocomplete',] },],
@@ -423,11 +450,6 @@ function MdAutocompleteTrigger_tsickle_Closure_declarations() {
     /** @type {?} */
     MdAutocompleteTrigger.prototype._positionStrategy;
     /**
-     * Stream of blur events that should close the panel.
-     * @type {?}
-     */
-    MdAutocompleteTrigger.prototype._blurStream;
-    /**
      * Whether or not the placeholder state is being overridden.
      * @type {?}
      */
@@ -451,10 +473,14 @@ function MdAutocompleteTrigger_tsickle_Closure_declarations() {
     /** @type {?} */
     MdAutocompleteTrigger.prototype._viewContainerRef;
     /** @type {?} */
+    MdAutocompleteTrigger.prototype._changeDetectorRef;
+    /** @type {?} */
     MdAutocompleteTrigger.prototype._dir;
     /** @type {?} */
     MdAutocompleteTrigger.prototype._zone;
     /** @type {?} */
     MdAutocompleteTrigger.prototype._inputContainer;
+    /** @type {?} */
+    MdAutocompleteTrigger.prototype._document;
 }
 //# sourceMappingURL=autocomplete-trigger.js.map

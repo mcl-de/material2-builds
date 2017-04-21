@@ -158,6 +158,9 @@ function TemplatePortal_tsickle_Closure_declarations() {
  */
 export class BasePortalHost {
     constructor() {
+        /**
+         * Whether this host has already been permanently disposed.
+         */
         this._isDisposed = false;
     }
     /**

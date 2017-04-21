@@ -76,7 +76,6 @@ function LiveAnnouncer_tsickle_Closure_declarations() {
 export function LIVE_ANNOUNCER_PROVIDER_FACTORY(parentDispatcher, liveElement) {
     return parentDispatcher || new LiveAnnouncer(liveElement);
 }
-;
 export const /** @type {?} */ LIVE_ANNOUNCER_PROVIDER = {
     // If there is already a LiveAnnouncer available, use that. Otherwise, provide a new one.
     provide: LiveAnnouncer,

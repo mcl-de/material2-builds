@@ -96,25 +96,19 @@ export declare class MdCheckbox implements ControlValueAccessor, AfterViewInit, 
     private _color;
     private _controlValueAccessorChangeFn;
     /** Reference to the focused state ripple. */
-    private _focusedRipple;
-    /** Reference to the focus origin monitor subscription. */
-    private _focusedSubscription;
+    private _focusRipple;
     constructor(_renderer: Renderer, _elementRef: ElementRef, _changeDetectorRef: ChangeDetectorRef, _focusOriginMonitor: FocusOriginMonitor);
     ngAfterViewInit(): void;
     ngOnDestroy(): void;
     /**
-     * Whether the checkbox is checked. Note that setting `checked` will immediately set
-     * `indeterminate` to false.
+     * Whether the checkbox is checked.
      */
     checked: boolean;
     /**
      * Whether the checkbox is indeterminate. This is also known as "mixed" mode and can be used to
      * represent a checkbox with three states, e.g. a checkbox that represents a nested list of
-     * checkable items. Note that whenever `checked` is set, indeterminate is immediately set to
-     * false. This differs from the web platform in that indeterminate state on native
-     * checkboxes is only remove when the user manually checks the checkbox (rather than setting the
-     * `checked` property programmatically). However, we feel that this behavior is more accommodating
-     * to the way consumers would envision using this component.
+     * checkable items. Note that whenever checkbox is manually clicked, indeterminate is immediately
+     * set to false.
      */
     indeterminate: boolean;
     /** The color of the button. Can be `primary`, `accent`, or `warn`. */
@@ -146,8 +140,8 @@ export declare class MdCheckbox implements ControlValueAccessor, AfterViewInit, 
     setDisabledState(isDisabled: boolean): void;
     private _transitionCheckState(newState);
     private _emitChangeEvent();
-    /** Informs the component when we lose focus in order to style accordingly */
-    _onInputBlur(): void;
+    /** Function is called whenever the focus changes for the input element. */
+    private _onInputFocusChange(focusOrigin);
     /** Toggles the `checked` state of the checkbox. */
     toggle(): void;
     /**
@@ -162,6 +156,6 @@ export declare class MdCheckbox implements ControlValueAccessor, AfterViewInit, 
     focus(): void;
     _onInteractionEvent(event: Event): void;
     private _getAnimationClassForCheckStateTransition(oldState, newState);
-    /** Fades out the focused state ripple. */
-    private _removeFocusedRipple();
+    /** Fades out the focus state ripple. */
+    private _removeFocusRipple();
 }

@@ -1,8 +1,12 @@
 import { RippleRef, RippleState } from './ripple-ref';
-/** Fade-in duration for the ripples. Can be modified with the speedFactor option. */
-export const /** @type {?} */ RIPPLE_FADE_IN_DURATION = 450;
-/** Fade-out duration for the ripples in milliseconds. This can't be modified by the speedFactor. */
-export const /** @type {?} */ RIPPLE_FADE_OUT_DURATION = 400;
+/**
+ * Fade-in duration for the ripples. Can be modified with the speedFactor option.
+ */
+export const RIPPLE_FADE_IN_DURATION = 450;
+/**
+ * Fade-out duration for the ripples in milliseconds. This can't be modified by the speedFactor.
+ */
+export const RIPPLE_FADE_OUT_DURATION = 400;
 /**
  * Helper service that performs DOM manipulations. Not intended to be used outside this module.
  * The constructor takes a reference to the ripple directive's host element and a map of DOM
@@ -19,12 +23,25 @@ export class RippleRenderer {
     constructor(_elementRef, _ngZone, _ruler) {
         this._ngZone = _ngZone;
         this._ruler = _ruler;
+        /**
+         * Whether the mouse is currently down or not.
+         */
         this._isMousedown = false;
+        /**
+         * Events to be registered on the trigger element.
+         */
         this._triggerEvents = new Map();
+        /**
+         * Set of currently active ripple references.
+         */
         this._activeRipples = new Set();
-        /** Ripple config for all ripples created by events. */
+        /**
+         * Ripple config for all ripples created by events.
+         */
         this.rippleConfig = {};
-        /** Whether mouse ripples should be created or not. */
+        /**
+         * Whether mouse ripples should be created or not.
+         */
         this.rippleDisabled = false;
         this._containerElement = _elementRef.nativeElement;
         // Specify events which need to be registered on the trigger.

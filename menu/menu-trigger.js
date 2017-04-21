@@ -21,9 +21,13 @@ export class MdMenuTrigger {
         this._dir = _dir;
         this._menuOpen = false;
         this._openedByMouse = false;
-        /** Event emitted when the associated menu is opened. */
+        /**
+         * Event emitted when the associated menu is opened.
+         */
         this.onMenuOpen = new EventEmitter();
-        /** Event emitted when the associated menu is closed. */
+        /**
+         * Event emitted when the associated menu is closed.
+         */
         this.onMenuClose = new EventEmitter();
     }
     /**
@@ -152,7 +156,6 @@ export class MdMenuTrigger {
             this.menu.focusFirstItem();
         }
     }
-    ;
     /**
      * This method resets the menu when it's closed, most importantly restoring
      * focus to the menu trigger if the menu was opened via the keyboard.

@@ -12,8 +12,17 @@ export class FocusOriginMonitor {
      */
     constructor(_ngZone) {
         this._ngZone = _ngZone;
+        /**
+         * The focus origin that the next focus event is a result of.
+         */
         this._origin = null;
+        /**
+         * Whether the window has just been focused.
+         */
         this._windowFocused = false;
+        /**
+         * Weak map of elements being monitored to their info.
+         */
         this._elementInfo = new WeakMap();
         this._ngZone.runOutsideAngular(() => this._registerDocumentEvents());
     }

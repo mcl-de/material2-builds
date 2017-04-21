@@ -1,4 +1,5 @@
 import { Subject } from 'rxjs/Subject';
+import 'rxjs/add/operator/filter';
 /**
  * Reference to a dialog opened via the MdDialog service.
  */
@@ -10,18 +11,18 @@ export class MdDialogRef {
     constructor(_overlayRef, _containerInstance) {
         this._overlayRef = _overlayRef;
         this._containerInstance = _containerInstance;
+        /**
+         * Subject for notifying the user that the dialog has finished closing.
+         */
         this._afterClosed = new Subject();
-        _containerInstance._onAnimationStateChange.subscribe((state) => {
-            if (state === 'exit-start') {
-                // Transition the backdrop in parallel with the dialog.
-                this._overlayRef.detachBackdrop();
-            }
-            else if (state === 'exit') {
-                this._overlayRef.dispose();
-                this._afterClosed.next(this._result);
-                this._afterClosed.complete();
-                this.componentInstance = null;
-            }
+        _containerInstance._onAnimationStateChange
+            .filter((event) => event.toState === 'exit')
+            .subscribe(() => {
+            this._overlayRef.dispose();
+            this.componentInstance = null;
+        }, null, () => {
+            this._afterClosed.next(this._result);
+            this._afterClosed.complete();
         });
     }
     /**
@@ -32,6 +33,7 @@ export class MdDialogRef {
     close(dialogResult) {
         this._result = dialogResult;
         this._containerInstance._exit();
+        this._overlayRef.detachBackdrop(); // Transition the backdrop in parallel with the dialog.
     }
     /**
      * Gets an observable that is notified when the dialog is finished closing.

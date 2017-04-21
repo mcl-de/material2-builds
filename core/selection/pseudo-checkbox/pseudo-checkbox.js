@@ -18,9 +18,13 @@ export class MdPseudoCheckbox {
     constructor(_elementRef, _renderer) {
         this._elementRef = _elementRef;
         this._renderer = _renderer;
-        /** Display state of the checkbox. */
+        /**
+         * Display state of the checkbox.
+         */
         this.state = 'unchecked';
-        /** Whether the checkbox is disabled. */
+        /**
+         * Whether the checkbox is disabled.
+         */
         this.disabled = false;
         this.color = 'accent';
     }
@@ -29,7 +33,6 @@ export class MdPseudoCheckbox {
      * @return {?}
      */
     get color() { return this._color; }
-    ;
     /**
      * @param {?} value
      * @return {?}

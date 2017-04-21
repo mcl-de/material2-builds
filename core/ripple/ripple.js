@@ -1,8 +1,10 @@
 import { Directive, ElementRef, Input, Inject, NgZone, OpaqueToken, Optional, } from '@angular/core';
 import { RippleRenderer } from './ripple-renderer';
 import { ViewportRuler } from '../overlay/position/viewport-ruler';
-/** OpaqueToken that can be used to specify the global ripple options. */
-export const /** @type {?} */ MD_RIPPLE_GLOBAL_OPTIONS = new OpaqueToken('md-ripple-global-options');
+/**
+ * OpaqueToken that can be used to specify the global ripple options.
+ */
+export const MD_RIPPLE_GLOBAL_OPTIONS = new OpaqueToken('md-ripple-global-options');
 export class MdRipple {
     /**
      * @param {?} elementRef

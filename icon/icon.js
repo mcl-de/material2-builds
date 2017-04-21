@@ -57,7 +57,9 @@ export class MdIcon {
         this._elementRef = _elementRef;
         this._renderer = _renderer;
         this._mdIconRegistry = _mdIconRegistry;
-        /** Screenreader label for the icon. */
+        /**
+         * Screenreader label for the icon.
+         */
         this.hostAriaLabel = '';
     }
     /**
@@ -325,7 +327,6 @@ function MdIcon_tsickle_Closure_declarations() {
 export function ICON_REGISTRY_PROVIDER_FACTORY(parentRegistry, http, sanitizer) {
     return parentRegistry || new MdIconRegistry(http, sanitizer);
 }
-;
 export const /** @type {?} */ ICON_REGISTRY_PROVIDER = {
     // If there is already an MdIconRegistry available, use that. Otherwise, provide a new one.
     provide: MdIconRegistry,

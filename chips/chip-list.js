@@ -19,8 +19,13 @@ export class MdChipList {
      */
     constructor(_elementRef) {
         this._elementRef = _elementRef;
+        /**
+         * Track which chips we're listening to for focus/destruction.
+         */
         this._subscribed = new WeakMap();
-        /** Whether or not the chip is selectable. */
+        /**
+         * Whether or not the chip is selectable.
+         */
         this._selectable = true;
     }
     /**

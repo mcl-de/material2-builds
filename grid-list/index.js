@@ -51,4 +51,5 @@ function MdGridListModule_tsickle_Closure_declarations() {
     MdGridListModule.ctorParameters;
 }
 export { MdGridList } from './grid-list';
+export { MdGridTile } from './grid-tile';
 //# sourceMappingURL=index.js.map

@@ -50,7 +50,7 @@ export { StyleModule, TOUCH_BUFFER_MS, FocusOriginMonitor, CdkMonitorFocus, FOCU
 export { MdError } from './errors/error';
 // Keybindings
 export { UP_ARROW, DOWN_ARROW, RIGHT_ARROW, LEFT_ARROW, PAGE_UP, PAGE_DOWN, HOME, END, ENTER, SPACE, TAB, ESCAPE, BACKSPACE, DELETE } from './keyboard/keycodes';
-export { MATERIAL_COMPATIBILITY_MODE, MAT_ELEMENTS_SELECTOR, MD_ELEMENTS_SELECTOR, MatPrefixRejector, MdPrefixRejector } from './compatibility/compatibility';
+export { MATERIAL_COMPATIBILITY_MODE, MdCompatibilityInvalidPrefixError, MAT_ELEMENTS_SELECTOR, MD_ELEMENTS_SELECTOR, MatPrefixRejector, MdPrefixRejector } from './compatibility/compatibility';
 // Animation
 export { AnimationCurves, AnimationDurations } from './animation/animation';
 // Selection

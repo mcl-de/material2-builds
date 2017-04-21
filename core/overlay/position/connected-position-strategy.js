@@ -20,10 +20,21 @@ export class ConnectedPositionStrategy {
         this._overlayPos = _overlayPos;
         this._viewportRuler = _viewportRuler;
         this._dir = 'ltr';
+        /**
+         * The offset in pixels for the overlay connection point on the x-axis
+         */
         this._offsetX = 0;
+        /**
+         * The offset in pixels for the overlay connection point on the y-axis
+         */
         this._offsetY = 0;
+        /**
+         * The Scrollable containers used to check scrollable view properties on position change.
+         */
         this.scrollables = [];
-        /** Ordered list of preferred positions, from most to least desirable. */
+        /**
+         * Ordered list of preferred positions, from most to least desirable.
+         */
         this._preferredPositions = [];
         this._onPositionChange = new Subject();
         this._origin = this._connectedTo.nativeElement;

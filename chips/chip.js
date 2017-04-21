@@ -11,19 +11,33 @@ export class MdChip {
     constructor(_renderer, _elementRef) {
         this._renderer = _renderer;
         this._elementRef = _elementRef;
-        /** Whether or not the chip is disabled. Disabled chips cannot be focused. */
+        /**
+         * Whether or not the chip is disabled. Disabled chips cannot be focused.
+         */
         this._disabled = null;
-        /** Whether or not the chip is selected. */
+        /**
+         * Whether or not the chip is selected.
+         */
         this._selected = false;
-        /** The palette color of selected chips. */
+        /**
+         * The palette color of selected chips.
+         */
         this._color = 'primary';
-        /** Emitted when the chip is focused. */
+        /**
+         * Emitted when the chip is focused.
+         */
         this.onFocus = new EventEmitter();
-        /** Emitted when the chip is selected. */
+        /**
+         * Emitted when the chip is selected.
+         */
         this.select = new EventEmitter();
-        /** Emitted when the chip is deselected. */
+        /**
+         * Emitted when the chip is deselected.
+         */
         this.deselect = new EventEmitter();
-        /** Emitted when the chip is destroyed. */
+        /**
+         * Emitted when the chip is destroyed.
+         */
         this.destroy = new EventEmitter();
     }
     /**

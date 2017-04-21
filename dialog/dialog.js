@@ -26,9 +26,13 @@ export class MdDialog {
         this._afterAllClosedAtThisLevel = new Subject();
         this._afterOpenAtThisLevel = new Subject();
         this._boundKeydown = this._handleKeydown.bind(this);
-        /** Gets an observable that is notified when a dialog has been opened. */
+        /**
+         * Gets an observable that is notified when a dialog has been opened.
+         */
         this.afterOpen = this._afterOpen.asObservable();
-        /** Gets an observable that is notified when all open dialog have finished closing. */
+        /**
+         * Gets an observable that is notified when all open dialog have finished closing.
+         */
         this.afterAllClosed = this._afterAllClosed.asObservable();
     }
     /**
@@ -66,7 +70,7 @@ export class MdDialog {
         let /** @type {?} */ overlayRef = this._createOverlay(config);
         let /** @type {?} */ dialogContainer = this._attachDialogContainer(overlayRef, config);
         let /** @type {?} */ dialogRef = this._attachDialogContent(componentOrTemplateRef, dialogContainer, overlayRef, config);
-        if (!this._openDialogs.length && !this._parentDialog) {
+        if (!this._openDialogs.length) {
             document.addEventListener('keydown', this._boundKeydown);
         }
         this._openDialogs.push(dialogRef);
@@ -180,8 +184,8 @@ export class MdDialog {
      */
     _handleKeydown(event) {
         let /** @type {?} */ topDialog = this._openDialogs[this._openDialogs.length - 1];
-        if (event.keyCode === ESCAPE && topDialog &&
-            !topDialog._containerInstance.dialogConfig.disableClose) {
+        let /** @type {?} */ canClose = topDialog ? !topDialog._containerInstance.dialogConfig.disableClose : false;
+        if (event.keyCode === ESCAPE && canClose) {
             topDialog.close();
         }
     }

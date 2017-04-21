@@ -10,7 +10,13 @@ export class MdSnackBarRef {
      */
     constructor(instance, containerInstance, _overlayRef) {
         this._overlayRef = _overlayRef;
+        /**
+         * Subject for notifying the user that the snack bar has closed.
+         */
         this._afterClosed = new Subject();
+        /**
+         * Subject for notifying the user that the snack bar action was called.
+         */
         this._onAction = new Subject();
         // Sets the readonly instance of the snack bar content component.
         this._instance = instance;

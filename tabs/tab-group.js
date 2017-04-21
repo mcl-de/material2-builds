@@ -2,8 +2,10 @@ import { ViewChild, Component, Input, Output, EventEmitter, ContentChildren, Ren
 import { coerceBooleanProperty } from '../core';
 import { MdTab } from './tab';
 import 'rxjs/add/operator/map';
-/** Used to generate unique ID's for each tab component */
-let /** @type {?} */ nextId = 0;
+/**
+ * Used to generate unique ID's for each tab component
+ */
+let nextId = 0;
 /**
  * A simple change event emitted on focus or selection changes.
  */
@@ -26,12 +28,26 @@ export class MdTabGroup {
      */
     constructor(_renderer) {
         this._renderer = _renderer;
+        /**
+         * Whether this component has been initialized.
+         */
         this._isInitialized = false;
+        /**
+         * The tab index that should be selected after the content has been checked.
+         */
         this._indexToSelect = 0;
+        /**
+         * Snapshot of the height of the tab body wrapper before another tab is activated.
+         */
         this._tabBodyWrapperHeight = null;
+        /**
+         * Whether the tab group should grow to the size of the active tab
+         */
         this._dynamicHeight = false;
         this._selectedIndex = null;
-        /** Position of the tab header. */
+        /**
+         * Position of the tab header.
+         */
         this.headerPosition = 'above';
         this._onFocusChange = new EventEmitter();
         this._onSelectChange = new EventEmitter(true);
@@ -67,7 +83,7 @@ export class MdTabGroup {
      */
     get selectedIndex() { return this._selectedIndex; }
     /**
-     * Output to enable support for two-way binding on ([selectedIndex])
+     * Output to enable support for two-way binding on `[(selectedIndex)]`
      * @return {?}
      */
     get selectedIndexChange() {

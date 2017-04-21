@@ -19,6 +19,9 @@ export class MdGridList {
         this._renderer = _renderer;
         this._element = _element;
         this._dir = _dir;
+        /**
+         * The amount of space between tiles. This will be something like '5px' or '2em'.
+         */
         this._gutter = '1px';
     }
     /**

@@ -22,9 +22,13 @@ export class TileCoordinator {
      * @param {?} tiles
      */
     constructor(numColumns, tiles) {
-        /** Index at which the search for the next gap will start. */
+        /**
+         * Index at which the search for the next gap will start.
+         */
         this.columnIndex = 0;
-        /** The current row index. */
+        /**
+         * The current row index.
+         */
         this.rowIndex = 0;
         this.tracker = new Array(numColumns);
         this.tracker.fill(0, 0, this.tracker.length);
@@ -90,6 +94,7 @@ export class TileCoordinator {
             // If a gap large enough isn't found, we want to start looking immediately after the current
             // gap on the next iteration.
             this.columnIndex = gapStartIndex + 1;
+            // Continue iterating until we find a gap wide enough for this tile.
         } while (gapEndIndex - gapStartIndex < tileCols);
         return gapStartIndex;
     }

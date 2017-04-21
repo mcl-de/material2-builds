@@ -1,16 +1,23 @@
-;
 /**
  * Configuration for opening a modal dialog with the MdDialog service.
  */
 export class MdDialogConfig {
     constructor() {
-        /** The ARIA role of the dialog element. */
+        /**
+         * The ARIA role of the dialog element.
+         */
         this.role = 'dialog';
-        /** Whether the user can use escape or clicking outside to close a modal. */
+        /**
+         * Whether the user can use escape or clicking outside to close a modal.
+         */
         this.disableClose = false;
-        /** Width of the dialog. */
+        /**
+         * Width of the dialog.
+         */
         this.width = '';
-        /** Height of the dialog. */
+        /**
+         * Height of the dialog.
+         */
         this.height = '';
         // TODO(jelbourn): add configuration for lifecycle hooks, ARIA labelling.
     }

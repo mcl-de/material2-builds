@@ -9,7 +9,7 @@ import { MATERIAL_COMPATIBILITY_MODE } from '../../core/compatibility/compatibil
  * Option IDs need to be unique across components, so this counter exists outside of
  * the component definition.
  */
-let /** @type {?} */ _uniqueIdCounter = 0;
+let _uniqueIdCounter = 0;
 /**
  * Event object emitted by MdOption when selected or deselected.
  */
@@ -44,11 +44,18 @@ export class MdOption {
         this._isCompatibilityMode = _isCompatibilityMode;
         this._selected = false;
         this._active = false;
+        /**
+         * Whether the option is disabled.
+         */
         this._disabled = false;
         this._id = `md-option-${_uniqueIdCounter++}`;
-        /** Whether the wrapping component is in multiple selection mode. */
+        /**
+         * Whether the wrapping component is in multiple selection mode.
+         */
         this.multiple = false;
-        /** Event emitted when the option is selected or deselected. */
+        /**
+         * Event emitted when the option is selected or deselected.
+         */
         this.onSelectionChange = new EventEmitter();
     }
     /**
@@ -174,7 +181,6 @@ export class MdOption {
     _emitSelectionChangeEvent(isUserInput = false) {
         this.onSelectionChange.emit(new MdOptionSelectionChange(this, isUserInput));
     }
-    ;
 }
 MdOption.decorators = [
     { type: Component, args: [{selector: 'md-option, mat-option',

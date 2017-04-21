@@ -1,18 +1,28 @@
-import { Component, ContentChildren, Input, TemplateRef, ViewChild, ViewEncapsulation } from '@angular/core';
+import { Component, ContentChildren, Input, TemplateRef, ViewChild, ViewEncapsulation, ChangeDetectorRef, } from '@angular/core';
 import { MdOption } from '../core';
 import { ActiveDescendantKeyManager } from '../core/a11y/activedescendant-key-manager';
 /**
  * Autocomplete IDs need to be unique across components, so this counter exists outside of
  * the component definition.
  */
-let /** @type {?} */ _uniqueAutocompleteIdCounter = 0;
+let _uniqueAutocompleteIdCounter = 0;
 export class MdAutocomplete {
-    constructor() {
-        /** Whether the autocomplete panel displays above or below its trigger. */
+    /**
+     * @param {?} _changeDetectorRef
+     */
+    constructor(_changeDetectorRef) {
+        this._changeDetectorRef = _changeDetectorRef;
+        /**
+         * Whether the autocomplete panel displays above or below its trigger.
+         */
         this.positionY = 'below';
-        /** Whether the autocomplete panel should be visible, depending on option length. */
+        /**
+         * Whether the autocomplete panel should be visible, depending on option length.
+         */
         this.showPanel = false;
-        /** Unique ID to be used by autocomplete trigger's "aria-owns" property. */
+        /**
+         * Unique ID to be used by autocomplete trigger's "aria-owns" property.
+         */
         this.id = `md-autocomplete-${_uniqueAutocompleteIdCounter++}`;
     }
     /**
@@ -37,7 +47,10 @@ export class MdAutocomplete {
      * @return {?}
      */
     _setVisibility() {
-        Promise.resolve().then(() => this.showPanel = !!this.options.length);
+        Promise.resolve().then(() => {
+            this.showPanel = !!this.options.length;
+            this._changeDetectorRef.markForCheck();
+        });
     }
     /**
      * Sets a class on the panel based on its position (used to set y-offset).
@@ -66,7 +79,9 @@ MdAutocomplete.decorators = [
 /**
  * @nocollapse
  */
-MdAutocomplete.ctorParameters = () => [];
+MdAutocomplete.ctorParameters = () => [
+    { type: ChangeDetectorRef, },
+];
 MdAutocomplete.propDecorators = {
     'template': [{ type: ViewChild, args: [TemplateRef,] },],
     'panel': [{ type: ViewChild, args: ['panel',] },],
@@ -114,5 +129,7 @@ function MdAutocomplete_tsickle_Closure_declarations() {
      * @type {?}
      */
     MdAutocomplete.prototype.id;
+    /** @type {?} */
+    MdAutocomplete.prototype._changeDetectorRef;
 }
 //# sourceMappingURL=autocomplete.js.map

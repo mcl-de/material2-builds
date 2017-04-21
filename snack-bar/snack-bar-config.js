@@ -3,13 +3,21 @@
  */
 export class MdSnackBarConfig {
     constructor() {
-        /** The politeness level for the MdAriaLiveAnnouncer announcement. */
+        /**
+         * The politeness level for the MdAriaLiveAnnouncer announcement.
+         */
         this.politeness = 'assertive';
-        /** Message to be announced by the MdAriaLiveAnnouncer */
+        /**
+         * Message to be announced by the MdAriaLiveAnnouncer
+         */
         this.announcementMessage = '';
-        /** The view container to place the overlay for the snack bar into. */
+        /**
+         * The view container to place the overlay for the snack bar into.
+         */
         this.viewContainerRef = null;
-        /** The length of time in milliseconds to wait before automatically dismissing the snack bar. */
+        /**
+         * The length of time in milliseconds to wait before automatically dismissing the snack bar.
+         */
         this.duration = 0;
     }
 }

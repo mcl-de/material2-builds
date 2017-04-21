@@ -12,14 +12,22 @@ export class MdMenu {
      * @param {?} deprecatedPosY
      */
     constructor(posX, posY, deprecatedPosX, deprecatedPosY) {
-        /** Config object to be passed into the menu's ngClass */
+        /**
+         * Config object to be passed into the menu's ngClass
+         */
         this._classList = {};
-        /** Position of the menu in the X axis. */
+        /**
+         * Position of the menu in the X axis.
+         */
         this.positionX = 'after';
-        /** Position of the menu in the Y axis. */
+        /**
+         * Position of the menu in the Y axis.
+         */
         this.positionY = 'below';
         this.overlapTrigger = true;
-        /** Event emitted when the menu is closed. */
+        /**
+         * Event emitted when the menu is closed.
+         */
         this.close = new EventEmitter();
         // TODO(kara): Remove kebab-case attributes after next release
         if (deprecatedPosX) {

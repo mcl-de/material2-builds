@@ -9,7 +9,9 @@ export class MdDialogClose {
      */
     constructor(dialogRef) {
         this.dialogRef = dialogRef;
-        /** Screenreader label for the button. */
+        /**
+         * Screenreader label for the button.
+         */
         this.ariaLabel = 'Close dialog';
     }
 }

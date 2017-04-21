@@ -149,10 +149,17 @@ export class MdButton {
         this._elementRef = _elementRef;
         this._renderer = _renderer;
         this._focusOriginMonitor = _focusOriginMonitor;
-        /** Whether the button is round. */
+        /**
+         * Whether the button is round.
+         */
         this._isRoundButton = this._hasAttributeWithPrefix('fab', 'mini-fab');
-        /** Whether the button is icon button. */
+        /**
+         * Whether the button is icon button.
+         */
         this._isIconButton = this._hasAttributeWithPrefix('icon-button');
+        /**
+         * Whether the ripple effect on click should be disabled.
+         */
         this._disableRipple = false;
         this._disabled = null;
         this._focusOriginMonitor.monitor(this._elementRef.nativeElement, this._renderer, true);

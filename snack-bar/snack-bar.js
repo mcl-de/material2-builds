@@ -67,6 +67,7 @@ export class MdSnackBar {
                 snackBarRef.containerInstance.enter();
             });
             this._openedSnackBarRef.dismiss();
+            // If no snack bar is in view, enter the new snack bar.
         }
         else {
             snackBarRef.containerInstance.enter();

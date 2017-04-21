@@ -1,10 +1,29 @@
-import { NgModule, Directive, OpaqueToken, Inject, Optional, isDevMode, } from '@angular/core';
+import { NgModule, Directive, OpaqueToken, Inject, Optional, isDevMode, ElementRef, } from '@angular/core';
 import { DOCUMENT } from '@angular/platform-browser';
-/** Whether we've done the global sanity checks (e.g. a theme is loaded, there is a doctype). */
-let /** @type {?} */ hasDoneGlobalChecks = false;
+import { MdError } from '../errors/error';
+/**
+ * Whether we've done the global sanity checks (e.g. a theme is loaded, there is a doctype).
+ */
+let hasDoneGlobalChecks = false;
 export const /** @type {?} */ MATERIAL_COMPATIBILITY_MODE = new OpaqueToken('md-compatibility-mode');
-/** Selector that matches all elements that may have style collisions with AngularJS Material. */
-export const /** @type {?} */ MAT_ELEMENTS_SELECTOR = `
+/**
+ * Exception thrown if the consumer has used an invalid Material prefix on a component.
+ * \@docs-private
+ */
+export class MdCompatibilityInvalidPrefixError extends MdError {
+    /**
+     * @param {?} prefix
+     * @param {?} nodeName
+     */
+    constructor(prefix, nodeName) {
+        super(`The "${prefix}-" prefix cannot be used in ng-material v1 compatibility mode. ` +
+            `It was used on an "${nodeName.toLowerCase()}" element.`);
+    }
+}
+/**
+ * Selector that matches all elements that may have style collisions with AngularJS Material.
+ */
+export const MAT_ELEMENTS_SELECTOR = `
   [mat-button],
   [mat-dialog-actions],
   [mat-dialog-close],
@@ -62,8 +81,10 @@ export const /** @type {?} */ MAT_ELEMENTS_SELECTOR = `
   mat-tab-group,
   mat-toolbar,
   mat-error`;
-/** Selector that matches all elements that may have style collisions with AngularJS Material. */
-export const /** @type {?} */ MD_ELEMENTS_SELECTOR = `
+/**
+ * Selector that matches all elements that may have style collisions with AngularJS Material.
+ */
+export const MD_ELEMENTS_SELECTOR = `
   [md-button],
   [md-dialog-actions],
   [md-dialog-close],
@@ -127,10 +148,11 @@ export const /** @type {?} */ MD_ELEMENTS_SELECTOR = `
 export class MatPrefixRejector {
     /**
      * @param {?} isCompatibilityMode
+     * @param {?} elementRef
      */
-    constructor(isCompatibilityMode) {
+    constructor(isCompatibilityMode, elementRef) {
         if (!isCompatibilityMode) {
-            throw Error('The "mat-" prefix cannot be used out of ng-material v1 compatibility mode.');
+            throw new MdCompatibilityInvalidPrefixError('mat', elementRef.nativeElement.nodeName);
         }
     }
 }
@@ -142,6 +164,7 @@ MatPrefixRejector.decorators = [
  */
 MatPrefixRejector.ctorParameters = () => [
     { type: undefined, decorators: [{ type: Optional }, { type: Inject, args: [MATERIAL_COMPATIBILITY_MODE,] },] },
+    { type: ElementRef, },
 ];
 function MatPrefixRejector_tsickle_Closure_declarations() {
     /** @type {?} */
@@ -158,10 +181,11 @@ function MatPrefixRejector_tsickle_Closure_declarations() {
 export class MdPrefixRejector {
     /**
      * @param {?} isCompatibilityMode
+     * @param {?} elementRef
      */
-    constructor(isCompatibilityMode) {
+    constructor(isCompatibilityMode, elementRef) {
         if (isCompatibilityMode) {
-            throw Error('The "md-" prefix cannot be used in ng-material v1 compatibility mode.');
+            throw new MdCompatibilityInvalidPrefixError('md', elementRef.nativeElement.nodeName);
         }
     }
 }
@@ -173,6 +197,7 @@ MdPrefixRejector.decorators = [
  */
 MdPrefixRejector.ctorParameters = () => [
     { type: undefined, decorators: [{ type: Optional }, { type: Inject, args: [MATERIAL_COMPATIBILITY_MODE,] },] },
+    { type: ElementRef, },
 ];
 function MdPrefixRejector_tsickle_Closure_declarations() {
     /** @type {?} */
@@ -222,7 +247,7 @@ export class CompatibilityModule {
      * @return {?}
      */
     _checkTheme() {
-        if (this._document) {
+        if (this._document && typeof getComputedStyle === 'function') {
             const /** @type {?} */ testElement = this._document.createElement('div');
             testElement.classList.add('mat-theme-loaded-marker');
             this._document.body.appendChild(testElement);

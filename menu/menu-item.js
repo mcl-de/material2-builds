@@ -12,6 +12,9 @@ export class MdMenuItem {
     constructor(_renderer, _elementRef) {
         this._renderer = _renderer;
         this._elementRef = _elementRef;
+        /**
+         * Whether the menu item is disabled
+         */
         this._disabled = false;
     }
     /**

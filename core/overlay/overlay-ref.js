@@ -98,7 +98,7 @@ export class OverlayRef {
         }
     }
     /**
-     * Updates the text direction of the overlay panel. *
+     * Updates the text direction of the overlay panel.
      * @return {?}
      */
     updateDirection() {
