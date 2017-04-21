@@ -1,1 +1,0 @@
-{"version":3,"sources":["../../../../../src/lib/tabs/tab-nav-bar/index.ts"],"names":[],"mappings":"AAAA,OAAC,EAAA,WAAA,EAAA,SAAA,EAAA,eAAA,EAAA,MAAA,eAAA,CAAA","file":"index.js","sourceRoot":"","sourcesContent":["export {MdTabNavBar,MdTabLink,MdTabLinkRipple} from './tab-nav-bar';\n"]}
