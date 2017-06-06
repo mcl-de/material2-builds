@@ -4,20 +4,21 @@ import { MdMenuItem } from './menu-item';
 import { MdMenuPanel } from './menu-panel';
 export declare class MdMenu implements AfterContentInit, MdMenuPanel, OnDestroy {
     private _keyManager;
+    private _xPosition;
+    private _yPosition;
     /** Subscription to tab events on the menu panel */
     private _tabSubscription;
     /** Config object to be passed into the menu's ngClass */
     _classList: any;
     /** Position of the menu in the X axis. */
-    positionX: MenuPositionX;
+    xPosition: MenuPositionX;
     /** Position of the menu in the Y axis. */
-    positionY: MenuPositionY;
+    yPosition: MenuPositionY;
     templateRef: TemplateRef<any>;
+    /** List of the items inside of a menu. */
     items: QueryList<MdMenuItem>;
+    /** Whether the menu should overlap its trigger. */
     overlapTrigger: boolean;
-    constructor(posX: MenuPositionX, posY: MenuPositionY, deprecatedPosX: MenuPositionX, deprecatedPosY: MenuPositionY);
-    ngAfterContentInit(): void;
-    ngOnDestroy(): void;
     /**
      * This method takes classes set on the host md-menu element and applies them on the
      * menu template that displays in the overlay container.  Otherwise, it's difficult
@@ -27,6 +28,10 @@ export declare class MdMenu implements AfterContentInit, MdMenuPanel, OnDestroy 
     classList: string;
     /** Event emitted when the menu is closed. */
     close: EventEmitter<void>;
+    ngAfterContentInit(): void;
+    ngOnDestroy(): void;
+    /** Handle a keyboard event from the menu, delegating to the appropriate action. */
+    _handleKeydown(event: KeyboardEvent): void;
     /**
      * Focus the first item in the menu. This method is used by the menu trigger
      * to focus the first item when the menu is opened by the ENTER key.
@@ -37,11 +42,9 @@ export declare class MdMenu implements AfterContentInit, MdMenuPanel, OnDestroy 
      * trigger will close the menu.
      */
     _emitCloseEvent(): void;
-    private _setPositionX(pos);
-    private _setPositionY(pos);
     /**
      * It's necessary to set position-based classes to ensure the menu panel animation
      * folds out from the correct direction.
      */
-    setPositionClasses(posX: MenuPositionX, posY: MenuPositionY): void;
+    setPositionClasses(posX?: "before" | "after", posY?: "above" | "below"): void;
 }

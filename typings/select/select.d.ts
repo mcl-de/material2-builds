@@ -1,4 +1,4 @@
-import { AfterContentInit, ElementRef, EventEmitter, OnDestroy, QueryList, Renderer, ChangeDetectorRef, OnInit } from '@angular/core';
+import { AfterContentInit, ElementRef, EventEmitter, OnDestroy, QueryList, Renderer2, ChangeDetectorRef, OnInit } from '@angular/core';
 import { MdOption, MdOptionSelectionChange } from '../core/option/option';
 import { FocusKeyManager } from '../core/a11y/focus-key-manager';
 import { Dir } from '../core/rtl/dir';
@@ -9,6 +9,7 @@ import { ViewportRuler } from '../core/overlay/position/viewport-ruler';
 import { SelectionModel } from '../core/selection/selection';
 import 'rxjs/add/observable/merge';
 import 'rxjs/add/operator/startWith';
+import 'rxjs/add/operator/filter';
 /**
  * The following style constants are necessary to save here in order
  * to properly calculate the alignment of the selected option over
@@ -89,18 +90,20 @@ export declare class MdSelect implements AfterContentInit, OnDestroy, OnInit, Co
     private _placeholderState;
     /** Tab index for the element. */
     private _tabIndex;
+    /** Theme color for the component. */
+    private _color;
     /**
      * The width of the trigger. Must be saved to set the min width of the overlay panel
      * and the width of the selected value.
      */
     _triggerWidth: number;
+    /** Manages keyboard events for options in the panel. */
+    _keyManager: FocusKeyManager;
     /**
      * The width of the selected option's value. Must be set programmatically
      * to ensure its overflow is clipped, as it's absolutely positioned.
      */
     _selectedValueWidth: number;
-    /** Manages keyboard events for options in the panel. */
-    _keyManager: FocusKeyManager;
     /** View -> model callback called when value changes */
     _onChange: (value: any) => void;
     /** View -> model callback called when select has been touched */
@@ -111,12 +114,6 @@ export declare class MdSelect implements AfterContentInit, OnDestroy, OnInit, Co
     _transformOrigin: string;
     /** Whether the panel's animation is done. */
     _panelDoneAnimating: boolean;
-    /**
-     * The x-offset of the overlay panel in relation to the trigger's top start corner.
-     * This must be adjusted to align the selected option text over the trigger text when
-     * the panel opens. Will change based on LTR or RTL text direction.
-     */
-    _offsetX: number;
     /**
      * The y-offset of the overlay panel in relation to the trigger's top start corner.
      * This must be adjusted to align the selected option text over the trigger text.
@@ -141,6 +138,10 @@ export declare class MdSelect implements AfterContentInit, OnDestroy, OnInit, Co
     overlayDir: ConnectedOverlayDirective;
     /** All of the defined select options. */
     options: QueryList<MdOption>;
+    /** Classes to be passed to the select panel. Supports the same syntax as `ngClass`. */
+    panelClass: string | string[] | Set<string> | {
+        [key: string]: any;
+    };
     /** Placeholder to be shown if no value has been selected. */
     placeholder: string;
     /** Whether the component is disabled. */
@@ -158,6 +159,8 @@ export declare class MdSelect implements AfterContentInit, OnDestroy, OnInit, Co
     ariaLabel: string;
     /** Input that can be used to specify the `aria-labelledby` attribute. */
     ariaLabelledby: string;
+    /** Theme color for the component. */
+    color: string;
     /** Combined stream of all of the child options' change events. */
     readonly optionSelectionChanges: Observable<MdOptionSelectionChange>;
     /** Event emitted when the select has been opened. */
@@ -166,7 +169,7 @@ export declare class MdSelect implements AfterContentInit, OnDestroy, OnInit, Co
     onClose: EventEmitter<void>;
     /** Event emitted when the selected value has been changed by the user. */
     change: EventEmitter<MdSelectChange>;
-    constructor(_element: ElementRef, _renderer: Renderer, _viewportRuler: ViewportRuler, _changeDetectorRef: ChangeDetectorRef, _dir: Dir, _control: NgControl, tabIndex: string);
+    constructor(_element: ElementRef, _renderer: Renderer2, _viewportRuler: ViewportRuler, _changeDetectorRef: ChangeDetectorRef, _dir: Dir, _control: NgControl, tabIndex: string);
     ngOnInit(): void;
     ngAfterContentInit(): void;
     ngOnDestroy(): void;
@@ -219,8 +222,10 @@ export declare class MdSelect implements AfterContentInit, OnDestroy, OnInit, Co
      * the overlay width to the trigger width.
      */
     private _setTriggerWidth();
-    /** Ensures the panel opens if activated by the keyboard. */
-    _handleKeydown(event: KeyboardEvent): void;
+    /** Handles the keyboard interactions of a closed select. */
+    _handleClosedKeydown(event: KeyboardEvent): void;
+    /** Handles keypresses inside the panel. */
+    _handlePanelKeydown(event: KeyboardEvent): void;
     /**
      * When the panel element is finished transforming in (though not fading in), it
      * emits an event and focuses an option if the panel is open.
@@ -237,11 +242,15 @@ export declare class MdSelect implements AfterContentInit, OnDestroy, OnInit, Co
      */
     _onBlur(): void;
     /**
+     * Callback that is invoked when the overlay panel has been attached.
+     */
+    _onAttached(): void;
+    /**
      * Sets the scroll position of the scroll container. This must be called after
      * the overlay pane is attached or the scroll container element will not yet be
      * present in the DOM.
      */
-    _setScrollTop(): void;
+    private _setScrollTop();
     /**
      * Sets the selected option based on a value. If no option can be
      * found with the designated value, the select trigger is cleared.
@@ -274,7 +283,7 @@ export declare class MdSelect implements AfterContentInit, OnDestroy, OnInit, Co
     /** Unsubscribes from all option subscriptions. */
     private _dropSubscriptions();
     /** Emits change event to set the model value. */
-    private _propagateChanges();
+    private _propagateChanges(fallbackValue?);
     /** Records option IDs to pass to the aria-owns property. */
     private _setOptionIds();
     /**
@@ -312,17 +321,25 @@ export declare class MdSelect implements AfterContentInit, OnDestroy, OnInit, Co
      */
     _getPlaceholderAnimationState(): string;
     /**
-     * Determines the CSS `visibility` of the placeholder element.
+     * Determines the CSS `opacity` of the placeholder element.
      */
-    _getPlaceholderVisibility(): 'visible' | 'hidden';
+    _getPlaceholderOpacity(): string;
     /** Returns the aria-label of the select component. */
     readonly _ariaLabel: string;
+    /**
+     * Sets the x-offset of the overlay panel in relation to the trigger's top start corner.
+     * This must be adjusted to align the selected option text over the trigger text when
+     * the panel opens. Will change based on LTR or RTL text direction. Note that the offset
+     * can't be calculated until the panel has been attached, because we need to know the
+     * content width in order to constrain the panel within the viewport.
+     */
+    private _calculateOverlayOffsetX();
     /**
      * Calculates the y-offset of the select's overlay panel in relation to the
      * top start corner of the trigger. It has to be adjusted in order for the
      * selected option to be aligned over the trigger when the panel opens.
      */
-    private _calculateOverlayOffset(selectedIndex, scrollBuffer, maxScroll);
+    private _calculateOverlayOffsetY(selectedIndex, scrollBuffer, maxScroll);
     /**
      * Checks that the attempted overlay position will fit within the viewport.
      * If it will not fit, tries to adjust the scroll position and the associated
@@ -338,4 +355,6 @@ export declare class MdSelect implements AfterContentInit, OnDestroy, OnInit, Co
     private _getOriginBasedOnOption();
     /** Figures out the floating placeholder state value. */
     private _floatPlaceholderState();
+    /** Handles the user pressing the arrow keys on a closed select.  */
+    private _handleArrowKey(event);
 }

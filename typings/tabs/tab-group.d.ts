@@ -1,4 +1,4 @@
-import { QueryList, ElementRef, Renderer } from '@angular/core';
+import { EventEmitter, QueryList, ElementRef, Renderer2 } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
 import { MdTab } from './tab';
 import 'rxjs/add/operator/map';
@@ -29,6 +29,9 @@ export declare class MdTabGroup {
     dynamicHeight: boolean;
     /** @deprecated */
     _dynamicHeightDeprecated: boolean;
+    /** Whether ripples for the tab-group should be disabled or not. */
+    disableRipple: boolean;
+    private _disableRipple;
     private _selectedIndex;
     /** The index of the active tab. */
     selectedIndex: number;
@@ -36,14 +39,12 @@ export declare class MdTabGroup {
     headerPosition: MdTabHeaderPosition;
     /** Output to enable support for two-way binding on `[(selectedIndex)]` */
     readonly selectedIndexChange: Observable<number>;
-    private _onFocusChange;
     /** Event emitted when focus has changed within a tab group. */
-    readonly focusChange: Observable<MdTabChangeEvent>;
-    private _onSelectChange;
+    focusChange: EventEmitter<MdTabChangeEvent>;
     /** Event emitted when the tab selection has changed. */
-    readonly selectChange: Observable<MdTabChangeEvent>;
+    selectChange: EventEmitter<MdTabChangeEvent>;
     private _groupId;
-    constructor(_renderer: Renderer);
+    constructor(_renderer: Renderer2);
     /**
      * After the content is checked, this component knows what tabs have been defined
      * and what the selected index should be. This is where we can know exactly what position

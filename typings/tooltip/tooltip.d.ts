@@ -1,4 +1,4 @@
-import { ElementRef, ViewContainerRef, NgZone, OnDestroy, Renderer, OnInit, ChangeDetectorRef } from '@angular/core';
+import { ElementRef, ViewContainerRef, NgZone, OnDestroy, Renderer2, ChangeDetectorRef } from '@angular/core';
 import { AnimationEvent } from '@angular/animations';
 import { Overlay, OverlayRef, OverlayConnectionPosition, OriginConnectionPosition } from '../core';
 import { Observable } from 'rxjs/Observable';
@@ -6,19 +6,20 @@ import { Dir } from '../core/rtl/dir';
 import { Platform } from '../core/platform/index';
 import 'rxjs/add/operator/first';
 import { ScrollDispatcher } from '../core/overlay/scroll/scroll-dispatcher';
-import { Subscription } from 'rxjs/Subscription';
 export declare type TooltipPosition = 'left' | 'right' | 'above' | 'below' | 'before' | 'after';
 /** Time in ms to delay before changing the tooltip visibility to hidden */
 export declare const TOUCHEND_HIDE_DELAY = 1500;
 /** Time in ms to throttle repositioning after scroll events. */
 export declare const SCROLL_THROTTLE_MS = 20;
+/** Throws an error if the user supplied an invalid tooltip position. */
+export declare function throwMdTooltipInvalidPositionError(position: string): void;
 /**
  * Directive that attaches a material design tooltip to the host element. Animates the showing and
  * hiding of a tooltip provided position (defaults to below the element).
  *
  * https://material.google.com/components/tooltips.html
  */
-export declare class MdTooltip implements OnInit, OnDestroy {
+export declare class MdTooltip implements OnDestroy {
     private _overlay;
     private _elementRef;
     private _scrollDispatcher;
@@ -29,7 +30,6 @@ export declare class MdTooltip implements OnInit, OnDestroy {
     private _dir;
     _overlayRef: OverlayRef;
     _tooltipInstance: TooltipComponent;
-    scrollSubscription: Subscription;
     private _position;
     private _disabled;
     /** Allows the user to define the position of the tooltip relative to the parent element */
@@ -52,8 +52,7 @@ export declare class MdTooltip implements OnInit, OnDestroy {
     _matDisabled: boolean;
     _matHideDelay: number;
     _matShowDelay: number;
-    constructor(_overlay: Overlay, _elementRef: ElementRef, _scrollDispatcher: ScrollDispatcher, _viewContainerRef: ViewContainerRef, _ngZone: NgZone, _renderer: Renderer, _platform: Platform, _dir: Dir);
-    ngOnInit(): void;
+    constructor(_overlay: Overlay, _elementRef: ElementRef, _scrollDispatcher: ScrollDispatcher, _viewContainerRef: ViewContainerRef, _ngZone: NgZone, _renderer: Renderer2, _platform: Platform, _dir: Dir);
     /**
      * Dispose the tooltip when destroyed.
      */

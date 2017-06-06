@@ -1,12 +1,5 @@
-import { ElementRef, OnChanges, OnInit, Renderer, SimpleChange, AfterViewChecked, Optional } from '@angular/core';
-import { Http } from '@angular/http';
-import { DomSanitizer } from '@angular/platform-browser';
-import { MdError } from '../core';
+import { ElementRef, OnChanges, OnInit, Renderer2, SimpleChange, AfterViewChecked } from '@angular/core';
 import { MdIconRegistry } from './icon-registry';
-/** Exception thrown when an invalid icon name is passed to an md-icon component. */
-export declare class MdIconInvalidNameError extends MdError {
-    constructor(iconName: string);
-}
 /**
  * Component to display an icon. It can be used in the following ways:
  * - Specify the svgSrc input to load an SVG icon from a URL. The SVG content is directly inlined
@@ -60,7 +53,7 @@ export declare class MdIcon implements OnChanges, OnInit, AfterViewChecked {
     private _previousFontSetClass;
     private _previousFontIconClass;
     private _previousAriaLabel;
-    constructor(_elementRef: ElementRef, _renderer: Renderer, _mdIconRegistry: MdIconRegistry);
+    constructor(_elementRef: ElementRef, _renderer: Renderer2, _mdIconRegistry: MdIconRegistry);
     _updateColor(newColor: string): void;
     _setElementColor(color: string, isAdd: boolean): void;
     /**
@@ -69,12 +62,12 @@ export declare class MdIcon implements OnChanges, OnInit, AfterViewChecked {
      * The separator for the two fields is ':'. If there is no separator, an empty
      * string is returned for the icon set and the entire value is returned for
      * the icon name. If the argument is falsy, returns an array of two empty strings.
-     * Throws a MdIconInvalidNameError if the name contains two or more ':' separators.
+     * Throws an error if the name contains two or more ':' separators.
      * Examples:
      *   'social:cake' -> ['social', 'cake']
      *   'penguin' -> ['', 'penguin']
      *   null -> ['', '']
-     *   'a:b:c' -> (throws MdIconInvalidNameError)
+     *   'a:b:c' -> (throws Error)
      */
     private _splitIconName(iconName);
     ngOnChanges(changes: {
@@ -88,9 +81,3 @@ export declare class MdIcon implements OnChanges, OnInit, AfterViewChecked {
     private _setSvgElement(svg);
     private _updateFontIconClasses();
 }
-export declare function ICON_REGISTRY_PROVIDER_FACTORY(parentRegistry: MdIconRegistry, http: Http, sanitizer: DomSanitizer): MdIconRegistry;
-export declare const ICON_REGISTRY_PROVIDER: {
-    provide: typeof MdIconRegistry;
-    deps: (Optional[] | typeof Http | typeof DomSanitizer)[];
-    useFactory: (parentRegistry: MdIconRegistry, http: Http, sanitizer: DomSanitizer) => MdIconRegistry;
-};

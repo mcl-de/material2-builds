@@ -21,6 +21,12 @@ export declare class MdDialogConfig {
     viewContainerRef?: ViewContainerRef;
     /** The ARIA role of the dialog element. */
     role?: DialogRole;
+    /** Custom class for the overlay pane. */
+    panelClass?: string;
+    /** Whether the dialog has a backdrop. */
+    hasBackdrop?: boolean;
+    /** Custom class for the backdrop, */
+    backdropClass?: string;
     /** Whether the user can use escape or clicking outside to close a modal. */
     disableClose?: boolean;
     /** Width of the dialog. */

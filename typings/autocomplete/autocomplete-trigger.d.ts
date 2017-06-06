@@ -9,7 +9,6 @@ import { MdInputContainer } from '../input/input-container';
 import 'rxjs/add/observable/merge';
 import 'rxjs/add/observable/fromEvent';
 import 'rxjs/add/operator/filter';
-import 'rxjs/add/operator/startWith';
 import 'rxjs/add/operator/switchMap';
 /**
  * The following style constants are necessary to save here in order
@@ -25,6 +24,10 @@ export declare const AUTOCOMPLETE_PANEL_HEIGHT = 256;
  * @docs-private
  */
 export declare const MD_AUTOCOMPLETE_VALUE_ACCESSOR: any;
+/**
+ * Creates an error to be thrown when attempting to use an autocomplete trigger without a panel.
+ */
+export declare function getMdAutocompleteMissingPanelError(): Error;
 export declare class MdAutocompleteTrigger implements ControlValueAccessor, OnDestroy {
     private _element;
     private _overlay;
@@ -39,6 +42,7 @@ export declare class MdAutocompleteTrigger implements ControlValueAccessor, OnDe
     private _panelOpen;
     /** The subscription to positioning changes in the autocomplete panel. */
     private _panelPositionSubscription;
+    /** Strategy that is used to position the panel. */
     private _positionStrategy;
     /** Whether or not the placeholder state is being overridden. */
     private _manuallyFloatingPlaceholder;

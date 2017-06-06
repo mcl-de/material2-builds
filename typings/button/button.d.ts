@@ -1,5 +1,6 @@
-import { ElementRef, OnDestroy, Renderer } from '@angular/core';
-import { FocusOriginMonitor } from '../core';
+import { ElementRef, OnDestroy, Renderer2 } from '@angular/core';
+import { FocusOriginMonitor, Platform } from '../core';
+import { CanDisable } from '../core/common-behaviors/disabled';
 /**
  * Directive whose purpose is to add the mat- CSS styling to this selector.
  * @docs-private
@@ -30,12 +31,16 @@ export declare class MdFabCssMatStyler {
  */
 export declare class MdMiniFabCssMatStyler {
 }
+export declare class MdButtonBase {
+}
+export declare const _MdButtonMixinBase: (new (...args: any[]) => CanDisable) & typeof MdButtonBase;
 /**
  * Material design button.
  */
-export declare class MdButton implements OnDestroy {
+export declare class MdButton extends _MdButtonMixinBase implements OnDestroy, CanDisable {
     private _elementRef;
     private _renderer;
+    private _platform;
     private _focusOriginMonitor;
     private _color;
     /** Whether the button is round. */
@@ -44,12 +49,9 @@ export declare class MdButton implements OnDestroy {
     _isIconButton: boolean;
     /** Whether the ripple effect on click should be disabled. */
     private _disableRipple;
-    private _disabled;
     /** Whether the ripple effect for this button is disabled. */
     disableRipple: boolean;
-    /** Whether the button is disabled. */
-    disabled: boolean;
-    constructor(_elementRef: ElementRef, _renderer: Renderer, _focusOriginMonitor: FocusOriginMonitor);
+    constructor(_elementRef: ElementRef, _renderer: Renderer2, _platform: Platform, _focusOriginMonitor: FocusOriginMonitor);
     ngOnDestroy(): void;
     /** The color of the button. Can be `primary`, `accent`, or `warn`. */
     color: string;
@@ -69,7 +71,7 @@ export declare class MdButton implements OnDestroy {
  * Raised Material design button.
  */
 export declare class MdAnchor extends MdButton {
-    constructor(elementRef: ElementRef, renderer: Renderer, focusOriginMonitor: FocusOriginMonitor);
+    constructor(elementRef: ElementRef, renderer: Renderer2, platform: Platform, focusOriginMonitor: FocusOriginMonitor);
     /** @docs-private */
     readonly tabIndex: number;
     readonly _isAriaDisabled: string;

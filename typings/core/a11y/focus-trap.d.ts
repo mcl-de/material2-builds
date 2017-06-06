@@ -1,5 +1,6 @@
 import { ElementRef, NgZone, OnDestroy, AfterContentInit } from '@angular/core';
 import { InteractivityChecker } from './interactivity-checker';
+import 'rxjs/add/operator/first';
 /**
  * Class that allows for trapping focus within a DOM element.
  *
@@ -26,15 +27,28 @@ export declare class FocusTrap {
      */
     attachAnchors(): void;
     /**
-     * Waits for microtask queue to empty, then focuses
+     * Waits for the zone to stabilize, then either focuses the first element that the
+     * user specified, or the first tabbable element..
+     */
+    focusInitialElementWhenReady(): void;
+    /**
+     * Waits for the zone to stabilize, then focuses
      * the first tabbable element within the focus trap region.
      */
     focusFirstTabbableElementWhenReady(): void;
     /**
-     * Waits for microtask queue to empty, then focuses
+     * Waits for the zone to stabilize, then focuses
      * the last tabbable element within the focus trap region.
      */
     focusLastTabbableElementWhenReady(): void;
+    /**
+     * Get the specified boundary element of the trapped region.
+     * @param bound The boundary to get (start or end of trapped region).
+     * @returns The boundary element.
+     */
+    private _getRegionBoundary(bound);
+    /** Focuses the element that should be focused when the focus trap is initialized. */
+    focusInitialElement(): void;
     /** Focuses the first tabbable element within the focus trap region. */
     focusFirstTabbableElement(): void;
     /** Focuses the last tabbable element within the focus trap region. */
@@ -45,6 +59,8 @@ export declare class FocusTrap {
     private _getLastTabbableElement(root);
     /** Creates an anchor element. */
     private _createAnchor();
+    /** Executes a function when the zone is stable. */
+    private _executeOnStable(fn);
 }
 /** Factory that allows easy instantiation of focus traps. */
 export declare class FocusTrapFactory {

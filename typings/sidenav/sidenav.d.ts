@@ -1,11 +1,9 @@
-import { AfterContentInit, ElementRef, QueryList, EventEmitter, Renderer, NgZone, OnDestroy } from '@angular/core';
-import { Dir, MdError } from '../core';
+import { AfterContentInit, ElementRef, QueryList, EventEmitter, Renderer2, NgZone, OnDestroy } from '@angular/core';
+import { Dir } from '../core';
 import { FocusTrapFactory } from '../core/a11y/focus-trap';
 import 'rxjs/add/operator/first';
-/** Exception thrown when two MdSidenav are matching the same side. */
-export declare class MdDuplicatedSidenavError extends MdError {
-    constructor(align: string);
-}
+/** Throws an exception when two MdSidenav are matching the same side. */
+export declare function throwMdDuplicatedSidenavError(align: string): void;
 /** Sidenav toggle promise result. */
 export declare class MdSidenavToggleResult {
     type: 'open' | 'close';
@@ -21,7 +19,6 @@ export declare class MdSidenavToggleResult {
  */
 export declare class MdSidenav implements AfterContentInit, OnDestroy {
     private _elementRef;
-    private _renderer;
     private _focusTrapFactory;
     private _focusTrap;
     /** Alignment of the sidenav (direction neutral); whether 'start' or 'end'. */
@@ -57,7 +54,7 @@ export declare class MdSidenav implements AfterContentInit, OnDestroy {
      * @param _elementRef The DOM element reference. Used for transition and width calculation.
      *     If not available we do not hook on transitions.
      */
-    constructor(_elementRef: ElementRef, _renderer: Renderer, _focusTrapFactory: FocusTrapFactory);
+    constructor(_elementRef: ElementRef, _focusTrapFactory: FocusTrapFactory);
     ngAfterContentInit(): void;
     ngOnDestroy(): void;
     /**
@@ -133,8 +130,12 @@ export declare class MdSidenavContainer implements AfterContentInit {
     private _right;
     /** Whether to enable open/close trantions. */
     _enableTransitions: boolean;
-    constructor(_dir: Dir, _element: ElementRef, _renderer: Renderer, _ngZone: NgZone);
+    constructor(_dir: Dir, _element: ElementRef, _renderer: Renderer2, _ngZone: NgZone);
     ngAfterContentInit(): void;
+    /** Calls `open` of both start and end sidenavs */
+    open(): Promise<MdSidenavToggleResult[]>;
+    /** Calls `close` of both start and end sidenavs */
+    close(): Promise<MdSidenavToggleResult[]>;
     /**
      * Subscribes to sidenav events in order to set a class on the main container element when the
      * sidenav is open and the backdrop is visible. This ensures any overflow on the container element
@@ -147,7 +148,7 @@ export declare class MdSidenavContainer implements AfterContentInit {
      */
     private _watchSidenavAlign(sidenav);
     /** Toggles the 'mat-sidenav-opened' class on the main 'md-sidenav-container' element. */
-    private _setContainerClass(sidenav, bool);
+    private _setContainerClass(isAdd);
     /** Validate the state of the sidenav children components. */
     private _validateDrawers();
     _onBackdropClicked(): void;
