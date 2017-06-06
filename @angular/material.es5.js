@@ -18047,6 +18047,7 @@ var MdTooltip = /*@__PURE__*/(function () {
          * @return {?}
          */
         set: function (value) {
+            value = value.replace(/\r\n|\r|\n/g, '<br>');
             this._message = value;
             if (this._tooltipInstance) {
                 this._setTooltipMessage(this._message);
@@ -18167,7 +18168,7 @@ var MdTooltip = /*@__PURE__*/(function () {
     MdTooltip.prototype.hide = function (delay) {
         if (delay === void 0) { delay = this.hideDelay; }
         if (this._tooltipInstance) {
-            this._tooltipInstance.hide(delay);
+            this._disposeTooltip();
         }
     };
     /**
@@ -18488,18 +18489,8 @@ var TooltipComponent = /*@__PURE__*/(function () {
 }());
 TooltipComponent.decorators = [
     { type: Component, args: [{ selector: 'md-tooltip-component, mat-tooltip-component',
-                template: "<div class=\"mat-tooltip\" [style.transform-origin]=\"_transformOrigin\" [@state]=\"_visibility\" (@state.done)=\"_afterVisibilityAnimation($event)\">{{message}}</div>",
+                template: "<div class=\"mat-tooltip\" [style.transform-origin]=\"_transformOrigin\" [innerHTML]=\"message\"></div>",
                 styles: [":host{pointer-events:none}.mat-tooltip{color:#fff;border-radius:2px;margin:14px;max-width:250px;padding-left:8px;padding-right:8px}@media screen and (-ms-high-contrast:active){.mat-tooltip{outline:solid 1px}}"],
-                animations: [
-                    trigger('state', [
-                        state('void', style({ transform: 'scale(0)' })),
-                        state('initial', style({ transform: 'scale(0)' })),
-                        state('visible', style({ transform: 'scale(1)' })),
-                        state('hidden', style({ transform: 'scale(0)' })),
-                        transition('* => visible', animate('150ms cubic-bezier(0.0, 0.0, 0.2, 1)')),
-                        transition('* => hidden', animate('150ms cubic-bezier(0.4, 0.0, 1, 1)')),
-                    ])
-                ],
                 host: {
                     // Forces the element to have a layout in IE and Edge. This fixes issues where the element
                     // won't be rendered if the animations are disabled or there is no web animations polyfill.

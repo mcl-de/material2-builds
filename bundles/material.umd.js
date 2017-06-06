@@ -18054,6 +18054,7 @@ var MdTooltip = (function () {
          * @return {?}
          */
         set: function (value) {
+            value = value.replace(/\r\n|\r|\n/g, '<br>');
             this._message = value;
             if (this._tooltipInstance) {
                 this._setTooltipMessage(this._message);
@@ -18174,7 +18175,7 @@ var MdTooltip = (function () {
     MdTooltip.prototype.hide = function (delay) {
         if (delay === void 0) { delay = this.hideDelay; }
         if (this._tooltipInstance) {
-            this._tooltipInstance.hide(delay);
+            this._disposeTooltip();
         }
     };
     /**
@@ -18495,18 +18496,8 @@ var TooltipComponent = (function () {
 }());
 TooltipComponent.decorators = [
     { type: _angular_core.Component, args: [{ selector: 'md-tooltip-component, mat-tooltip-component',
-                template: "<div class=\"mat-tooltip\" [style.transform-origin]=\"_transformOrigin\" [@state]=\"_visibility\" (@state.done)=\"_afterVisibilityAnimation($event)\">{{message}}</div>",
+                template: "<div class=\"mat-tooltip\" [style.transform-origin]=\"_transformOrigin\" [innerHTML]=\"message\"></div>",
                 styles: [":host{pointer-events:none}.mat-tooltip{color:#fff;border-radius:2px;margin:14px;max-width:250px;padding-left:8px;padding-right:8px}@media screen and (-ms-high-contrast:active){.mat-tooltip{outline:solid 1px}}"],
-                animations: [
-                    _angular_animations.trigger('state', [
-                        _angular_animations.state('void', _angular_animations.style({ transform: 'scale(0)' })),
-                        _angular_animations.state('initial', _angular_animations.style({ transform: 'scale(0)' })),
-                        _angular_animations.state('visible', _angular_animations.style({ transform: 'scale(1)' })),
-                        _angular_animations.state('hidden', _angular_animations.style({ transform: 'scale(0)' })),
-                        _angular_animations.transition('* => visible', _angular_animations.animate('150ms cubic-bezier(0.0, 0.0, 0.2, 1)')),
-                        _angular_animations.transition('* => hidden', _angular_animations.animate('150ms cubic-bezier(0.4, 0.0, 1, 1)')),
-                    ])
-                ],
                 host: {
                     // Forces the element to have a layout in IE and Edge. This fixes issues where the element
                     // won't be rendered if the animations are disabled or there is no web animations polyfill.
