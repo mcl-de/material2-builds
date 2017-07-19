@@ -1,18 +1,36 @@
-import { ElementRef, ViewContainerRef, NgZone, OnDestroy, Renderer2, ChangeDetectorRef } from '@angular/core';
+/**
+ * @license
+ * Copyright Google Inc. All Rights Reserved.
+ *
+ * Use of this source code is governed by an MIT-style license that can be
+ * found in the LICENSE file at https://angular.io/license
+ */
+import { ElementRef, ViewContainerRef, NgZone, OnDestroy, Renderer2, ChangeDetectorRef, InjectionToken } from '@angular/core';
 import { AnimationEvent } from '@angular/animations';
-import { Overlay, OverlayRef, OverlayConnectionPosition, OriginConnectionPosition } from '../core';
+import { Overlay, OverlayRef, OverlayConnectionPosition, OriginConnectionPosition, RepositionScrollStrategy, ScrollStrategy } from '../core';
 import { Observable } from 'rxjs/Observable';
-import { Dir } from '../core/rtl/dir';
+import { Directionality } from '../core/bidi/index';
 import { Platform } from '../core/platform/index';
-import 'rxjs/add/operator/first';
 import { ScrollDispatcher } from '../core/overlay/scroll/scroll-dispatcher';
 export declare type TooltipPosition = 'left' | 'right' | 'above' | 'below' | 'before' | 'after';
 /** Time in ms to delay before changing the tooltip visibility to hidden */
 export declare const TOUCHEND_HIDE_DELAY = 1500;
 /** Time in ms to throttle repositioning after scroll events. */
 export declare const SCROLL_THROTTLE_MS = 20;
-/** Throws an error if the user supplied an invalid tooltip position. */
-export declare function throwMdTooltipInvalidPositionError(position: string): void;
+/** CSS class that will be attached to the overlay panel. */
+export declare const TOOLTIP_PANEL_CLASS = "mat-tooltip-panel";
+/** Creates an error to be thrown if the user supplied an invalid tooltip position. */
+export declare function getMdTooltipInvalidPositionError(position: string): Error;
+/** Injection token that determines the scroll handling while a tooltip is visible. */
+export declare const MD_TOOLTIP_SCROLL_STRATEGY: InjectionToken<() => ScrollStrategy>;
+/** @docs-private */
+export declare function MD_TOOLTIP_SCROLL_STRATEGY_PROVIDER_FACTORY(overlay: Overlay): () => RepositionScrollStrategy;
+/** @docs-private */
+export declare const MD_TOOLTIP_SCROLL_STRATEGY_PROVIDER: {
+    provide: InjectionToken<() => ScrollStrategy>;
+    deps: typeof Overlay[];
+    useFactory: (overlay: Overlay) => () => RepositionScrollStrategy;
+};
 /**
  * Directive that attaches a material design tooltip to the host element. Animates the showing and
  * hiding of a tooltip provided position (defaults to below the element).
@@ -27,11 +45,13 @@ export declare class MdTooltip implements OnDestroy {
     private _ngZone;
     private _renderer;
     private _platform;
+    private _scrollStrategy;
     private _dir;
-    _overlayRef: OverlayRef;
-    _tooltipInstance: TooltipComponent;
+    _overlayRef: OverlayRef | null;
+    _tooltipInstance: TooltipComponent | null;
     private _position;
     private _disabled;
+    private _tooltipClass;
     /** Allows the user to define the position of the tooltip relative to the parent element */
     position: TooltipPosition;
     /** Disables the display of the tooltip. */
@@ -45,6 +65,10 @@ export declare class MdTooltip implements OnDestroy {
     private _message;
     /** The message to be displayed in the tooltip */
     message: string;
+    /** Classes to be passed to the tooltip. Supports the same syntax as `ngClass`. */
+    tooltipClass: string | string[] | Set<string> | {
+        [key: string]: any;
+    };
     /** @deprecated */
     _deprecatedMessage: string;
     _matMessage: string;
@@ -52,7 +76,12 @@ export declare class MdTooltip implements OnDestroy {
     _matDisabled: boolean;
     _matHideDelay: number;
     _matShowDelay: number;
-    constructor(_overlay: Overlay, _elementRef: ElementRef, _scrollDispatcher: ScrollDispatcher, _viewContainerRef: ViewContainerRef, _ngZone: NgZone, _renderer: Renderer2, _platform: Platform, _dir: Dir);
+    _matClass: string | string[] | Set<string> | {
+        [key: string]: any;
+    };
+    private _enterListener;
+    private _leaveListener;
+    constructor(_overlay: Overlay, _elementRef: ElementRef, _scrollDispatcher: ScrollDispatcher, _viewContainerRef: ViewContainerRef, _ngZone: NgZone, _renderer: Renderer2, _platform: Platform, _scrollStrategy: any, _dir: Directionality);
     /**
      * Dispose the tooltip when destroyed.
      */
@@ -60,7 +89,7 @@ export declare class MdTooltip implements OnDestroy {
     /** Shows the tooltip after the delay in ms, defaults to tooltip-delay-show or 0ms if no input */
     show(delay?: number): void;
     /** Hides the tooltip after the delay in ms, defaults to tooltip-delay-hide or 0ms if no input */
-    hide(delay?: number): void;
+    hide(): void;
     /** Shows/hides the tooltip */
     toggle(): void;
     /** Returns true if the tooltip is currently visible to the user */
@@ -77,6 +106,8 @@ export declare class MdTooltip implements OnDestroy {
     _getOverlayPosition(): OverlayConnectionPosition;
     /** Updates the tooltip message and repositions the overlay according to the new message length */
     private _setTooltipMessage(message);
+    /** Updates the tooltip class */
+    private _setTooltipClass(tooltipClass);
 }
 export declare type TooltipVisibility = 'initial' | 'visible' | 'hidden';
 /**
@@ -88,6 +119,10 @@ export declare class TooltipComponent {
     private _changeDetectorRef;
     /** Message to display in the tooltip */
     message: string;
+    /** Classes to be added to the tooltip. Supports the same syntax as `ngClass`. */
+    tooltipClass: string | string[] | Set<string> | {
+        [key: string]: any;
+    };
     /** The timeout ID of any current timer set to show the tooltip */
     _showTimeoutId: number;
     /** The timeout ID of any current timer set to hide the tooltip */
@@ -100,7 +135,7 @@ export declare class TooltipComponent {
     _transformOrigin: string;
     /** Subject for notifying that the tooltip has been hidden from the view */
     private _onHide;
-    constructor(_dir: Dir, _changeDetectorRef: ChangeDetectorRef);
+    constructor(_dir: Directionality, _changeDetectorRef: ChangeDetectorRef);
     /**
      * Shows the tooltip with an animation originating from the provided origin
      * @param position Position of the tooltip.
@@ -111,7 +146,7 @@ export declare class TooltipComponent {
      * Begins the animation to hide the tooltip after the provided delay in ms.
      * @param delay Amount of milliseconds to delay showing the tooltip.
      */
-    hide(delay: number): void;
+    hide(): void;
     /**
      * Returns an observable that notifies when the tooltip has been hidden from view
      */

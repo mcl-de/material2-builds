@@ -1,9 +1,15 @@
+/**
+ * @license
+ * Copyright Google Inc. All Rights Reserved.
+ *
+ * Use of this source code is governed by an MIT-style license that can be
+ * found in the LICENSE file at https://angular.io/license
+ */
 import { ElementRef, EventEmitter, NgZone, OnDestroy, Optional, Renderer2 } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
 import { Platform } from '../platform/platform';
-import 'rxjs/add/observable/of';
 export declare const TOUCH_BUFFER_MS = 650;
-export declare type FocusOrigin = 'touch' | 'mouse' | 'keyboard' | 'program';
+export declare type FocusOrigin = 'touch' | 'mouse' | 'keyboard' | 'program' | null;
 /** Monitors mouse and keyboard events to determine the cause of focus events. */
 export declare class FocusOriginMonitor {
     private _ngZone;
@@ -38,10 +44,9 @@ export declare class FocusOriginMonitor {
     /**
      * Focuses the element via the specified focus origin.
      * @param element The element to focus.
-     * @param renderer The renderer to use to invoke the focus method on the element.
      * @param origin The focus origin.
      */
-    focusVia(element: HTMLElement, renderer: Renderer2, origin: FocusOrigin): void;
+    focusVia(element: HTMLElement, origin: FocusOrigin): void;
     /** Register necessary event listeners on the document and window. */
     private _registerDocumentEvents();
     /**
@@ -49,7 +54,7 @@ export declare class FocusOriginMonitor {
      * @param element The element to update the classes on.
      * @param origin The focus origin.
      */
-    private _setClasses(element, origin);
+    private _setClasses(element, origin?);
     /**
      * Sets the origin and schedules an async function to clear it at the end of the event queue.
      * @param origin The origin to set.
@@ -72,7 +77,7 @@ export declare class FocusOriginMonitor {
      * @param event The blur event.
      * @param element The monitored element.
      */
-    private _onBlur(event, element);
+    _onBlur(event: FocusEvent, element: HTMLElement): void;
 }
 /**
  * Directive that determines how a particular element was focused (via keyboard, mouse, touch, or
@@ -86,6 +91,7 @@ export declare class FocusOriginMonitor {
 export declare class CdkMonitorFocus implements OnDestroy {
     private _elementRef;
     private _focusOriginMonitor;
+    private _monitorSubscription;
     cdkFocusChange: EventEmitter<FocusOrigin>;
     constructor(_elementRef: ElementRef, _focusOriginMonitor: FocusOriginMonitor, renderer: Renderer2);
     ngOnDestroy(): void;
@@ -93,6 +99,6 @@ export declare class CdkMonitorFocus implements OnDestroy {
 export declare function FOCUS_ORIGIN_MONITOR_PROVIDER_FACTORY(parentDispatcher: FocusOriginMonitor, ngZone: NgZone, platform: Platform): FocusOriginMonitor;
 export declare const FOCUS_ORIGIN_MONITOR_PROVIDER: {
     provide: typeof FocusOriginMonitor;
-    deps: (typeof Platform | Optional[] | typeof NgZone)[];
+    deps: (Optional[] | typeof NgZone | typeof Platform)[];
     useFactory: (parentDispatcher: FocusOriginMonitor, ngZone: NgZone, platform: Platform) => FocusOriginMonitor;
 };

@@ -1,7 +1,15 @@
+/**
+ * @license
+ * Copyright Google Inc. All Rights Reserved.
+ *
+ * Use of this source code is governed by an MIT-style license that can be
+ * found in the LICENSE file at https://angular.io/license
+ */
 import { AfterContentInit, AfterContentChecked, AfterViewInit, ChangeDetectorRef, ElementRef, EventEmitter, QueryList, Renderer2 } from '@angular/core';
+import { Platform } from '../core';
 import { FormGroupDirective, NgControl, NgForm } from '@angular/forms';
-/** Type for the available floatPlaceholder values. */
-export declare type FloatPlaceholderType = 'always' | 'never' | 'auto';
+import { FloatPlaceholderType, PlaceholderOptions } from '../core/placeholder/placeholder-options';
+import { ErrorStateMatcher, ErrorOptions } from '../core/error/error-options';
 /**
  * The placeholder directive. The content can declare this to implement more
  * complex placeholders.
@@ -28,6 +36,7 @@ export declare class MdSuffix {
 export declare class MdInputDirective {
     private _elementRef;
     private _renderer;
+    private _platform;
     _ngControl: NgControl;
     private _parentForm;
     private _parentFormGroup;
@@ -38,6 +47,7 @@ export declare class MdInputDirective {
     private _required;
     private _id;
     private _cachedUid;
+    private _errorOptions;
     /** Whether the element is focused or not. */
     focused: boolean;
     /** Sets the aria-describedby attribute on the input for improved a11y. */
@@ -52,6 +62,8 @@ export declare class MdInputDirective {
     required: any;
     /** Input type of the element. */
     type: string;
+    /** A function used to control when error messages are shown. */
+    errorStateMatcher: ErrorStateMatcher;
     /** The input element's value. */
     value: string;
     /**
@@ -62,7 +74,7 @@ export declare class MdInputDirective {
     readonly empty: boolean;
     private readonly _uid;
     private _neverEmptyInputTypes;
-    constructor(_elementRef: ElementRef, _renderer: Renderer2, _ngControl: NgControl, _parentForm: NgForm, _parentFormGroup: FormGroupDirective);
+    constructor(_elementRef: ElementRef, _renderer: Renderer2, _platform: Platform, _ngControl: NgControl, _parentForm: NgForm, _parentFormGroup: FormGroupDirective, errorOptions: ErrorOptions);
     /** Focuses the input element. */
     focus(): void;
     _onFocus(): void;
@@ -83,12 +95,11 @@ export declare class MdInputDirective {
 export declare class MdInputContainer implements AfterViewInit, AfterContentInit, AfterContentChecked {
     _elementRef: ElementRef;
     private _changeDetectorRef;
-    /** Alignment of the input container's content. */
-    align: 'start' | 'end';
+    private _placeholderOptions;
     /** Color of the input divider, based on the theme. */
     color: 'primary' | 'accent' | 'warn';
     /** @deprecated Use color instead. */
-    dividerColor: "accent" | "primary" | "warn";
+    dividerColor: "primary" | "accent" | "warn";
     /** Whether the required marker should be hidden. */
     hideRequiredMarker: any;
     private _hideRequiredMarker;
@@ -113,7 +124,7 @@ export declare class MdInputContainer implements AfterViewInit, AfterContentInit
     _hintChildren: QueryList<MdHint>;
     _prefixChildren: QueryList<MdPrefix>;
     _suffixChildren: QueryList<MdSuffix>;
-    constructor(_elementRef: ElementRef, _changeDetectorRef: ChangeDetectorRef);
+    constructor(_elementRef: ElementRef, _changeDetectorRef: ChangeDetectorRef, placeholderOptions: PlaceholderOptions);
     ngAfterContentInit(): void;
     ngAfterContentChecked(): void;
     ngAfterViewInit(): void;
@@ -147,5 +158,5 @@ export declare class MdInputContainer implements AfterViewInit, AfterContentInit
     /**
      * Throws an error if the container's input child was removed.
      */
-    private _validateInputChild();
+    protected _validateInputChild(): void;
 }

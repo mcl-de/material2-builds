@@ -1,3 +1,10 @@
+/**
+ * @license
+ * Copyright Google Inc. All Rights Reserved.
+ *
+ * Use of this source code is governed by an MIT-style license that can be
+ * found in the LICENSE file at https://angular.io/license
+ */
 import { Renderer2, ElementRef, NgZone } from '@angular/core';
 /**
  * The ink-bar is used to display and animate the line underneath the current active tab label.
@@ -19,13 +26,8 @@ export declare class MdInkBar {
     /** Hides the ink bar. */
     hide(): void;
     /**
-     * Generates the pixel distance from the left based on the provided element in string format.
+     * Sets the proper styles to the ink bar element.
      * @param element
      */
-    private _getLeftPosition(element);
-    /**
-     * Generates the pixel width from the provided element in string format.
-     * @param element
-     */
-    private _getElementWidth(element);
+    private _setStyles(element);
 }

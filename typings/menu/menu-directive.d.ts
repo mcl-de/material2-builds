@@ -1,8 +1,17 @@
-import { AfterContentInit, EventEmitter, OnDestroy, QueryList, TemplateRef } from '@angular/core';
+/**
+ * @license
+ * Copyright Google Inc. All Rights Reserved.
+ *
+ * Use of this source code is governed by an MIT-style license that can be
+ * found in the LICENSE file at https://angular.io/license
+ */
+import { AfterContentInit, EventEmitter, OnDestroy, QueryList, TemplateRef, ElementRef } from '@angular/core';
+import { AnimationEvent } from '@angular/animations';
 import { MenuPositionX, MenuPositionY } from './menu-positions';
 import { MdMenuItem } from './menu-item';
 import { MdMenuPanel } from './menu-panel';
 export declare class MdMenu implements AfterContentInit, MdMenuPanel, OnDestroy {
+    private _elementRef;
     private _keyManager;
     private _xPosition;
     private _yPosition;
@@ -10,6 +19,8 @@ export declare class MdMenu implements AfterContentInit, MdMenuPanel, OnDestroy 
     private _tabSubscription;
     /** Config object to be passed into the menu's ngClass */
     _classList: any;
+    /** Current state of the panel animation. */
+    _panelAnimationState: 'void' | 'enter-start' | 'enter';
     /** Position of the menu in the X axis. */
     xPosition: MenuPositionX;
     /** Position of the menu in the Y axis. */
@@ -28,6 +39,7 @@ export declare class MdMenu implements AfterContentInit, MdMenuPanel, OnDestroy 
     classList: string;
     /** Event emitted when the menu is closed. */
     close: EventEmitter<void>;
+    constructor(_elementRef: ElementRef);
     ngAfterContentInit(): void;
     ngOnDestroy(): void;
     /** Handle a keyboard event from the menu, delegating to the appropriate action. */
@@ -47,4 +59,10 @@ export declare class MdMenu implements AfterContentInit, MdMenuPanel, OnDestroy 
      * folds out from the correct direction.
      */
     setPositionClasses(posX?: "before" | "after", posY?: "above" | "below"): void;
+    /** Starts the enter animation. */
+    _startAnimation(): void;
+    /** Resets the panel animation to its initial state. */
+    _resetAnimation(): void;
+    /** Callback that is invoked when the panel animation completes. */
+    _onAnimationDone(event: AnimationEvent): void;
 }

@@ -1,3 +1,10 @@
+/**
+ * @license
+ * Copyright Google Inc. All Rights Reserved.
+ *
+ * Use of this source code is governed by an MIT-style license that can be
+ * found in the LICENSE file at https://angular.io/license
+ */
 import { EventEmitter } from '@angular/core';
 /**
  * An internal class that represents the data corresponding to a single calendar cell.
@@ -31,6 +38,11 @@ export declare class MdCalendarBody {
     allowDisabledSelection: boolean;
     /** The cell number of the active cell in the table. */
     activeCell: number;
+    /**
+     * The aspect ratio (width / height) to use for the cells in the table. This aspect ratio will be
+     * maintained even as the table resizes.
+     */
+    cellAspectRatio: number;
     /** Emits when a new value is selected. */
     selectedValueChange: EventEmitter<number>;
     _cellClicked(cell: MdCalendarCell): void;

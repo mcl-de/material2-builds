@@ -1,3 +1,10 @@
+/**
+ * @license
+ * Copyright Google Inc. All Rights Reserved.
+ *
+ * Use of this source code is governed by an MIT-style license that can be
+ * found in the LICENSE file at https://angular.io/license
+ */
 import { Subject } from 'rxjs/Subject';
 /**
  * Class to be used to power selecting one or more options from a list.
@@ -17,7 +24,7 @@ export declare class SelectionModel<T> {
     /** Selected value(s). */
     readonly selected: T[];
     /** Event emitted when the value has changed. */
-    onChange: Subject<SelectionChange<T>>;
+    onChange: Subject<SelectionChange<T>> | null;
     constructor(_isMulti?: boolean, initiallySelectedValues?: T[], _emitChanges?: boolean);
     /**
      * Selects a value or an array of values.

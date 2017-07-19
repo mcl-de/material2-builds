@@ -1,3 +1,10 @@
+/**
+ * @license
+ * Copyright Google Inc. All Rights Reserved.
+ *
+ * Use of this source code is governed by an MIT-style license that can be
+ * found in the LICENSE file at https://angular.io/license
+ */
 import { OverlayRef } from '../core';
 import { Observable } from 'rxjs/Observable';
 import { MdSnackBarContainer } from './snack-bar-container';
@@ -6,9 +13,8 @@ import { MdSnackBarContainer } from './snack-bar-container';
  */
 export declare class MdSnackBarRef<T> {
     private _overlayRef;
-    private _instance;
     /** The instance of the component making up the content of the snack bar. */
-    readonly instance: T;
+    instance: T;
     /**
      * The instance of the component making up the content of the snack bar.
      * @docs-private
@@ -20,9 +26,16 @@ export declare class MdSnackBarRef<T> {
     private _afterOpened;
     /** Subject for notifying the user that the snack bar action was called. */
     private _onAction;
-    constructor(instance: T, containerInstance: MdSnackBarContainer, _overlayRef: OverlayRef);
+    /**
+     * Timeout ID for the duration setTimeout call. Used to clear the timeout if the snackbar is
+     * dismissed before the duration passes.
+     */
+    private _durationTimeoutId;
+    constructor(containerInstance: MdSnackBarContainer, _overlayRef: OverlayRef);
     /** Dismisses the snack bar. */
     dismiss(): void;
+    /** Dismisses the snack bar after some duration */
+    _dismissAfter(duration: number): void;
     /** Marks the snackbar action clicked. */
     _action(): void;
     /** Marks the snackbar as opened */

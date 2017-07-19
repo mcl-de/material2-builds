@@ -1,3 +1,10 @@
+/**
+ * @license
+ * Copyright Google Inc. All Rights Reserved.
+ *
+ * Use of this source code is governed by an MIT-style license that can be
+ * found in the LICENSE file at https://angular.io/license
+ */
 import { AfterContentInit, ElementRef, EventEmitter, OnDestroy, Renderer2 } from '@angular/core';
 import { MdDatepicker } from './datepicker';
 import { AbstractControl, ControlValueAccessor, ValidationErrors, Validator } from '@angular/forms';
@@ -21,15 +28,18 @@ export declare class MdDatepickerInput<D> implements AfterContentInit, ControlVa
     _dateFilter: (date: D | null) => boolean;
     matDatepickerFilter: (date: D | null) => boolean;
     /** The value of the input. */
-    value: D;
+    value: D | null;
     /** The minimum valid date. */
     min: D;
     private _min;
     /** The maximum valid date. */
     max: D;
     private _max;
+    /** Whether the datepicker-input is disabled. */
+    disabled: any;
+    private _disabled;
     /** Emits when the value changes (either due to user input or programmatic change). */
-    _valueChange: EventEmitter<D>;
+    _valueChange: EventEmitter<D | null>;
     _onTouched: () => void;
     private _cvaOnChange;
     private _validatorOnChange;

@@ -1,7 +1,15 @@
+/**
+ * @license
+ * Copyright Google Inc. All Rights Reserved.
+ *
+ * Use of this source code is governed by an MIT-style license that can be
+ * found in the LICENSE file at https://angular.io/license
+ */
 import { AfterContentInit, ChangeDetectorRef, ElementRef, Renderer2, EventEmitter, OnInit, QueryList, OnDestroy, AfterViewInit } from '@angular/core';
 import { ControlValueAccessor } from '@angular/forms';
 import { UniqueSelectionDispatcher, MdRipple, FocusOriginMonitor } from '../core';
 import { CanDisable } from '../core/common-behaviors/disabled';
+import { CanColor } from '../core/common-behaviors/color';
 /**
  * Provider Expression that allows md-radio-group to register as a ControlValueAccessor. This
  * allows it to support [(ngModel)] and ngControl.
@@ -11,10 +19,11 @@ export declare const MD_RADIO_GROUP_CONTROL_VALUE_ACCESSOR: any;
 /** Change event object emitted by MdRadio and MdRadioGroup. */
 export declare class MdRadioChange {
     /** The MdRadioButton that emits the change event. */
-    source: MdRadioButton;
+    source: MdRadioButton | null;
     /** The value of the MdRadioButton. */
     value: any;
 }
+/** @docs-private */
 export declare class MdRadioGroupBase {
 }
 export declare const _MdRadioGroupMixinBase: (new (...args: any[]) => CanDisable) & typeof MdRadioGroupBase;
@@ -68,7 +77,7 @@ export declare class MdRadioGroup extends _MdRadioGroupMixinBase implements Afte
     value: any;
     _checkSelectedRadioButton(): void;
     /** Whether the radio button is selected. */
-    selected: MdRadioButton;
+    selected: MdRadioButton | null;
     /** Whether the radio group is diabled */
     disabled: boolean;
     constructor(_changeDetector: ChangeDetectorRef);
@@ -111,15 +120,21 @@ export declare class MdRadioGroup extends _MdRadioGroupMixinBase implements Afte
      */
     setDisabledState(isDisabled: boolean): void;
 }
+/** @docs-private */
+export declare class MdRadioButtonBase {
+    _renderer: Renderer2;
+    _elementRef: ElementRef;
+    constructor(_renderer: Renderer2, _elementRef: ElementRef);
+}
+export declare const _MdRadioButtonMixinBase: (new (...args: any[]) => CanColor) & typeof MdRadioButtonBase;
 /**
  * A radio-button. May be inside of
  */
-export declare class MdRadioButton implements OnInit, AfterViewInit, OnDestroy {
-    private _elementRef;
-    private _renderer;
+export declare class MdRadioButton extends _MdRadioButtonMixinBase implements OnInit, AfterViewInit, OnDestroy, CanColor {
     private _changeDetector;
     private _focusOriginMonitor;
     private _radioDispatcher;
+    private _uniqueId;
     /** The unique ID for the radio button. */
     id: string;
     /** Analog to HTML 'name' attribute used to group radios for unique selection. */
@@ -166,9 +181,11 @@ export declare class MdRadioButton implements OnInit, AfterViewInit, OnDestroy {
     _ripple: MdRipple;
     /** Reference to the current focus ripple. */
     private _focusRipple;
+    /** Unregister function for _radioDispatcher **/
+    private _removeUniqueSelectionListener;
     /** The native `<input type=radio>` element */
     _inputElement: ElementRef;
-    constructor(radioGroup: MdRadioGroup, _elementRef: ElementRef, _renderer: Renderer2, _changeDetector: ChangeDetectorRef, _focusOriginMonitor: FocusOriginMonitor, _radioDispatcher: UniqueSelectionDispatcher);
+    constructor(radioGroup: MdRadioGroup, elementRef: ElementRef, renderer: Renderer2, _changeDetector: ChangeDetectorRef, _focusOriginMonitor: FocusOriginMonitor, _radioDispatcher: UniqueSelectionDispatcher);
     /** Focuses the radio button. */
     focus(): void;
     /**

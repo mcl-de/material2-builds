@@ -1,3 +1,10 @@
+/**
+ * @license
+ * Copyright Google Inc. All Rights Reserved.
+ *
+ * Use of this source code is governed by an MIT-style license that can be
+ * found in the LICENSE file at https://angular.io/license
+ */
 import { PositionStrategy } from './position-strategy';
 import { ElementRef } from '@angular/core';
 import { ViewportRuler } from './viewport-ruler';
@@ -52,7 +59,7 @@ export declare class ConnectedPositionStrategy implements PositionStrategy {
      * @param element Element to which to apply the CSS styles.
      * @returns Resolves when the styles have been applied.
      */
-    apply(element: HTMLElement): Promise<void>;
+    apply(element: HTMLElement): void;
     /**
      * This re-aligns the overlay element with the trigger in its last calculated position,
      * even if a position higher in the "preferred positions" list would now fit. This

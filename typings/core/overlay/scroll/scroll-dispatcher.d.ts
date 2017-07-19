@@ -1,11 +1,15 @@
+/**
+ * @license
+ * Copyright Google Inc. All Rights Reserved.
+ *
+ * Use of this source code is governed by an MIT-style license that can be
+ * found in the LICENSE file at https://angular.io/license
+ */
 import { ElementRef, NgZone, Optional } from '@angular/core';
 import { Platform } from '../../platform/index';
 import { Scrollable } from './scrollable';
 import { Subject } from 'rxjs/Subject';
 import { Subscription } from 'rxjs/Subscription';
-import 'rxjs/add/observable/fromEvent';
-import 'rxjs/add/observable/merge';
-import 'rxjs/add/operator/auditTime';
 /** Time in ms to throttle the scrolling events by default. */
 export declare const DEFAULT_SCROLL_TIME = 20;
 /**
@@ -19,7 +23,7 @@ export declare class ScrollDispatcher {
     /** Subject for notifying that a registered scrollable reference element has been scrolled. */
     _scrolled: Subject<void>;
     /** Keeps track of the global `scroll` and `resize` subscriptions. */
-    _globalSubscription: Subscription;
+    _globalSubscription: Subscription | null;
     /** Keeps track of the amount of subscriptions to `scrolled`. Used for cleaning up afterwards. */
     private _scrolledCount;
     /**
@@ -43,7 +47,7 @@ export declare class ScrollDispatcher {
      * references (or window, document, or body) fire a scrolled event. Can provide a time in ms
      * to override the default "throttle" time.
      */
-    scrolled(auditTimeInMs: number, callback: () => any): Subscription;
+    scrolled(auditTimeInMs: number | undefined, callback: () => any): Subscription;
     /** Returns all registered Scrollables that contain the provided element. */
     getScrollContainers(elementRef: ElementRef): Scrollable[];
     /** Returns true if the element is contained within the provided Scrollable. */
@@ -54,6 +58,6 @@ export declare class ScrollDispatcher {
 export declare function SCROLL_DISPATCHER_PROVIDER_FACTORY(parentDispatcher: ScrollDispatcher, ngZone: NgZone, platform: Platform): ScrollDispatcher;
 export declare const SCROLL_DISPATCHER_PROVIDER: {
     provide: typeof ScrollDispatcher;
-    deps: (typeof Platform | Optional[] | typeof NgZone)[];
+    deps: (Optional[] | typeof NgZone | typeof Platform)[];
     useFactory: (parentDispatcher: ScrollDispatcher, ngZone: NgZone, platform: Platform) => ScrollDispatcher;
 };

@@ -1,7 +1,14 @@
-import { ElementRef, EventEmitter, OnDestroy, Renderer2 } from '@angular/core';
+/**
+ * @license
+ * Copyright Google Inc. All Rights Reserved.
+ *
+ * Use of this source code is governed by an MIT-style license that can be
+ * found in the LICENSE file at https://angular.io/license
+ */
+import { ElementRef, EventEmitter, OnDestroy, Renderer2, ChangeDetectorRef } from '@angular/core';
 import { ControlValueAccessor } from '@angular/forms';
 import { HammerInput } from '../core';
-import { Dir } from '../core/rtl/dir';
+import { Directionality } from '../core/bidi/index';
 import { FocusOriginMonitor } from '../core/style/focus-origin-monitor';
 import { CanDisable } from '../core/common-behaviors/disabled';
 /**
@@ -14,8 +21,9 @@ export declare class MdSliderChange {
     /** The MdSlider that changed. */
     source: MdSlider;
     /** The new value of the source slider. */
-    value: number;
+    value: number | null;
 }
+/** @docs-private */
 export declare class MdSliderBase {
 }
 export declare const _MdSliderMixinBase: (new (...args: any[]) => CanDisable) & typeof MdSliderBase;
@@ -26,6 +34,7 @@ export declare const _MdSliderMixinBase: (new (...args: any[]) => CanDisable) & 
 export declare class MdSlider extends _MdSliderMixinBase implements ControlValueAccessor, OnDestroy, CanDisable {
     private _elementRef;
     private _focusOriginMonitor;
+    private _changeDetectorRef;
     private _dir;
     /** Whether the slider is inverted. */
     invert: any;
@@ -53,7 +62,7 @@ export declare class MdSlider extends _MdSliderMixinBase implements ControlValue
     /** @deprecated */
     _tickIntervalDeprecated: number | "auto";
     /** Value of the slider. */
-    value: number;
+    value: number | null;
     private _value;
     /** Whether the slider is vertical. */
     vertical: any;
@@ -131,7 +140,7 @@ export declare class MdSlider extends _MdSliderMixinBase implements ControlValue
     private readonly _invertMouseCoords;
     /** The language direction for this slider element. */
     private readonly _direction;
-    constructor(renderer: Renderer2, _elementRef: ElementRef, _focusOriginMonitor: FocusOriginMonitor, _dir: Dir);
+    constructor(renderer: Renderer2, _elementRef: ElementRef, _focusOriginMonitor: FocusOriginMonitor, _changeDetectorRef: ChangeDetectorRef, _dir: Directionality);
     ngOnDestroy(): void;
     _onMouseenter(): void;
     _onClick(event: MouseEvent): void;
@@ -196,7 +205,7 @@ export declare class SliderRenderer {
      * The track is used rather than the native element to ignore the extra space that the thumb can
      * take up.
      */
-    getSliderDimensions(): ClientRect;
+    getSliderDimensions(): ClientRect | null;
     /**
      * Focuses the native element.
      * Currently only used to allow a blur event to fire but will be used with keyboard input later.

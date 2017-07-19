@@ -1,3 +1,10 @@
+/**
+ * @license
+ * Copyright Google Inc. All Rights Reserved.
+ *
+ * Use of this source code is governed by an MIT-style license that can be
+ * found in the LICENSE file at https://angular.io/license
+ */
 import { ComponentRef, NgZone, ElementRef, EventEmitter } from '@angular/core';
 import { AnimationEvent } from '@angular/animations';
 import { BasePortalHost, ComponentPortal, PortalHostDirective, TemplatePortal } from '../core';
@@ -27,11 +34,13 @@ export declare class MdDialogContainer extends BasePortalHost {
     /** Reference to the global document object. */
     private _document;
     /** The dialog configuration. */
-    dialogConfig: MdDialogConfig;
+    _config: MdDialogConfig;
     /** State of the dialog animation. */
     _state: 'void' | 'enter' | 'exit';
     /** Emits the current animation state whenever it changes. */
     _onAnimationStateChange: EventEmitter<AnimationEvent>;
+    /** ID of the element that should be considered as the dialog's label. */
+    _ariaLabelledBy: string | null;
     constructor(_ngZone: NgZone, _elementRef: ElementRef, _focusTrapFactory: FocusTrapFactory, _document: any);
     /**
      * Attach a ComponentPortal as content to this dialog container.

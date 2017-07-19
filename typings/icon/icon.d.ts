@@ -1,5 +1,20 @@
-import { ElementRef, OnChanges, OnInit, Renderer2, SimpleChange, AfterViewChecked } from '@angular/core';
+/**
+ * @license
+ * Copyright Google Inc. All Rights Reserved.
+ *
+ * Use of this source code is governed by an MIT-style license that can be
+ * found in the LICENSE file at https://angular.io/license
+ */
+import { ElementRef, OnChanges, OnInit, Renderer2, SimpleChange } from '@angular/core';
 import { MdIconRegistry } from './icon-registry';
+import { CanColor } from '../core/common-behaviors/color';
+/** @docs-private */
+export declare class MdIconBase {
+    _renderer: Renderer2;
+    _elementRef: ElementRef;
+    constructor(_renderer: Renderer2, _elementRef: ElementRef);
+}
+export declare const _MdIconMixinBase: (new (...args: any[]) => CanColor) & typeof MdIconBase;
 /**
  * Component to display an icon. It can be used in the following ways:
  * - Specify the svgSrc input to load an SVG icon from a URL. The SVG content is directly inlined
@@ -33,29 +48,17 @@ import { MdIconRegistry } from './icon-registry';
  *   Example:
  *     <md-icon fontSet="fa" fontIcon="alarm"></md-icon>
  */
-export declare class MdIcon implements OnChanges, OnInit, AfterViewChecked {
-    private _elementRef;
-    private _renderer;
+export declare class MdIcon extends _MdIconMixinBase implements OnChanges, OnInit, CanColor {
     private _mdIconRegistry;
-    private _color;
     /** Name of the icon in the SVG icon set. */
     svgIcon: string;
     /** Font set that the icon is a part of. */
     fontSet: string;
     /** Name of an icon within a font set. */
     fontIcon: string;
-    /** Alt label to be used for accessibility. */
-    alt: string;
-    /** Screenreader label for the icon. */
-    hostAriaLabel: string;
-    /** Color of the icon. */
-    color: string;
     private _previousFontSetClass;
     private _previousFontIconClass;
-    private _previousAriaLabel;
-    constructor(_elementRef: ElementRef, _renderer: Renderer2, _mdIconRegistry: MdIconRegistry);
-    _updateColor(newColor: string): void;
-    _setElementColor(color: string, isAdd: boolean): void;
+    constructor(renderer: Renderer2, elementRef: ElementRef, _mdIconRegistry: MdIconRegistry, ariaHidden: string);
     /**
      * Splits an svgIcon binding value into its icon set and icon name components.
      * Returns a 2-element array of [(icon set), (icon name)].
@@ -74,9 +77,6 @@ export declare class MdIcon implements OnChanges, OnInit, AfterViewChecked {
         [propertyName: string]: SimpleChange;
     }): void;
     ngOnInit(): void;
-    ngAfterViewChecked(): void;
-    private _updateAriaLabel();
-    private _getAriaLabel();
     private _usingFontIcon();
     private _setSvgElement(svg);
     private _updateFontIconClasses();

@@ -1,6 +1,7 @@
 import { DateAdapter } from './date-adapter';
 /** Adapts the native JS Date for use with cdk-based components that work with dates. */
 export declare class NativeDateAdapter extends DateAdapter<Date> {
+    constructor(localeId: any);
     getYear(date: Date): number;
     getMonth(date: Date): number;
     getDate(date: Date): number;
@@ -14,7 +15,7 @@ export declare class NativeDateAdapter extends DateAdapter<Date> {
     clone(date: Date): Date;
     createDate(year: number, month: number, date: number): Date;
     today(): Date;
-    parse(value: any, parseFormat: Object): Date | null;
+    parse(value: any): Date | null;
     format(date: Date, displayFormat: Object): string;
     addCalendarYears(date: Date, years: number): Date;
     addCalendarMonths(date: Date, months: number): Date;
@@ -32,8 +33,8 @@ export declare class NativeDateAdapter extends DateAdapter<Date> {
      * Strip out unicode LTR and RTL characters. Edge and IE insert these into formatted dates while
      * other browsers do not. We remove them to make output consistent and because they interfere with
      * date parsing.
-     * @param s The string to strip direction characters from.
+     * @param str The string to strip direction characters from.
      * @returns The stripped string.
      */
-    private _stripDirectionalityCharacters(s);
+    private _stripDirectionalityCharacters(str);
 }

@@ -1,7 +1,13 @@
+/**
+ * @license
+ * Copyright Google Inc. All Rights Reserved.
+ *
+ * Use of this source code is governed by an MIT-style license that can be
+ * found in the LICENSE file at https://angular.io/license
+ */
 import { EventEmitter, OnInit, ElementRef, AfterViewChecked } from '@angular/core';
 import { AnimationEvent } from '@angular/animations';
-import { TemplatePortal, PortalHostDirective, Dir, LayoutDirection } from '../core';
-import 'rxjs/add/operator/map';
+import { TemplatePortal, PortalHostDirective, Directionality, Direction } from '../core';
 /**
  * These position states are used internally as animation states for the tab body. Setting the
  * position state to left, right, or center will transition the tab body from its current
@@ -25,8 +31,8 @@ export declare type MdTabBodyOriginState = 'left' | 'right';
  * @docs-private
  */
 export declare class MdTabBody implements OnInit, AfterViewChecked {
-    private _dir;
     private _elementRef;
+    private _dir;
     /** The portal host inside of this container into which the tab body content will be loaded. */
     _portalHost: PortalHostDirective;
     /** Event emitted when the tab begins to animate towards the center as the active tab. */
@@ -42,7 +48,7 @@ export declare class MdTabBody implements OnInit, AfterViewChecked {
     _origin: MdTabBodyOriginState;
     /** The origin position from which this tab should appear when it is centered into view. */
     origin: number;
-    constructor(_dir: Dir, _elementRef: ElementRef);
+    constructor(_elementRef: ElementRef, _dir: Directionality);
     /**
      * After initialized, check if the content is centered and has an origin. If so, set the
      * special position states that transition the tab from the left or right before centering.
@@ -56,7 +62,7 @@ export declare class MdTabBody implements OnInit, AfterViewChecked {
     _onTranslateTabStarted(e: AnimationEvent): void;
     _onTranslateTabComplete(e: AnimationEvent): void;
     /** The text direction of the containing app. */
-    _getLayoutDirection(): LayoutDirection;
+    _getLayoutDirection(): Direction;
     /** Whether the provided position state is considered center, regardless of origin. */
     private _isCenterPosition(position);
 }

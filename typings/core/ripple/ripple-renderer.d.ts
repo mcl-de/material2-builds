@@ -1,3 +1,10 @@
+/**
+ * @license
+ * Copyright Google Inc. All Rights Reserved.
+ *
+ * Use of this source code is governed by an MIT-style license that can be
+ * found in the LICENSE file at https://angular.io/license
+ */
 import { ElementRef, NgZone } from '@angular/core';
 import { Platform } from '../platform/platform';
 import { ViewportRuler } from '../overlay/position/viewport-ruler';
@@ -45,7 +52,7 @@ export declare class RippleRenderer {
     /** Fades out all currently active ripples. */
     fadeOutAll(): void;
     /** Sets the trigger element and registers the mouse events. */
-    setTriggerElement(element: HTMLElement): void;
+    setTriggerElement(element: HTMLElement | null): void;
     /** Listener being called on mousedown event. */
     private onMousedown(event);
     /** Listener being called on mouseup event. */

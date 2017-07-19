@@ -1,15 +1,18 @@
-import { ElementRef, NgZone, OnDestroy, ViewContainerRef, ChangeDetectorRef } from '@angular/core';
+/**
+ * @license
+ * Copyright Google Inc. All Rights Reserved.
+ *
+ * Use of this source code is governed by an MIT-style license that can be
+ * found in the LICENSE file at https://angular.io/license
+ */
+import { ElementRef, NgZone, OnDestroy, ViewContainerRef, ChangeDetectorRef, InjectionToken } from '@angular/core';
 import { ControlValueAccessor } from '@angular/forms';
-import { Overlay } from '../core';
+import { Overlay, RepositionScrollStrategy, ScrollStrategy } from '../core';
 import { MdAutocomplete } from './autocomplete';
 import { Observable } from 'rxjs/Observable';
 import { MdOptionSelectionChange, MdOption } from '../core/option/option';
-import { Dir } from '../core/rtl/dir';
+import { Directionality } from '../core/bidi/index';
 import { MdInputContainer } from '../input/input-container';
-import 'rxjs/add/observable/merge';
-import 'rxjs/add/observable/fromEvent';
-import 'rxjs/add/operator/filter';
-import 'rxjs/add/operator/switchMap';
 /**
  * The following style constants are necessary to save here in order
  * to properly calculate the scrollTop of the panel. Because we are not
@@ -19,6 +22,16 @@ import 'rxjs/add/operator/switchMap';
 export declare const AUTOCOMPLETE_OPTION_HEIGHT = 48;
 /** The total height of the autocomplete panel. */
 export declare const AUTOCOMPLETE_PANEL_HEIGHT = 256;
+/** Injection token that determines the scroll handling while the autocomplete panel is open. */
+export declare const MD_AUTOCOMPLETE_SCROLL_STRATEGY: InjectionToken<() => ScrollStrategy>;
+/** @docs-private */
+export declare function MD_AUTOCOMPLETE_SCROLL_STRATEGY_PROVIDER_FACTORY(overlay: Overlay): () => RepositionScrollStrategy;
+/** @docs-private */
+export declare const MD_AUTOCOMPLETE_SCROLL_STRATEGY_PROVIDER: {
+    provide: InjectionToken<() => ScrollStrategy>;
+    deps: typeof Overlay[];
+    useFactory: (overlay: Overlay) => () => RepositionScrollStrategy;
+};
 /**
  * Provider that allows the autocomplete to register as a ControlValueAccessor.
  * @docs-private
@@ -32,9 +45,10 @@ export declare class MdAutocompleteTrigger implements ControlValueAccessor, OnDe
     private _element;
     private _overlay;
     private _viewContainerRef;
-    private _changeDetectorRef;
-    private _dir;
     private _zone;
+    private _changeDetectorRef;
+    private _scrollStrategy;
+    private _dir;
     private _inputContainer;
     private _document;
     private _overlayRef;
@@ -46,6 +60,8 @@ export declare class MdAutocompleteTrigger implements ControlValueAccessor, OnDe
     private _positionStrategy;
     /** Whether or not the placeholder state is being overridden. */
     private _manuallyFloatingPlaceholder;
+    /** The subscription for closing actions (some are bound to document). */
+    private _closingActionsSubscription;
     /** View -> model callback called when value changes */
     _onChange: (value: any) => void;
     /** View -> model callback called when autocomplete has been touched */
@@ -53,7 +69,7 @@ export declare class MdAutocompleteTrigger implements ControlValueAccessor, OnDe
     autocomplete: MdAutocomplete;
     /** Property with mat- prefix for no-conflict mode. */
     _matAutocomplete: MdAutocomplete;
-    constructor(_element: ElementRef, _overlay: Overlay, _viewContainerRef: ViewContainerRef, _changeDetectorRef: ChangeDetectorRef, _dir: Dir, _zone: NgZone, _inputContainer: MdInputContainer, _document: any);
+    constructor(_element: ElementRef, _overlay: Overlay, _viewContainerRef: ViewContainerRef, _zone: NgZone, _changeDetectorRef: ChangeDetectorRef, _scrollStrategy: any, _dir: Directionality, _inputContainer: MdInputContainer, _document: any);
     ngOnDestroy(): void;
     readonly panelOpen: boolean;
     /** Opens the autocomplete suggestion panel. */
@@ -68,7 +84,7 @@ export declare class MdAutocompleteTrigger implements ControlValueAccessor, OnDe
     /** Stream of autocomplete option selections. */
     readonly optionSelections: Observable<MdOptionSelectionChange>;
     /** The currently active option, coerced to MdOption type. */
-    readonly activeOption: MdOption;
+    readonly activeOption: MdOption | null;
     /** Stream of clicks outside of the autocomplete panel. */
     private readonly _outsideClickStream;
     /**
@@ -107,8 +123,11 @@ export declare class MdAutocompleteTrigger implements ControlValueAccessor, OnDe
     /**
      * Given that we are not actually focusing active options, we must manually adjust scroll
      * to reveal options below the fold. First, we find the offset of the option from the top
-     * of the panel. The new scrollTop will be that offset - the panel height + the option
-     * height, so the active option will be just visible at the bottom of the panel.
+     * of the panel. If that offset is below the fold, the new scrollTop will be the offset -
+     * the panel height + the option height, so the active option will be just visible at the
+     * bottom of the panel. If that offset is above the top of the visible panel, the new scrollTop
+     * will become the offset. If that offset is visible within the panel already, the scrollTop is
+     * not adjusted.
      */
     private _scrollToOption();
     /**
@@ -139,7 +158,7 @@ export declare class MdAutocompleteTrigger implements ControlValueAccessor, OnDe
     private _subscribeToPositionChanges(strategy);
     /** Returns the width of the input element, so the panel width can match it. */
     private _getHostWidth();
-    /** Reset active item to null so arrow events will activate the correct options.*/
+    /** Reset active item to -1 so arrow events will activate the correct options.*/
     private _resetActiveItem();
     /**
      * Resets the active item and re-calculates alignment of the panel in case its size

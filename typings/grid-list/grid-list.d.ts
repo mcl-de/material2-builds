@@ -1,6 +1,13 @@
+/**
+ * @license
+ * Copyright Google Inc. All Rights Reserved.
+ *
+ * Use of this source code is governed by an MIT-style license that can be
+ * found in the LICENSE file at https://angular.io/license
+ */
 import { AfterContentChecked, OnInit, QueryList, Renderer2, ElementRef } from '@angular/core';
 import { MdGridTile } from './grid-tile';
-import { Dir } from '../core';
+import { Directionality } from '../core';
 export declare class MdGridList implements OnInit, AfterContentChecked {
     private _renderer;
     private _element;
@@ -20,7 +27,7 @@ export declare class MdGridList implements OnInit, AfterContentChecked {
     private _tileStyler;
     /** Query list of tiles that are being rendered. */
     _tiles: QueryList<MdGridTile>;
-    constructor(_renderer: Renderer2, _element: ElementRef, _dir: Dir);
+    constructor(_renderer: Renderer2, _element: ElementRef, _dir: Directionality);
     /** Amount of columns in the grid list. */
     cols: any;
     /** Size of the grid list's gutter in pixels. */
@@ -42,5 +49,5 @@ export declare class MdGridList implements OnInit, AfterContentChecked {
     /** Computes and applies the size and position for all children grid tiles. */
     private _layoutTiles();
     /** Sets style on the main grid-list element, given the style name and value. */
-    _setListStyle(style: [string, string]): void;
+    _setListStyle(style: [string, string] | null): void;
 }

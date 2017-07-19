@@ -2,16 +2,19 @@
  * Generated bundle index. Do not edit.
  */
 export * from './public_api';
-export { LIVE_ANNOUNCER_PROVIDER_FACTORY as ɵi } from './core/a11y/live-announcer';
-export { mixinDisabled as ɵp } from './core/common-behaviors/disabled';
-export { UNIQUE_SELECTION_DISPATCHER_PROVIDER_FACTORY as ɵj } from './core/coordination/unique-selection-dispatcher';
-export { CdkCell as ɵv, CdkCellDef as ɵr, CdkColumnDef as ɵt, CdkHeaderCell as ɵu, CdkHeaderCellDef as ɵs } from './core/data-table/cell';
-export { CdkCellOutlet as ɵy, CdkHeaderRow as ɵz, CdkHeaderRowDef as ɵw, CdkRow as ɵba, CdkRowDef as ɵx } from './core/data-table/row';
-export { MdDateFormats as ɵq } from './core/datetime/date-formats';
-export { MdMutationObserverFactory as ɵa } from './core/observe-content/observe-content';
-export { OVERLAY_CONTAINER_PROVIDER as ɵc, OVERLAY_CONTAINER_PROVIDER_FACTORY as ɵb } from './core/overlay/overlay-container';
-export { OverlayPositionBuilder as ɵo } from './core/overlay/position/overlay-position-builder';
-export { VIEWPORT_RULER_PROVIDER as ɵe, VIEWPORT_RULER_PROVIDER_FACTORY as ɵd } from './core/overlay/position/viewport-ruler';
-export { SCROLL_DISPATCHER_PROVIDER as ɵg, SCROLL_DISPATCHER_PROVIDER_FACTORY as ɵf } from './core/overlay/scroll/scroll-dispatcher';
-export { RippleRenderer as ɵh } from './core/ripple/ripple-renderer';
-export { MdGridAvatarCssMatStyler as ɵl, MdGridTileFooterCssMatStyler as ɵn, MdGridTileHeaderCssMatStyler as ɵm, MdGridTileText as ɵk } from './grid-list/grid-tile';
+export { mixinColor as ɵba } from './core/common-behaviors/color';
+export { mixinDisabled as ɵbb } from './core/common-behaviors/disabled';
+export { UNIQUE_SELECTION_DISPATCHER_PROVIDER_FACTORY as ɵk } from './core/coordination/unique-selection-dispatcher';
+export { MdDateFormats as ɵbc } from './core/datetime/date-formats';
+export { OVERLAY_CONTAINER_PROVIDER as ɵb, OVERLAY_CONTAINER_PROVIDER_FACTORY as ɵa } from './core/overlay/overlay-container';
+export { MD_CONNECTED_OVERLAY_SCROLL_STRATEGY as ɵc, MD_CONNECTED_OVERLAY_SCROLL_STRATEGY_PROVIDER as ɵe, MD_CONNECTED_OVERLAY_SCROLL_STRATEGY_PROVIDER_FACTORY as ɵd } from './core/overlay/overlay-directives';
+export { OverlayPositionBuilder as ɵz } from './core/overlay/position/overlay-position-builder';
+export { VIEWPORT_RULER_PROVIDER as ɵg, VIEWPORT_RULER_PROVIDER_FACTORY as ɵf } from './core/overlay/position/viewport-ruler';
+export { SCROLL_DISPATCHER_PROVIDER as ɵi, SCROLL_DISPATCHER_PROVIDER_FACTORY as ɵh } from './core/overlay/scroll/scroll-dispatcher';
+export { RippleRenderer as ɵj } from './core/ripple/ripple-renderer';
+export { EXPANSION_PANEL_ANIMATION_TIMING as ɵl } from './expansion/expansion-panel';
+export { MdGridAvatarCssMatStyler as ɵn, MdGridTileFooterCssMatStyler as ɵp, MdGridTileHeaderCssMatStyler as ɵo, MdGridTileText as ɵm } from './grid-list/grid-tile';
+export { MdMenuItemBase as ɵq, _MdMenuItemMixinBase as ɵr } from './menu/menu-item';
+export { MD_MENU_SCROLL_STRATEGY as ɵs, MD_MENU_SCROLL_STRATEGY_PROVIDER as ɵu, MD_MENU_SCROLL_STRATEGY_PROVIDER_FACTORY as ɵt } from './menu/menu-trigger';
+export { MdTabBase as ɵx, _MdTabMixinBase as ɵy } from './tabs/tab';
+export { MdTabLabelWrapperBase as ɵv, _MdTabLabelWrapperMixinBase as ɵw } from './tabs/tab-label-wrapper';

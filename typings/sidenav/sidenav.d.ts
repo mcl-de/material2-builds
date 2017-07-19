@@ -1,7 +1,13 @@
+/**
+ * @license
+ * Copyright Google Inc. All Rights Reserved.
+ *
+ * Use of this source code is governed by an MIT-style license that can be
+ * found in the LICENSE file at https://angular.io/license
+ */
 import { AfterContentInit, ElementRef, QueryList, EventEmitter, Renderer2, NgZone, OnDestroy } from '@angular/core';
-import { Dir } from '../core';
+import { Directionality } from '../core';
 import { FocusTrapFactory } from '../core/a11y/focus-trap';
-import 'rxjs/add/operator/first';
 /** Throws an exception when two MdSidenav are matching the same side. */
 export declare function throwMdDuplicatedSidenavError(align: string): void;
 /** Sidenav toggle promise result. */
@@ -20,6 +26,7 @@ export declare class MdSidenavToggleResult {
 export declare class MdSidenav implements AfterContentInit, OnDestroy {
     private _elementRef;
     private _focusTrapFactory;
+    private _doc;
     private _focusTrap;
     /** Alignment of the sidenav (direction neutral); whether 'start' or 'end'. */
     private _align;
@@ -54,7 +61,12 @@ export declare class MdSidenav implements AfterContentInit, OnDestroy {
      * @param _elementRef The DOM element reference. Used for transition and width calculation.
      *     If not available we do not hook on transitions.
      */
-    constructor(_elementRef: ElementRef, _focusTrapFactory: FocusTrapFactory);
+    constructor(_elementRef: ElementRef, _focusTrapFactory: FocusTrapFactory, _doc: any);
+    /**
+     * If focus is currently inside the sidenav, restores it to where it was before the sidenav
+     * opened.
+     */
+    private _restoreFocus();
     ngAfterContentInit(): void;
     ngOnDestroy(): void;
     /**
@@ -112,9 +124,9 @@ export declare class MdSidenavContainer implements AfterContentInit {
     private _ngZone;
     _sidenavs: QueryList<MdSidenav>;
     /** The sidenav child with the `start` alignment. */
-    readonly start: MdSidenav;
+    readonly start: MdSidenav | null;
     /** The sidenav child with the `end` alignment. */
-    readonly end: MdSidenav;
+    readonly end: MdSidenav | null;
     /** Event emitted when the sidenav backdrop is clicked. */
     backdropClick: EventEmitter<void>;
     /** The sidenav at the start/end alignment, independent of direction. */
@@ -130,7 +142,7 @@ export declare class MdSidenavContainer implements AfterContentInit {
     private _right;
     /** Whether to enable open/close trantions. */
     _enableTransitions: boolean;
-    constructor(_dir: Dir, _element: ElementRef, _renderer: Renderer2, _ngZone: NgZone);
+    constructor(_dir: Directionality, _element: ElementRef, _renderer: Renderer2, _ngZone: NgZone);
     ngAfterContentInit(): void;
     /** Calls `open` of both start and end sidenavs */
     open(): Promise<MdSidenavToggleResult[]>;

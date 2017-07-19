@@ -1,3 +1,10 @@
+/**
+ * @license
+ * Copyright Google Inc. All Rights Reserved.
+ *
+ * Use of this source code is governed by an MIT-style license that can be
+ * found in the LICENSE file at https://angular.io/license
+ */
 import { ElementRef, NgZone, OnChanges, SimpleChanges, OnDestroy, InjectionToken } from '@angular/core';
 import { RippleConfig } from './ripple-renderer';
 import { RippleRef } from './ripple-ref';
@@ -21,8 +28,8 @@ export declare class MdRipple implements OnChanges, OnDestroy {
      */
     centered: boolean;
     /**
-     * Whether click events will not trigger the ripple. It can still be triggered by manually
-     * calling createRipple()
+     * Whether click events will not trigger the ripple. Ripples can be still launched manually
+     * by using the `launch()` method.
      */
     disabled: boolean;
     /**

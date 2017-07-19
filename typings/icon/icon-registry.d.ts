@@ -1,16 +1,14 @@
+/**
+ * @license
+ * Copyright Google Inc. All Rights Reserved.
+ *
+ * Use of this source code is governed by an MIT-style license that can be
+ * found in the LICENSE file at https://angular.io/license
+ */
 import { Optional } from '@angular/core';
 import { SafeResourceUrl, DomSanitizer } from '@angular/platform-browser';
 import { Http } from '@angular/http';
 import { Observable } from 'rxjs/Observable';
-import 'rxjs/add/observable/forkJoin';
-import 'rxjs/add/observable/of';
-import 'rxjs/add/operator/map';
-import 'rxjs/add/operator/filter';
-import 'rxjs/add/operator/do';
-import 'rxjs/add/operator/share';
-import 'rxjs/add/operator/finally';
-import 'rxjs/add/operator/catch';
-import 'rxjs/add/observable/throw';
 /**
  * Returns an exception to be thrown in the case when attempting to
  * load an icon with a name that cannot be found.
@@ -23,6 +21,12 @@ export declare function getMdIconNameNotFoundError(iconName: string): Error;
  * @docs-private
  */
 export declare function getMdIconNoHttpProviderError(): Error;
+/**
+ * Returns an exception to be thrown when a URL couldn't be sanitized.
+ * @param url URL that was attempted to be sanitized.
+ * @docs-private
+ */
+export declare function getMdIconFailedToSanitizeError(url: SafeResourceUrl): Error;
 /**
  * Service to register and display icons used by the <md-icon> component.
  * - Registers icon URLs by namespace and name.

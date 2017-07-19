@@ -1,17 +1,35 @@
-import { Injector, TemplateRef } from '@angular/core';
+/**
+ * @license
+ * Copyright Google Inc. All Rights Reserved.
+ *
+ * Use of this source code is governed by an MIT-style license that can be
+ * found in the LICENSE file at https://angular.io/license
+ */
+import { Injector, TemplateRef, InjectionToken } from '@angular/core';
 import { Location } from '@angular/common';
 import { Observable } from 'rxjs/Observable';
 import { Subject } from 'rxjs/Subject';
-import { Overlay, ComponentType } from '../core';
+import { Overlay, ComponentType, BlockScrollStrategy, ScrollStrategy } from '../core';
 import { MdDialogConfig } from './dialog-config';
 import { MdDialogRef } from './dialog-ref';
-import 'rxjs/add/operator/first';
+export declare const MD_DIALOG_DATA: InjectionToken<any>;
+/** Injection token that determines the scroll handling while the dialog is open. */
+export declare const MD_DIALOG_SCROLL_STRATEGY: InjectionToken<() => ScrollStrategy>;
+/** @docs-private */
+export declare function MD_DIALOG_SCROLL_STRATEGY_PROVIDER_FACTORY(overlay: Overlay): () => BlockScrollStrategy;
+/** @docs-private */
+export declare const MD_DIALOG_SCROLL_STRATEGY_PROVIDER: {
+    provide: InjectionToken<() => ScrollStrategy>;
+    deps: typeof Overlay[];
+    useFactory: (overlay: Overlay) => () => BlockScrollStrategy;
+};
 /**
  * Service to open Material Design modal dialogs.
  */
 export declare class MdDialog {
     private _overlay;
     private _injector;
+    private _scrollStrategy;
     private _location;
     private _parentDialog;
     private _openDialogsAtThisLevel;
@@ -28,7 +46,7 @@ export declare class MdDialog {
     afterOpen: Observable<MdDialogRef<any>>;
     /** Gets an observable that is notified when all open dialog have finished closing. */
     afterAllClosed: Observable<void>;
-    constructor(_overlay: Overlay, _injector: Injector, _location: Location, _parentDialog: MdDialog);
+    constructor(_overlay: Overlay, _injector: Injector, _scrollStrategy: any, _location: Location, _parentDialog: MdDialog);
     /**
      * Opens a modal dialog containing the given component.
      * @param componentOrTemplateRef Type of the component to load into the dialog,
@@ -70,6 +88,15 @@ export declare class MdDialog {
      * @returns A promise resolving to the MdDialogRef that should be returned to the user.
      */
     private _attachDialogContent<T>(componentOrTemplateRef, dialogContainer, overlayRef, config);
+    /**
+     * Creates a custom injector to be used inside the dialog. This allows a component loaded inside
+     * of a dialog to close itself and, optionally, to return a value.
+     * @param config Config object that is used to construct the dialog.
+     * @param dialogRef Reference to the dialog.
+     * @param container Dialog container element that wraps all of the contents.
+     * @returns The custom injector that can be used inside the dialog.
+     */
+    private _createInjector<T>(config, dialogRef, dialogContainer);
     /**
      * Removes a dialog from the array of open dialogs.
      * @param dialogRef Dialog to be removed.

@@ -1,4 +1,12 @@
+/**
+ * @license
+ * Copyright Google Inc. All Rights Reserved.
+ *
+ * Use of this source code is governed by an MIT-style license that can be
+ * found in the LICENSE file at https://angular.io/license
+ */
 import { OnDestroy, ElementRef, NgZone, Renderer2 } from '@angular/core';
+import { CanColor } from '../core/common-behaviors/color';
 /** Default stroke width as a percentage of the viewBox. */
 export declare const PROGRESS_SPINNER_STROKE_WIDTH = 10;
 export declare type ProgressSpinnerMode = 'determinate' | 'indeterminate';
@@ -8,13 +16,18 @@ export declare type ProgressSpinnerMode = 'determinate' | 'indeterminate';
  */
 export declare class MdProgressSpinnerCssMatStyler {
 }
+/** @docs-private */
+export declare class MdProgressSpinnerBase {
+    _renderer: Renderer2;
+    _elementRef: ElementRef;
+    constructor(_renderer: Renderer2, _elementRef: ElementRef);
+}
+export declare const _MdProgressSpinnerMixinBase: (new (...args: any[]) => CanColor) & typeof MdProgressSpinnerBase;
 /**
  * <md-progress-spinner> component.
  */
-export declare class MdProgressSpinner implements OnDestroy {
+export declare class MdProgressSpinner extends _MdProgressSpinnerMixinBase implements OnDestroy, CanColor {
     private _ngZone;
-    private _elementRef;
-    private _renderer;
     /** The id of the last requested animation. */
     private _lastAnimationId;
     /** The id of the indeterminate interval. */
@@ -23,7 +36,6 @@ export declare class MdProgressSpinner implements OnDestroy {
     private _path;
     private _mode;
     private _value;
-    private _color;
     /** Stroke width of the progress spinner. By default uses 10px as stroke width. */
     strokeWidth: number;
     /**
@@ -31,17 +43,15 @@ export declare class MdProgressSpinner implements OnDestroy {
      * because voiceover does not report the progress indicator as indeterminate if the aria min
      * and/or max value are number values.
      */
-    readonly _ariaValueMin: number;
-    readonly _ariaValueMax: number;
+    readonly _ariaValueMin: number | null;
+    readonly _ariaValueMax: number | null;
     /** @docs-private */
     /** @docs-private */
-    interdeterminateInterval: number;
+    interdeterminateInterval: number | null;
     /**
      * Clean up any animations that were running.
      */
     ngOnDestroy(): void;
-    /** The color of the progress-spinner. Can be primary, accent, or warn. */
-    color: string;
     /** Value of the progress circle. It is bound to the host as the attribute aria-valuenow. */
     value: number;
     /**
@@ -51,7 +61,7 @@ export declare class MdProgressSpinner implements OnDestroy {
      * mode is bound to the host as the attribute host.
      */
     mode: ProgressSpinnerMode;
-    constructor(_ngZone: NgZone, _elementRef: ElementRef, _renderer: Renderer2);
+    constructor(renderer: Renderer2, elementRef: ElementRef, _ngZone: NgZone);
     /**
      * Animates the circle from one percentage value to another.
      *
@@ -83,7 +93,6 @@ export declare class MdProgressSpinner implements OnDestroy {
  * This is a component definition to be used as a convenience reference to create an
  * indeterminate <md-progress-spinner> instance.
  */
-export declare class MdSpinner extends MdProgressSpinner implements OnDestroy {
+export declare class MdSpinner extends MdProgressSpinner {
     constructor(elementRef: ElementRef, ngZone: NgZone, renderer: Renderer2);
-    ngOnDestroy(): void;
 }

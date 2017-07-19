@@ -21,12 +21,20 @@ export declare class MdCardSubtitle {
  * @docs-private
  */
 export declare class MdCardActions {
+    /** Position of the actions inside the card. */
+    align: 'start' | 'end';
 }
 /**
  * Footer of a card, needed as it's used as a selector in the API.
  * @docs-private
  */
 export declare class MdCardFooter {
+}
+/**
+ * Image used in a card, needed to add the mat- CSS styling.
+ * @docs-private
+ */
+export declare class MdCardImage {
 }
 /**
  * Image used in a card, needed to add the mat- CSS styling.
@@ -45,12 +53,6 @@ export declare class MdCardMdImage {
  * @docs-private
  */
 export declare class MdCardLgImage {
-}
-/**
- * Image used in a card, needed to add the mat- CSS styling.
- * @docs-private
- */
-export declare class MdCardImage {
 }
 /**
  * Large image used in a card, needed to add the mat- CSS styling.

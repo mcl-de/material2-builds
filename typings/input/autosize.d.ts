@@ -1,22 +1,28 @@
+/**
+ * @license
+ * Copyright Google Inc. All Rights Reserved.
+ *
+ * Use of this source code is governed by an MIT-style license that can be
+ * found in the LICENSE file at https://angular.io/license
+ */
 import { ElementRef, AfterViewInit } from '@angular/core';
+import { NgControl } from '@angular/forms';
 /**
  * Directive to automatically resize a textarea to fit its content.
  */
 export declare class MdTextareaAutosize implements AfterViewInit {
     private _elementRef;
+    /** Keep track of the previous textarea value to avoid resizing when the value hasn't changed. */
+    private _previousValue;
     private _minRows;
     private _maxRows;
-    /** @deprecated Use mdAutosizeMinRows */
     minRows: number;
-    /** @deprecated Use mdAutosizeMaxRows */
     maxRows: number;
-    /** Minimum number of rows for this textarea. */
-    mdAutosizeMinRows: number;
-    /** Maximum number of rows for this textarea. */
-    mdAutosizeMaxRows: number;
+    _matAutosizeMinRows: number;
+    _matAutosizeMaxRows: number;
     /** Cached height of a textarea with a single row. */
     private _cachedLineHeight;
-    constructor(_elementRef: ElementRef);
+    constructor(_elementRef: ElementRef, formControl: NgControl);
     /** Sets the minimum height of the textarea as determined by minRows. */
     _setMinHeight(): void;
     /** Sets the maximum height of the textarea as determined by maxRows. */
