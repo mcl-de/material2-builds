@@ -7,8 +7,8 @@
  */
 import { AfterContentInit, QueryList, OnDestroy, ElementRef, Renderer2 } from '@angular/core';
 import { MdChip } from './chip';
-import { FocusKeyManager } from '../core/a11y/focus-key-manager';
-import { Directionality } from '@angular/cdk';
+import { FocusKeyManager } from '@angular/cdk/a11y';
+import { Directionality } from '@angular/cdk/bidi';
 /**
  * A material design chips component (named ChipList for it's similarity to the List component).
  *
@@ -34,8 +34,13 @@ export declare class MdChipList implements AfterContentInit, OnDestroy {
     protected _inputElement: HTMLInputElement;
     /** Tab index for the chip list. */
     _tabIndex: number;
+    /**
+     * User defined tab index.
+     * When it is not null, use user defined tab index. Otherwise use _tabIndex
+     */
+    _userTabIndex: number | null;
     /** The FocusKeyManager which handles focus. */
-    _keyManager: FocusKeyManager;
+    _keyManager: FocusKeyManager<MdChip>;
     /** The chip components contained within this chip list. */
     chips: QueryList<MdChip>;
     constructor(_renderer: Renderer2, _elementRef: ElementRef, _dir: Directionality);
@@ -46,6 +51,7 @@ export declare class MdChipList implements AfterContentInit, OnDestroy {
      * it's selected state is always ignored.
      */
     selectable: boolean;
+    tabIndex: number;
     /** Associates an HTML input element with this chip list. */
     registerInput(inputElement: HTMLInputElement): void;
     /**

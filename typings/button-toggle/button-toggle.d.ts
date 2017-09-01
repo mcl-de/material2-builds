@@ -5,7 +5,7 @@
  * Use of this source code is governed by an MIT-style license that can be
  * found in the LICENSE file at https://angular.io/license
  */
-import { ElementRef, Renderer2, EventEmitter, OnInit, OnDestroy, QueryList, AfterViewInit, ChangeDetectorRef } from '@angular/core';
+import { ElementRef, Renderer2, EventEmitter, OnInit, OnDestroy, QueryList, ChangeDetectorRef } from '@angular/core';
 import { ControlValueAccessor } from '@angular/forms';
 import { UniqueSelectionDispatcher, FocusOriginMonitor } from '../core';
 import { CanDisable } from '../core/common-behaviors/disabled';
@@ -29,7 +29,8 @@ export declare class MdButtonToggleChange {
     value: any;
 }
 /** Exclusive selection button toggle group that behaves like a radio-button group. */
-export declare class MdButtonToggleGroup extends _MdButtonToggleGroupMixinBase implements AfterViewInit, ControlValueAccessor, CanDisable {
+export declare class MdButtonToggleGroup extends _MdButtonToggleGroupMixinBase implements ControlValueAccessor, CanDisable {
+    private _changeDetector;
     /** The value for the button toggle group. Should match currently selected button toggle. */
     private _value;
     /** The HTML name attribute applied to toggles in this group. */
@@ -38,18 +39,15 @@ export declare class MdButtonToggleGroup extends _MdButtonToggleGroupMixinBase i
     private _vertical;
     /** The currently selected button toggle, should match the value. */
     private _selected;
-    /** Whether the button toggle group is initialized or not. */
-    private _isInitialized;
     /**
      * The method to be called in order to update ngModel.
      * Now `ngModel` binding is not supported in multiple selection mode.
      */
-    private _controlValueAccessorChangeFn;
+    _controlValueAccessorChangeFn: (value: any) => void;
     /** onTouch function registered via registerOnTouch (ControlValueAccessor). */
     onTouched: () => any;
     /** Child button toggle buttons. */
     _buttonToggles: QueryList<MdButtonToggle>;
-    ngAfterViewInit(): void;
     /** `name` attribute for the underlying `input` element. */
     name: string;
     /** Whether the toggle group is vertical. */
@@ -60,10 +58,11 @@ export declare class MdButtonToggleGroup extends _MdButtonToggleGroupMixinBase i
     selected: MdButtonToggle | null;
     /** Event emitted when the group's value changes. */
     change: EventEmitter<MdButtonToggleChange>;
+    constructor(_changeDetector: ChangeDetectorRef);
     private _updateButtonToggleNames();
     private _updateSelectedButtonToggleFromValue();
     /** Dispatch change event with current selection and group value. */
-    private _emitChangeEvent();
+    _emitChangeEvent(): void;
     /**
      * Sets the model value. Implemented as part of ControlValueAccessor.
      * @param value Value to be set to the model.
@@ -101,6 +100,15 @@ export declare class MdButtonToggle implements OnInit, OnDestroy {
     private _renderer;
     private _elementRef;
     private _focusOriginMonitor;
+    /**
+     * Attached to the aria-label attribute of the host element. In most cases, arial-labelledby will
+     * take precedence so this may be omitted.
+     */
+    ariaLabel: string;
+    /**
+     * Users can specify the `aria-labelledby` attribute which will be forwarded to the input element
+     */
+    ariaLabelledby: string | null;
     /** Whether or not this button toggle is checked. */
     private _checked;
     /** Type of the button toggle. Either 'radio' or 'checkbox'. */

@@ -6,7 +6,8 @@
  * found in the LICENSE file at https://angular.io/license
  */
 import { ElementRef, EventEmitter, OnDestroy, Renderer2 } from '@angular/core';
-import { Focusable } from '../core/a11y/focus-key-manager';
+import { Subject } from 'rxjs/Subject';
+import { FocusableOption } from '../core/a11y/focus-key-manager';
 import { CanColor } from '../core/common-behaviors/color';
 import { CanDisable } from '../core/common-behaviors/disabled';
 export interface MdChipEvent {
@@ -28,7 +29,7 @@ export declare class MdBasicChip {
 /**
  * Material design styled Chip component. Used inside the MdChipList component.
  */
-export declare class MdChip extends _MdChipMixinBase implements Focusable, OnDestroy, CanColor, CanDisable {
+export declare class MdChip extends _MdChipMixinBase implements FocusableOption, OnDestroy, CanColor, CanDisable {
     _chipRemove: MdChipRemove;
     /** Whether the chip is selected. */
     selected: boolean;
@@ -46,14 +47,15 @@ export declare class MdChip extends _MdChipMixinBase implements Focusable, OnDes
     protected _removable: boolean;
     /** Whether the chip has focus. */
     _hasFocus: boolean;
-    /** Emitted when the chip is focused. */
-    onFocus: EventEmitter<MdChipEvent>;
+    /** Emits when the chip is focused. */
+    _onFocus: Subject<MdChipEvent>;
     /** Emitted when the chip is selected. */
     select: EventEmitter<MdChipEvent>;
     /** Emitted when the chip is deselected. */
     deselect: EventEmitter<MdChipEvent>;
     /** Emitted when the chip is destroyed. */
     destroy: EventEmitter<MdChipEvent>;
+    readonly ariaSelected: string | null;
     constructor(renderer: Renderer2, elementRef: ElementRef);
     /** Emitted when a chip is to be removed. */
     onRemove: EventEmitter<MdChipEvent>;

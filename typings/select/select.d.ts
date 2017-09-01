@@ -5,20 +5,18 @@
  * Use of this source code is governed by an MIT-style license that can be
  * found in the LICENSE file at https://angular.io/license
  */
-import { AfterContentInit, ElementRef, EventEmitter, OnDestroy, QueryList, Renderer2, ChangeDetectorRef, OnInit, InjectionToken } from '@angular/core';
-import { MdOption, MdOptionSelectionChange, MdOptgroup } from '../core/option/index';
-import { FocusKeyManager } from '../core/a11y/focus-key-manager';
-import { Directionality } from '../core/bidi/index';
+import { AfterContentInit, ChangeDetectorRef, ElementRef, EventEmitter, InjectionToken, OnDestroy, OnInit, QueryList, Renderer2 } from '@angular/core';
+import { ControlValueAccessor, FormGroupDirective, NgControl, NgForm } from '@angular/forms';
+import { FocusKeyManager } from '@angular/cdk/a11y';
+import { Directionality } from '@angular/cdk/bidi';
+import { ConnectedOverlayDirective, Overlay, RepositionScrollStrategy, ScrollStrategy, ViewportRuler } from '@angular/cdk/overlay';
 import { Observable } from 'rxjs/Observable';
-import { ControlValueAccessor, NgControl } from '@angular/forms';
-import { ConnectedOverlayDirective } from '../core/overlay/overlay-directives';
-import { ViewportRuler } from '../core/overlay/position/viewport-ruler';
-import { SelectionModel } from '../core/selection/selection';
-import { Overlay } from '../core/overlay/overlay';
+import { SelectionModel } from '@angular/cdk/collections';
 import { CanColor } from '../core/common-behaviors/color';
 import { CanDisable } from '../core/common-behaviors/disabled';
+import { MdOptgroup, MdOption, MdOptionSelectionChange } from '../core/option/index';
 import { FloatPlaceholderType, PlaceholderOptions } from '../core/placeholder/placeholder-options';
-import { ScrollStrategy, RepositionScrollStrategy } from '../core/overlay/scroll';
+import { Platform } from '@angular/cdk/platform';
 /**
  * The following style constants are necessary to save here in order
  * to properly calculate the alignment of the selected option over
@@ -84,11 +82,19 @@ export declare class MdSelectBase {
     constructor(_renderer: Renderer2, _elementRef: ElementRef);
 }
 export declare const _MdSelectMixinBase: (new (...args: any[]) => CanColor) & (new (...args: any[]) => CanDisable) & typeof MdSelectBase;
+/**
+ * Allows the user to customize the trigger that is displayed when the select has a value.
+ */
+export declare class MdSelectTrigger {
+}
 export declare class MdSelect extends _MdSelectMixinBase implements AfterContentInit, OnDestroy, OnInit, ControlValueAccessor, CanColor, CanDisable {
     private _viewportRuler;
     private _changeDetectorRef;
     private _overlay;
+    private _platform;
     private _dir;
+    private _parentForm;
+    private _parentFormGroup;
     _control: NgControl;
     private _scrollStrategyFactory;
     /** Whether or not the overlay panel is open. */
@@ -107,6 +113,8 @@ export declare class MdSelect extends _MdSelectMixinBase implements AfterContent
     private _placeholder;
     /** Whether the component is in multiple selection mode. */
     private _multiple;
+    /** Comparison function to specify which option is displayed. Defaults to object equality. */
+    private _compareWith;
     /** Deals with the selection logic. */
     _selectionModel: SelectionModel<MdOption>;
     /** The animation state of the placeholder. */
@@ -121,7 +129,7 @@ export declare class MdSelect extends _MdSelectMixinBase implements AfterContent
      */
     _triggerWidth: number;
     /** Manages keyboard events for options in the panel. */
-    _keyManager: FocusKeyManager;
+    _keyManager: FocusKeyManager<MdOption>;
     /**
      * The width of the selected option's value. Must be set programmatically
      * to ensure its overflow is clipped, as it's absolutely positioned.
@@ -169,17 +177,31 @@ export declare class MdSelect extends _MdSelectMixinBase implements AfterContent
     panelClass: string | string[] | Set<string> | {
         [key: string]: any;
     };
+    /** User-supplied override of the trigger element. */
+    customTrigger: MdSelectTrigger;
     /** Placeholder to be shown if no value has been selected. */
     placeholder: string;
     /** Whether the component is required. */
     required: any;
     /** Whether the user should be allowed to select multiple options. */
     multiple: boolean;
+    /**
+     * A function to compare the option values with the selected values. The first argument
+     * is a value from an option. The second is a value from the selection. A boolean
+     * should be returned.
+     */
+    compareWith: (o1: any, o2: any) => boolean;
     /** Whether to float the placeholder text. */
     floatPlaceholder: FloatPlaceholderType;
     private _floatPlaceholder;
     /** Tab index for the select element. */
     tabIndex: number;
+    /** Value of the select control. */
+    value: any;
+    private _value;
+    /** Whether ripples for all options in the select are disabled. */
+    disableRipple: boolean;
+    private _disableRipple;
     /** Aria label of the select. If not specified, the placeholder will be used as label. */
     ariaLabel: string;
     /** Input that can be used to specify the `aria-labelledby` attribute. */
@@ -192,7 +214,13 @@ export declare class MdSelect extends _MdSelectMixinBase implements AfterContent
     onClose: EventEmitter<void>;
     /** Event emitted when the selected value has been changed by the user. */
     change: EventEmitter<MdSelectChange>;
-    constructor(_viewportRuler: ViewportRuler, _changeDetectorRef: ChangeDetectorRef, _overlay: Overlay, renderer: Renderer2, elementRef: ElementRef, _dir: Directionality, _control: NgControl, tabIndex: string, placeholderOptions: PlaceholderOptions, _scrollStrategyFactory: any);
+    /**
+     * Event that emits whenever the raw value of the select changes. This is here primarily
+     * to facilitate the two-way binding for the `value` input.
+     * @docs-private
+     */
+    valueChange: EventEmitter<any>;
+    constructor(_viewportRuler: ViewportRuler, _changeDetectorRef: ChangeDetectorRef, _overlay: Overlay, _platform: Platform, renderer: Renderer2, elementRef: ElementRef, _dir: Directionality, _parentForm: NgForm, _parentFormGroup: FormGroupDirective, _control: NgControl, tabIndex: string, placeholderOptions: PlaceholderOptions, _scrollStrategyFactory: any);
     ngOnInit(): void;
     ngAfterContentInit(): void;
     ngOnDestroy(): void;
@@ -270,12 +298,15 @@ export declare class MdSelect extends _MdSelectMixinBase implements AfterContent
     _onAttached(): void;
     /** Whether the select has a value. */
     _hasValue(): boolean;
+    /** Whether the select is in an error state. */
+    _isErrorState(): boolean;
     /**
      * Sets the scroll position of the scroll container. This must be called after
      * the overlay pane is attached or the scroll container element will not yet be
      * present in the DOM.
      */
     private _setScrollTop();
+    private _initializeSelection();
     /**
      * Sets the selected option based on a value. If no option can be
      * found with the designated value, the select trigger is cleared.
@@ -316,6 +347,8 @@ export declare class MdSelect extends _MdSelectMixinBase implements AfterContent
      * in order to avoid Angular errors when modifying the property after init.
      */
     private _setOptionMultiple();
+    /** Sets the `disableRipple` property on each option. */
+    private _setOptionDisableRipple();
     /**
      * Must set the width of the selected option's value programmatically
      * because it is absolutely positioned and otherwise will not clip
@@ -384,10 +417,4 @@ export declare class MdSelect extends _MdSelectMixinBase implements AfterContent
     private _handleArrowKey(event);
     /** Calculates the amount of items in the select. This includes options and group labels. */
     private _getItemCount();
-    /**
-     * Calculates the amount of option group labels that precede the specified option.
-     * Useful when positioning the panel, because the labels will offset the index of the
-     * currently-selected option.
-     */
-    private _getLabelCountBeforeOption(optionIndex);
 }

@@ -5,12 +5,13 @@
  * Use of this source code is governed by an MIT-style license that can be
  * found in the LICENSE file at https://angular.io/license
  */
-import { ElementRef, EventEmitter, OnDestroy, Renderer2, ChangeDetectorRef } from '@angular/core';
+import { ChangeDetectorRef, ElementRef, EventEmitter, OnDestroy, Renderer2 } from '@angular/core';
 import { ControlValueAccessor } from '@angular/forms';
+import { Directionality } from '@angular/cdk/bidi';
 import { HammerInput } from '../core';
-import { Directionality } from '../core/bidi/index';
 import { FocusOriginMonitor } from '../core/style/focus-origin-monitor';
 import { CanDisable } from '../core/common-behaviors/disabled';
+import { CanColor } from '../core/common-behaviors/color';
 /**
  * Provider Expression that allows md-slider to register as a ControlValueAccessor.
  * This allows it to support [(ngModel)] and [formControl].
@@ -25,14 +26,16 @@ export declare class MdSliderChange {
 }
 /** @docs-private */
 export declare class MdSliderBase {
+    _renderer: Renderer2;
+    _elementRef: ElementRef;
+    constructor(_renderer: Renderer2, _elementRef: ElementRef);
 }
-export declare const _MdSliderMixinBase: (new (...args: any[]) => CanDisable) & typeof MdSliderBase;
+export declare const _MdSliderMixinBase: (new (...args: any[]) => CanColor) & (new (...args: any[]) => CanDisable) & typeof MdSliderBase;
 /**
  * Allows users to select from a range of values by moving the slider thumb. It is similar in
  * behavior to the native `<input type="range">` element.
  */
-export declare class MdSlider extends _MdSliderMixinBase implements ControlValueAccessor, OnDestroy, CanDisable {
-    private _elementRef;
+export declare class MdSlider extends _MdSliderMixinBase implements ControlValueAccessor, OnDestroy, CanDisable, CanColor {
     private _focusOriginMonitor;
     private _changeDetectorRef;
     private _dir;
@@ -67,7 +70,6 @@ export declare class MdSlider extends _MdSliderMixinBase implements ControlValue
     /** Whether the slider is vertical. */
     vertical: any;
     private _vertical;
-    color: 'primary' | 'accent' | 'warn';
     /** Event emitted when the slider value has changed. */
     change: EventEmitter<MdSliderChange>;
     /** Event emitted when the slider thumb moves. */
@@ -122,17 +124,15 @@ export declare class MdSlider extends _MdSliderMixinBase implements ControlValue
     };
     /** The size of a tick interval as a percentage of the size of the track. */
     private _tickIntervalPercent;
-    /** A renderer to handle updating the slider's thumb and fill track. */
-    private _renderer;
     /** The dimensions of the slider. */
     private _sliderDimensions;
     private _controlValueAccessorChangeFn;
-    /** The last value for which a change event was emitted. */
-    private _lastChangeValue;
-    /** The last value for which an input event was emitted. */
-    private _lastInputValue;
     /** Decimal places to round to, based on the step amount. */
     private _roundLabelTo;
+    /** The value of the slider when the slide start event fires. */
+    private _valueOnSlideStart;
+    /** Reference to the inner slider wrapper element. */
+    private _sliderWrapper;
     /**
      * Whether mouse events should be converted to a slider position by calculating their distance
      * from the right or bottom edge of the slider as opposed to the top or left.
@@ -140,12 +140,12 @@ export declare class MdSlider extends _MdSliderMixinBase implements ControlValue
     private readonly _invertMouseCoords;
     /** The language direction for this slider element. */
     private readonly _direction;
-    constructor(renderer: Renderer2, _elementRef: ElementRef, _focusOriginMonitor: FocusOriginMonitor, _changeDetectorRef: ChangeDetectorRef, _dir: Directionality);
+    constructor(renderer: Renderer2, elementRef: ElementRef, _focusOriginMonitor: FocusOriginMonitor, _changeDetectorRef: ChangeDetectorRef, _dir: Directionality);
     ngOnDestroy(): void;
     _onMouseenter(): void;
     _onClick(event: MouseEvent): void;
     _onSlide(event: HammerInput): void;
-    _onSlideStart(event: HammerInput): void;
+    _onSlideStart(event: HammerInput | null): void;
     _onSlideEnd(): void;
     _onFocus(): void;
     _onBlur(): void;
@@ -156,7 +156,7 @@ export declare class MdSlider extends _MdSliderMixinBase implements ControlValue
     /** Calculate the new value from the new physical location. The value will always be snapped. */
     private _updateValueFromPosition(pos);
     /** Emits a change event if the current value is different from the last emitted value. */
-    private _emitValueIfChanged();
+    private _emitChangeEvent();
     /** Emits an input event when the current value is different from the last emitted value. */
     private _emitInputEvent();
     /** Updates the amount of space between ticks as a percentage of the width of the slider. */
@@ -169,6 +169,17 @@ export declare class MdSlider extends _MdSliderMixinBase implements ControlValue
     private _calculateValue(percentage);
     /** Return a number between two numbers. */
     private _clamp(value, min?, max?);
+    /**
+     * Get the bounding client rect of the slider track element.
+     * The track is used rather than the native element to ignore the extra space that the thumb can
+     * take up.
+     */
+    private _getSliderDimensions();
+    /**
+     * Focuses the native element.
+     * Currently only used to allow a blur event to fire but will be used with keyboard input later.
+     */
+    private _focusHostElement();
     /**
      * Sets the model value. Implemented as part of ControlValueAccessor.
      * @param value
@@ -192,23 +203,4 @@ export declare class MdSlider extends _MdSliderMixinBase implements ControlValue
      * @param isDisabled
      */
     setDisabledState(isDisabled: boolean): void;
-}
-/**
- * Renderer class in order to keep all dom manipulation in one place and outside of the main class.
- * @docs-private
- */
-export declare class SliderRenderer {
-    private _sliderElement;
-    constructor(elementRef: ElementRef);
-    /**
-     * Get the bounding client rect of the slider track element.
-     * The track is used rather than the native element to ignore the extra space that the thumb can
-     * take up.
-     */
-    getSliderDimensions(): ClientRect | null;
-    /**
-     * Focuses the native element.
-     * Currently only used to allow a blur event to fire but will be used with keyboard input later.
-     */
-    addFocus(): void;
 }

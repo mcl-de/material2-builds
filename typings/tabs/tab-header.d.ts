@@ -5,16 +5,21 @@
  * Use of this source code is governed by an MIT-style license that can be
  * found in the LICENSE file at https://angular.io/license
  */
-import { QueryList, ElementRef, EventEmitter, AfterContentChecked, AfterContentInit, OnDestroy, NgZone, Renderer2, ChangeDetectorRef } from '@angular/core';
-import { Directionality, Direction } from '../core';
+import { QueryList, ElementRef, EventEmitter, AfterContentChecked, AfterContentInit, OnDestroy, Renderer2, ChangeDetectorRef } from '@angular/core';
+import { Directionality, Direction } from '@angular/cdk/bidi';
 import { MdTabLabelWrapper } from './tab-label-wrapper';
 import { MdInkBar } from './ink-bar';
+import { CanDisableRipple } from '../core/common-behaviors/disable-ripple';
 /**
  * The directions that scrolling can go in when the header's tabs exceed the header width. 'After'
  * will scroll the header towards the end of the tabs list and 'before' will scroll towards the
  * beginning of the list.
  */
 export declare type ScrollDirection = 'after' | 'before';
+/** @docs-private */
+export declare class MdTabHeaderBase {
+}
+export declare const _MdTabHeaderMixinBase: (new (...args: any[]) => CanDisableRipple) & typeof MdTabHeaderBase;
 /**
  * The header of the tab group which displays a list of all the tabs in the tab group. Includes
  * an ink bar that follows the currently selected tab. When the tabs list's width exceeds the
@@ -22,9 +27,8 @@ export declare type ScrollDirection = 'after' | 'before';
  * left and right across the header.
  * @docs-private
  */
-export declare class MdTabHeader implements AfterContentChecked, AfterContentInit, OnDestroy {
+export declare class MdTabHeader extends _MdTabHeaderMixinBase implements AfterContentChecked, AfterContentInit, OnDestroy, CanDisableRipple {
     private _elementRef;
-    private _ngZone;
     private _renderer;
     private _changeDetectorRef;
     private _dir;
@@ -56,14 +60,11 @@ export declare class MdTabHeader implements AfterContentChecked, AfterContentIni
     private _selectedIndex;
     /** The index of the active tab. */
     selectedIndex: number;
-    /** Whether ripples for the tab-header labels should be disabled or not. */
-    disableRipple: boolean;
-    private _disableRipple;
     /** Event emitted when the option is selected. */
     selectFocusedIndex: EventEmitter<{}>;
     /** Event emitted when a label is focused. */
     indexFocused: EventEmitter<{}>;
-    constructor(_elementRef: ElementRef, _ngZone: NgZone, _renderer: Renderer2, _changeDetectorRef: ChangeDetectorRef, _dir: Directionality);
+    constructor(_elementRef: ElementRef, _renderer: Renderer2, _changeDetectorRef: ChangeDetectorRef, _dir: Directionality);
     ngAfterContentChecked(): void;
     _handleKeydown(event: KeyboardEvent): void;
     /**

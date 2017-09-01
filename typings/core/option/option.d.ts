@@ -5,7 +5,7 @@
  * Use of this source code is governed by an MIT-style license that can be
  * found in the LICENSE file at https://angular.io/license
  */
-import { ElementRef, EventEmitter, ChangeDetectorRef } from '@angular/core';
+import { ElementRef, EventEmitter, ChangeDetectorRef, QueryList } from '@angular/core';
 import { MdOptgroup } from './optgroup';
 /** Event object emitted by MdOption when selected or deselected. */
 export declare class MdOptionSelectionChange {
@@ -24,6 +24,7 @@ export declare class MdOption {
     private _selected;
     private _active;
     private _multiple;
+    private _disableRipple;
     /** Whether the option is disabled.  */
     private _disabled;
     private _id;
@@ -37,6 +38,8 @@ export declare class MdOption {
     value: any;
     /** Whether the option is disabled. */
     disabled: any;
+    /** Whether ripples for the option are disabled. */
+    disableRipple: boolean;
     /** Event emitted when the option is selected or deselected. */
     onSelectionChange: EventEmitter<MdOptionSelectionChange>;
     constructor(_element: ElementRef, _changeDetectorRef: ChangeDetectorRef, group: MdOptgroup, _isCompatibilityMode: boolean);
@@ -70,6 +73,8 @@ export declare class MdOption {
      * events will display the proper options as active on arrow key events.
      */
     setInactiveStyles(): void;
+    /** Gets the label to be used when determining whether the option should be focused. */
+    getLabel(): string;
     /** Ensures the option is selected when activated from the keyboard. */
     _handleKeydown(event: KeyboardEvent): void;
     /**
@@ -79,8 +84,15 @@ export declare class MdOption {
     _selectViaInteraction(): void;
     /** Returns the correct tabindex for the option depending on disabled state. */
     _getTabIndex(): string;
-    /** Fetches the host DOM element. */
+    /** Gets the host DOM element. */
     _getHostElement(): HTMLElement;
     /** Emits the selection change event. */
     private _emitSelectionChangeEvent(isUserInput?);
+    /**
+     * Counts the amount of option group labels that precede the specified option.
+     * @param optionIndex Index of the option at which to start counting.
+     * @param options Flat list of all of the options.
+     * @param optionGroups Flat list of all of the option groups.
+     */
+    static countGroupLabelsBeforeOption(optionIndex: number, options: QueryList<MdOption>, optionGroups: QueryList<MdOptgroup>): number;
 }

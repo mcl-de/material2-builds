@@ -5,7 +5,7 @@
  * Use of this source code is governed by an MIT-style license that can be
  * found in the LICENSE file at https://angular.io/license
  */
-import { AfterContentInit, ElementRef, EventEmitter, NgZone } from '@angular/core';
+import { AfterContentInit, ElementRef, EventEmitter, NgZone, ChangeDetectorRef, OnDestroy } from '@angular/core';
 import { DateAdapter } from '../core/datetime/index';
 import { MdDatepickerIntl } from './datepicker-intl';
 import { MdDateFormats } from '../core/datetime/date-formats';
@@ -13,27 +13,30 @@ import { MdDateFormats } from '../core/datetime/date-formats';
  * A calendar that is used as part of the datepicker.
  * @docs-private
  */
-export declare class MdCalendar<D> implements AfterContentInit {
+export declare class MdCalendar<D> implements AfterContentInit, OnDestroy {
     private _elementRef;
     private _intl;
     private _ngZone;
     _isCompatibilityMode: boolean;
     private _dateAdapter;
     private _dateFormats;
+    private _intlChanges;
     /** A date representing the period (month or year) to start the calendar in. */
     startAt: D;
     /** Whether the calendar should be started in month or year view. */
     startView: 'month' | 'year';
     /** The currently selected date. */
-    selected: D;
+    selected: D | null;
     /** The minimum selectable date. */
-    minDate: D;
+    minDate: D | null;
     /** The maximum selectable date. */
-    maxDate: D;
+    maxDate: D | null;
     /** A function used to filter which dates are selectable. */
     dateFilter: (date: D) => boolean;
     /** Emits when the currently selected date changes. */
     selectedChange: EventEmitter<D>;
+    /** Emits when any date is selected. */
+    userSelection: EventEmitter<void>;
     /** Date filter for the month and year views. */
     _dateFilterForViews: (date: D) => boolean;
     /**
@@ -51,10 +54,12 @@ export declare class MdCalendar<D> implements AfterContentInit {
     readonly _prevButtonLabel: string;
     /** The label for the the next button. */
     readonly _nextButtonLabel: string;
-    constructor(_elementRef: ElementRef, _intl: MdDatepickerIntl, _ngZone: NgZone, _isCompatibilityMode: boolean, _dateAdapter: DateAdapter<D>, _dateFormats: MdDateFormats);
+    constructor(_elementRef: ElementRef, _intl: MdDatepickerIntl, _ngZone: NgZone, _isCompatibilityMode: boolean, _dateAdapter: DateAdapter<D>, _dateFormats: MdDateFormats, changeDetectorRef: ChangeDetectorRef);
     ngAfterContentInit(): void;
+    ngOnDestroy(): void;
     /** Handles date selection in the month view. */
     _dateSelected(date: D): void;
+    _userSelected(): void;
     /** Handles month selection in the year view. */
     _monthSelected(month: D): void;
     /** Handles user clicks on the period label. */

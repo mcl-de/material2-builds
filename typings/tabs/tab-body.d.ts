@@ -7,7 +7,8 @@
  */
 import { EventEmitter, OnInit, ElementRef, AfterViewChecked } from '@angular/core';
 import { AnimationEvent } from '@angular/animations';
-import { TemplatePortal, PortalHostDirective, Directionality, Direction } from '../core';
+import { TemplatePortal, PortalHostDirective } from '@angular/cdk/portal';
+import { Directionality, Direction } from '@angular/cdk/bidi';
 /**
  * These position states are used internally as animation states for the tab body. Setting the
  * position state to left, right, or center will transition the tab body from its current
@@ -40,7 +41,7 @@ export declare class MdTabBody implements OnInit, AfterViewChecked {
     /** Event emitted when the tab completes its animation towards the center. */
     onCentered: EventEmitter<void>;
     /** The tab body content to display. */
-    _content: TemplatePortal;
+    _content: TemplatePortal<any>;
     /** The shifted index position of the tab body, where zero represents the active center tab. */
     _position: MdTabBodyPositionState;
     position: number;

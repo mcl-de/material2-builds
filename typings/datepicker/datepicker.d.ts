@@ -5,9 +5,9 @@
  * Use of this source code is governed by an MIT-style license that can be
  * found in the LICENSE file at https://angular.io/license
  */
-import { AfterContentInit, EventEmitter, OnDestroy, ViewContainerRef, NgZone, InjectionToken } from '@angular/core';
-import { Overlay, RepositionScrollStrategy, ScrollStrategy } from '../core/overlay/index';
-import { Directionality } from '../core/bidi/index';
+import { AfterContentInit, EventEmitter, InjectionToken, NgZone, OnDestroy, ViewContainerRef } from '@angular/core';
+import { Overlay, RepositionScrollStrategy, ScrollStrategy } from '@angular/cdk/overlay';
+import { Directionality } from '@angular/cdk/bidi';
 import { MdDialog } from '../dialog/dialog';
 import { MdDatepickerInput } from './datepicker-input';
 import { DateAdapter } from '../core/datetime/index';
@@ -50,7 +50,7 @@ export declare class MdDatepicker<D> implements OnDestroy {
     private _dir;
     private _document;
     /** The date to open the calendar to initially. */
-    startAt: D;
+    startAt: D | null;
     private _startAt;
     /** The view that the calendar should start in. */
     startView: 'month' | 'year';
@@ -62,7 +62,10 @@ export declare class MdDatepicker<D> implements OnDestroy {
     /** Whether the datepicker pop-up should be disabled. */
     disabled: any;
     private _disabled;
-    /** Emits new selected date when selected date changes. */
+    /**
+     * Emits new selected date when selected date changes.
+     * @deprecated Switch to the `dateChange` and `dateInput` binding on the input element.
+     */
     selectedChanged: EventEmitter<D>;
     /** Whether the calendar is open. */
     opened: boolean;
@@ -70,10 +73,11 @@ export declare class MdDatepicker<D> implements OnDestroy {
     id: string;
     /** The currently selected date. */
     _selected: D | null;
+    private _validSelected;
     /** The minimum selectable date. */
-    readonly _minDate: D;
+    readonly _minDate: D | null;
     /** The maximum selectable date. */
-    readonly _maxDate: D;
+    readonly _maxDate: D | null;
     readonly _dateFilter: (date: D | null) => boolean;
     /** A reference to the overlay when the calendar is opened as a popup. */
     private _popupRef;
@@ -88,8 +92,8 @@ export declare class MdDatepicker<D> implements OnDestroy {
     private _inputSubscription;
     constructor(_dialog: MdDialog, _overlay: Overlay, _ngZone: NgZone, _viewContainerRef: ViewContainerRef, _scrollStrategy: any, _dateAdapter: DateAdapter<D>, _dir: Directionality, _document: any);
     ngOnDestroy(): void;
-    /** Selects the given date and closes the currently open popup or dialog. */
-    _selectAndClose(date: D): void;
+    /** Selects the given date */
+    _select(date: D): void;
     /**
      * Register an input with this datepicker.
      * @param input The datepicker input to register with this datepicker.

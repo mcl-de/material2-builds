@@ -8,6 +8,8 @@
 import { EventEmitter, QueryList, ElementRef, Renderer2, ChangeDetectorRef, AfterViewChecked, AfterContentInit, AfterContentChecked, OnDestroy } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
 import { MdTab } from './tab';
+import { CanDisableRipple } from '../core/common-behaviors/disable-ripple';
+import { CanColor, ThemePalette } from '../core/common-behaviors/color';
 /** A simple change event emitted on focus or selection changes. */
 export declare class MdTabChangeEvent {
     index: number;
@@ -15,13 +17,19 @@ export declare class MdTabChangeEvent {
 }
 /** Possible positions for the tab header. */
 export declare type MdTabHeaderPosition = 'above' | 'below';
+/** @docs-private */
+export declare class MdTabGroupBase {
+    _renderer: Renderer2;
+    _elementRef: ElementRef;
+    constructor(_renderer: Renderer2, _elementRef: ElementRef);
+}
+export declare const _MdTabGroupMixinBase: (new (...args: any[]) => CanColor) & (new (...args: any[]) => CanDisableRipple) & typeof MdTabGroupBase;
 /**
  * Material design tab-group component.  Supports basic tab pairs (label + content) and includes
  * animated ink-bar, keyboard navigation, and screen reader.
  * See: https://www.google.com/design/spec/components/tabs.html
  */
-export declare class MdTabGroup implements AfterContentInit, AfterContentChecked, AfterViewChecked, OnDestroy {
-    private _renderer;
+export declare class MdTabGroup extends _MdTabGroupMixinBase implements AfterContentInit, AfterContentChecked, AfterViewChecked, OnDestroy, CanColor, CanDisableRipple {
     private _changeDetectorRef;
     _tabs: QueryList<MdTab>;
     _tabBodyWrapper: ElementRef;
@@ -40,14 +48,14 @@ export declare class MdTabGroup implements AfterContentInit, AfterContentChecked
     private _dynamicHeight;
     /** @deprecated */
     _dynamicHeightDeprecated: boolean;
-    /** Whether ripples for the tab-group should be disabled or not. */
-    disableRipple: boolean;
-    private _disableRipple;
     /** The index of the active tab. */
     selectedIndex: number | null;
     private _selectedIndex;
     /** Position of the tab header. */
     headerPosition: MdTabHeaderPosition;
+    /** Background color of the tab group. */
+    backgroundColor: ThemePalette;
+    private _backgroundColor;
     /** Output to enable support for two-way binding on `[(selectedIndex)]` */
     readonly selectedIndexChange: Observable<number>;
     /** Event emitted when focus has changed within a tab group. */
@@ -55,7 +63,7 @@ export declare class MdTabGroup implements AfterContentInit, AfterContentChecked
     /** Event emitted when the tab selection has changed. */
     selectChange: EventEmitter<MdTabChangeEvent>;
     private _groupId;
-    constructor(_renderer: Renderer2, _changeDetectorRef: ChangeDetectorRef);
+    constructor(_renderer: Renderer2, elementRef: ElementRef, _changeDetectorRef: ChangeDetectorRef);
     /**
      * After the content is checked, this component knows what tabs have been defined
      * and what the selected index should be. This is where we can know exactly what position

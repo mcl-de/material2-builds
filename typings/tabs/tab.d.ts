@@ -6,7 +6,7 @@
  * found in the LICENSE file at https://angular.io/license
  */
 import { TemplatePortal } from '../core/portal/portal';
-import { ViewContainerRef, TemplateRef, OnInit, OnDestroy, OnChanges, SimpleChanges } from '@angular/core';
+import { OnChanges, OnDestroy, OnInit, SimpleChanges, TemplateRef, ViewContainerRef } from '@angular/core';
 import { CanDisable } from '../core/common-behaviors/disabled';
 import { MdTabLabel } from './tab-label';
 import { Subject } from 'rxjs/Subject';
@@ -24,7 +24,7 @@ export declare class MdTab extends _MdTabMixinBase implements OnInit, CanDisable
     textLabel: string;
     /** The portal that will be the hosted content of the tab */
     private _contentPortal;
-    readonly content: TemplatePortal | null;
+    readonly content: TemplatePortal<any> | null;
     /** Emits whenever the label changes. */
     _labelChange: Subject<void>;
     /**
@@ -37,6 +37,10 @@ export declare class MdTab extends _MdTabMixinBase implements OnInit, CanDisable
      * was already a selected tab. Provides context of what position the tab should originate from.
      */
     origin: number | null;
+    /**
+     * Whether the tab is currently active.
+     */
+    isActive: boolean;
     constructor(_viewContainerRef: ViewContainerRef);
     ngOnChanges(changes: SimpleChanges): void;
     ngOnDestroy(): void;

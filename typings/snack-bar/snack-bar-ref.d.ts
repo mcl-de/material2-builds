@@ -5,7 +5,7 @@
  * Use of this source code is governed by an MIT-style license that can be
  * found in the LICENSE file at https://angular.io/license
  */
-import { OverlayRef } from '../core';
+import { OverlayRef } from '@angular/cdk/overlay';
 import { Observable } from 'rxjs/Observable';
 import { MdSnackBarContainer } from './snack-bar-container';
 /**
@@ -34,10 +34,10 @@ export declare class MdSnackBarRef<T> {
     constructor(containerInstance: MdSnackBarContainer, _overlayRef: OverlayRef);
     /** Dismisses the snack bar. */
     dismiss(): void;
+    /** Marks the snackbar action clicked. */
+    closeWithAction(): void;
     /** Dismisses the snack bar after some duration */
     _dismissAfter(duration: number): void;
-    /** Marks the snackbar action clicked. */
-    _action(): void;
     /** Marks the snackbar as opened */
     _open(): void;
     /** Cleans up the DOM after closing. */

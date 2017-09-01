@@ -6,10 +6,10 @@
  * found in the LICENSE file at https://angular.io/license
  */
 import { ElementRef, NgZone, OnChanges, SimpleChanges, OnDestroy, InjectionToken } from '@angular/core';
+import { ViewportRuler } from '@angular/cdk/scrolling';
+import { Platform } from '@angular/cdk/platform';
 import { RippleConfig } from './ripple-renderer';
 import { RippleRef } from './ripple-ref';
-import { ViewportRuler } from '../overlay/position/viewport-ruler';
-import { Platform } from '../platform/platform';
 export interface RippleGlobalOptions {
     disabled?: boolean;
     baseSpeedFactor?: number;
@@ -48,6 +48,13 @@ export declare class MdRipple implements OnChanges, OnDestroy {
     color: string;
     /** Whether foreground ripples should be visible outside the component's bounds. */
     unbounded: boolean;
+    _matRippleTrigger: HTMLElement;
+    _matRippleCentered: boolean;
+    _matRippleDisabled: boolean;
+    _matRippleRadius: number;
+    _matRippleSpeedFactor: number;
+    _matRippleColor: string;
+    _matRippleUnbounded: boolean;
     /** Renderer for the ripple DOM manipulations. */
     private _rippleRenderer;
     /** Options that are set globally for all ripples. */
@@ -62,5 +69,5 @@ export declare class MdRipple implements OnChanges, OnDestroy {
     /** Ripple configuration from the directive's input values. */
     readonly rippleConfig: RippleConfig;
     /** Updates the ripple renderer with the latest ripple configuration. */
-    private _updateRippleRenderer();
+    _updateRippleRenderer(): void;
 }

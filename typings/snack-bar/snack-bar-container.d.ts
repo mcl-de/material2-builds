@@ -5,11 +5,11 @@
  * Use of this source code is governed by an MIT-style license that can be
  * found in the LICENSE file at https://angular.io/license
  */
-import { ComponentRef, NgZone, OnDestroy, Renderer2, ElementRef } from '@angular/core';
+import { ComponentRef, EmbeddedViewRef, NgZone, OnDestroy, Renderer2, ElementRef } from '@angular/core';
 import { AnimationEvent } from '@angular/animations';
-import { BasePortalHost, ComponentPortal, PortalHostDirective } from '../core';
-import { MdSnackBarConfig } from './snack-bar-config';
+import { BasePortalHost, ComponentPortal, PortalHostDirective } from '@angular/cdk/portal';
 import { Observable } from 'rxjs/Observable';
+import { MdSnackBarConfig } from './snack-bar-config';
 export declare type SnackBarState = 'initial' | 'visible' | 'complete' | 'void';
 export declare const SHOW_ANIMATION = "225ms cubic-bezier(0.4,0.0,1,1)";
 export declare const HIDE_ANIMATION = "195ms cubic-bezier(0.0,0.0,0.2,1)";
@@ -35,7 +35,7 @@ export declare class MdSnackBarContainer extends BasePortalHost implements OnDes
     /** Attach a component portal as content to this snack bar container. */
     attachComponentPortal<T>(portal: ComponentPortal<T>): ComponentRef<T>;
     /** Attach a template portal as content to this snack bar container. */
-    attachTemplatePortal(): Map<string, any>;
+    attachTemplatePortal(): EmbeddedViewRef<any>;
     /** Handle end of animations, updating the state of the snackbar. */
     onAnimationEnd(event: AnimationEvent): void;
     /** Begin animation of snack bar entrance into view. */
